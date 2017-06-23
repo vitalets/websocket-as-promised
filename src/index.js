@@ -52,7 +52,7 @@ module.exports = class WebSocketAsPromised {
    * @param {Object} data
    * @returns {Promise}
    */
-  send(data = {}) {
+  send(data) {
     return this._pendings.add(id => {
       if (!data || typeof data !== 'object') {
         throw new Error(`WebSocket data should be a plain object, got ${data}`);
