@@ -17,7 +17,6 @@
     "code": "npm run lint-all",
     "lint-all": "eslint src test",
     "lint-staged": "lint-staged",
-    "server": "node test/server",
     "test": "mocha test/index.test.js",
     "ci": "npm run code && npm test",
     "release": "npm run code && npm test && npm version $VER && npm publish && git push --follow-tags --no-verify",
