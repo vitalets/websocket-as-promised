@@ -1,0 +1,59 @@
+{
+  "name": "websocket-as-promised",
+  "version": "0.1.0",
+  "description": "Promise-based WebSocket wrapper",
+  "author": {
+    "name": "Vitaliy Potapov",
+    "email": "noginsk@rambler.ru"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vitalets/websocket-as-promised.git"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "code": "npm run lint-all",
+    "lint-all": "eslint src test",
+    "lint-staged": "lint-staged",
+    "test": "mocha test/index.test.js --require=test/globals.js",
+    "ci": "npm run code && npm test",
+    "release": "npm run code && npm test && npm version $VER && npm publish && git push --follow-tags --no-verify",
+    "release-patch": "VER=patch npm run release",
+    "release-minor": "VER=minor npm run release",
+    "precommit": "npm run lint-staged && npm t",
+    "prepush": "npm run code && npm t",
+    "prepublish": "babel src --out-dir lib"
+  },
+  "lint-staged": {
+    "{src,test}/**/*.js": "eslint"
+  },
+  "main": "lib/index.js",
+  "babel": {
+    "presets": [
+      "es2015"
+    ]
+  },
+  "dependencies": {
+    "pendings": "^0.1.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^4.0.2",
+    "chai-as-promised": "^7.0.0",
+    "eslint": "^4.0.0",
+    "husky": "^0.13.4",
+    "lint-staged": "^4.0.0",
+    "mocha": "^3.4.2",
+    "websocket": "^1.0.24"
+  },
+  "keywords": [
+    "websocket",
+    "ws",
+    "promise",
+    "promises"
+  ],
+  "license": "MIT"
+}
