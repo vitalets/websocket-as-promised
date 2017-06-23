@@ -7,7 +7,7 @@
 npm install websocket-as-promised --save
 ```
 
-## Usage
+## Usage in browser
 ```js
 const WebSocketAsPromised = require('websocket-as-promised');
 
@@ -17,6 +17,19 @@ wsp.open('ws://echo.websocket.org')
   .then(response => console.log(response.id))
   .then(() => wsp.close())
   .catch(e => console.error(e));
+
+```
+
+## Usage in Node.js
+As there is no built-in WebSocket client in Node.js, you should use a third-party module.
+The most popular W3C compatible solution is [websocket](https://www.npmjs.com/package/websocket):
+```js
+const W3CWebSocket = require('websocket').w3cwebsocket;
+const WebSocketAsPromised = require('websocket-as-promised');
+
+const wsp = new WebSocketAsPromised(W3CWebSocket);
+wsp.open('ws://echo.websocket.org')
+  .then(...)
 
 ```
 
