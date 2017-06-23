@@ -45,7 +45,7 @@ wsp.open('ws://echo.websocket.org')
    * Constructor
    *
    * @param {Object} [options]
-   * @param {String} [options.idProp="id"] id property name
+   * @param {String} [options.idProp="id"] id property name attached to each message
    * @param {Object} [options.WebSocket=WebSocket] custom WebSocket constructor
    */
 ```
