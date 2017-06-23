@@ -3,10 +3,21 @@
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const assert = require('chai').assert;
 const WebSocketAsPromised = require('../src');
-
-const URL = 'ws://localhost:8080';
+const server = require('./server');
 
 describe('WebSocketAsPromised', function () {
+
+  before(function (done) {
+    server.start(url => {
+      this.url = url;
+      done();
+    });
+  });
+
+  after(function (done) {
+    server.stop(() => done());
+  });
+
   beforeEach(function () {
     this.wsp = new WebSocketAsPromised(W3CWebSocket);
   });
@@ -18,12 +29,12 @@ describe('WebSocketAsPromised', function () {
   });
 
   it('should open connection', function () {
-    return this.wsp.open(URL)
+    return this.wsp.open(this.url)
       .then(event => assert.equal(event.type, 'open'));
   });
 
   it('should send and receive data with id', function () {
-    return this.wsp.open(URL)
+    return this.wsp.open(this.url)
       .then(() => this.wsp.send({foo: 'bar'}))
       .then(data => {
         assert.equal(data.foo, 'bar');
@@ -32,7 +43,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   it('should close connection', function () {
-    return this.wsp.open(URL)
+    return this.wsp.open(this.url)
       .then(() => this.wsp.close())
       .then(event => assert.equal(event.code, 1000));
   });
