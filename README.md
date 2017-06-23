@@ -1,6 +1,6 @@
 # websocket-as-promised
 
-> Wraps [W3C WebSocket] with [Promise]-based API
+> [Promise]-based [W3C WebSocket] wrapper
 
 ## Installation
 ```bash
