@@ -39,10 +39,10 @@ module.exports = class WebSocketAsPromised {
   open(url) {
     return this._pendings.set(OPENING_ID, () => {
       this._ws = new this._WebSocket(url);
-      this._ws.onopen = event => this._onOpen(event);
-      this._ws.onmessage = event => this._onMessage(event);
-      this._ws.onerror = event => this._onError(event);
-      this._ws.onclose = event => this._onClose(event);
+      this._ws.addEventListener('open', event => this._onOpen(event));
+      this._ws.addEventListener('message', event => this._onMessage(event));
+      this._ws.addEventListener('error', event => this._onError(event));
+      this._ws.addEventListener('close', event => this._onClose(event));
     });
   }
 
