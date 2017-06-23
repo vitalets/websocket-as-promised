@@ -31,7 +31,7 @@ The most popular W3C compatible solution is [websocket](https://www.npmjs.com/pa
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised(W3CWebSocket);
+const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket});
 wsp.open('ws://echo.websocket.org')
   .then(...)
 
@@ -39,39 +39,50 @@ wsp.open('ws://echo.websocket.org')
 
 ## API
 
-#### new WebSocketAsPromised(CustomWebSocket)
+#### new WebSocketAsPromised(options)
 ```
-/**
- * Constructor
- *
- * @param {Object} [CustomWebSocket] custom WebSocket constructor. By default, `window.WebSocket`
- */
+  /**
+   * Constructor
+   *
+   * @param {Object} [options]
+   * @param {String} [options.idProp="id"] id property name
+   * @param {Object} [options.WebSocket=WebSocket] custom WebSocket constructor
+   */
 ```
-#### open(url)
+#### .open(url)
 ```
-/**
- * Open WebSocket connection
- *
- * @param {String} url
- * @returns {Promise}
- */
+  /**
+   * Open WebSocket connection
+   *
+   * @param {String} url
+   * @returns {Promise}
+   */
 ```
-#### send(data)
+#### .send(data)
 ```
-/**
- * Send data and wait for response containing `id` property
- *
- * @param {Object} data
- * @returns {Promise}
- */
+  /**
+   * Send data and wait for response containing `id` property
+   *
+   * @param {Object} data
+   * @returns {Promise}
+   */
 ```
-#### close()
+#### .close()
 ```
-/**
- * Close WebSocket connection
- *
- * @returns {Promise}
- */
+  /**
+   * Close WebSocket connection
+   *
+   * @returns {Promise}
+   */
+```
+
+#### .ws
+```
+  /**
+   * Returns raw WebSocket instance
+   *
+   * @returns {WebSocket}
+   */
 ```
 
 ## License

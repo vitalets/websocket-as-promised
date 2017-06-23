@@ -42,6 +42,7 @@
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.0.2",
+    "chai-as-promised": "^7.0.0",
     "eslint": "^4.0.0",
     "husky": "^0.13.4",
     "lint-staged": "^4.0.0",

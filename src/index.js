@@ -13,16 +13,20 @@ module.exports = class WebSocketAsPromised {
   /**
    * Constructor
    *
-   * @param {Object} [CustomWebSocket] custom WebSocket constructor. By default, `window.WebSocket`
+   * @param {Object} [options]
+   * @param {String} [options.idProp="id"] id property name
+   * @param {Object} [options.WebSocket=WebSocket] custom WebSocket constructor
    */
-  constructor(CustomWebSocket) {
-    this._WebSocket = CustomWebSocket || WebSocket;
-    this._ws = null;
+  constructor(options) {
+    options = options || {};
+    this._idProp = options.idProp || 'id';
+    this._WebSocket = options.WebSocket || WebSocket;
     this._pendings = new Pendings();
+    this._ws = null;
   }
 
   /**
-   * Get WebSocket instance
+   * Returns raw WebSocket instance
    *
    * @returns {WebSocket}
    */
@@ -57,7 +61,10 @@ module.exports = class WebSocketAsPromised {
       if (!data || typeof data !== 'object') {
         throw new Error(`WebSocket data should be a plain object, got ${data}`);
       }
-      data.id = id;
+      if (data[this._idProp] !== undefined) {
+        throw new Error(`WebSocket data should not contain system property: ${this._idProp}`);
+      }
+      data[this._idProp] = id;
       const dataStr = JSON.stringify(data);
       this._ws.send(dataStr);
     });
@@ -79,8 +86,9 @@ module.exports = class WebSocketAsPromised {
   _onMessage(event) {
     if (event.data) {
       const data = JSON.parse(event.data);
-      if (data && data.id && this._pendings.has(data.id)) {
-        this._pendings.resolve(data.id, data);
+      const id = data && data[this._idProp];
+      if (id) {
+        this._pendings.resolve(id, data);
       }
     }
   }
