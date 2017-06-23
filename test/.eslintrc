@@ -8,6 +8,7 @@
   },
 
   "rules": {
+    "no-console": 0,
     "max-statements": 0,
     "max-lines": 0,
     "max-nested-callbacks": 0

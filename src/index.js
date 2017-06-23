@@ -9,7 +9,7 @@ const Pendings = require('pendings');
 const OPENING_ID = 'open';
 const CLOSING_ID = 'close';
 
-module.exports = class WebSocketPromised {
+module.exports = class WebSocketAsPromised {
   constructor(CustomWebSocket) {
     this._WebSocket = CustomWebSocket || WebSocket;
     this._ws = null;
@@ -29,6 +29,9 @@ module.exports = class WebSocketPromised {
   }
   send(data = {}) {
     return this._pendings.add(id => {
+      if (!data || typeof data !== 'object') {
+        throw new Error(`WebSocket data should be a plain object, got ${data}`);
+      }
       data.id = id;
       const dataStr = JSON.stringify(data);
       this._ws.send(dataStr);
@@ -41,9 +44,11 @@ module.exports = class WebSocketPromised {
     this._pendings.resolve(OPENING_ID, event);
   }
   _onMessage(event) {
-    const data = event.data;
-    if (data && data.id && this._pendings.has(data.id)) {
-      this._pendings.resolve(data.id, data);
+    if (event.data) {
+      const data = JSON.parse(event.data);
+      if (data && data.id && this._pendings.has(data.id)) {
+        this._pendings.resolve(data.id, data);
+      }
     }
   }
   _onError(event) {
