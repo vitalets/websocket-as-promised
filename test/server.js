@@ -21,12 +21,8 @@ exports.start = function (callback) {
   wsServer.on('connect', function (connection) {
     connection.on('message', function (message) {
       if (message.type === 'utf8') {
-        const data = JSON.parse(message.utf8Data);
-        if (data.error) {
-          // todo: trigger error
-        } else {
-          connection.sendUTF(message.utf8Data);
-        }
+        const response = handleUTF8Message(message);
+        connection.sendUTF(response);
       } else if (message.type === 'binary') {
         connection.sendBytes(message.binaryData);
       }
@@ -39,6 +35,18 @@ exports.start = function (callback) {
       callback(url);
     });
   });
+
+  function handleUTF8Message(message) {
+    const data = JSON.parse(message.utf8Data);
+    if (data.nonJSONResponse) {
+      return 'non JSON response';
+    } else if (data.noId) {
+      delete data.id;
+      return JSON.stringify(data);
+    } else {
+      return message.utf8Data;
+    }
+  }
 };
 
 exports.stop = function (callback) {

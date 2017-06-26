@@ -107,5 +107,6 @@ module.exports = class WebSocketAsPromised {
     if (this._pendings.has(CLOSING_ID)) {
       this._pendings.resolve(CLOSING_ID, event);
     }
+    this._pendings.rejectAll(new Error('Connection closed.'));
   }
 };
