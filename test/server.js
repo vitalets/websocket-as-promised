@@ -2,8 +2,7 @@
 
 const WebSocketServer = require('websocket').server;
 const http = require('http');
-
-const PORT = 8080;
+const getPort = require('get-port');
 
 let server;
 let wsServer;
@@ -34,9 +33,11 @@ exports.start = function (callback) {
     });
   });
 
-  server.listen(PORT, function () {
-    const url = `ws://localhost:${PORT}`;
-    callback(url);
+  getPort().then(port => {
+    server.listen(port, function () {
+      const url = `ws://localhost:${port}`;
+      callback(url);
+    });
   });
 };
 
@@ -44,3 +45,10 @@ exports.stop = function (callback) {
   wsServer.shutDown();
   server.close(callback);
 };
+
+// useful for debug
+if (!module.parent) {
+  exports.start(url => {
+    console.log(`WebSocket started on url: ${url}`);
+  });
+}
