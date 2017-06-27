@@ -1,6 +1,6 @@
 {
   "name": "websocket-as-promised",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Promise-based WebSocket wrapper",
   "author": {
     "name": "Vitaliy Potapov",
