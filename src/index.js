@@ -59,9 +59,11 @@ module.exports = class WebSocketAsPromised {
    * Performs request with data and waits for response containing `id` property
    *
    * @param {Object} data
+   * @param {Object} [options]
+   * @param {Number} [options.timeout]
    * @returns {Promise}
    */
-  request(data) {
+  request(data, options) {
     if (!data || typeof data !== 'object') {
       return Promise.reject(new Error(`WebSocket data should be a plain object, got ${data}`));
     }
@@ -72,8 +74,8 @@ module.exports = class WebSocketAsPromised {
       this._ws.send(dataStr);
     };
     return data[idProp] === undefined
-      ? this._pendings.add(fn)
-      : this._pendings.set(data[idProp], fn);
+      ? this._pendings.add(fn, options)
+      : this._pendings.set(data[idProp], fn, options);
   }
 
   /**
