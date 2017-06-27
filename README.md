@@ -46,6 +46,7 @@ wsp.open('ws://echo.websocket.org')
    *
    * @param {Object} [options]
    * @param {String} [options.idProp="id"] id property name attached to each message
+   * @param {Object} [options.timeout=0] default timeout for requests
    * @param {Object} [options.WebSocket=WebSocket] custom WebSocket constructor
    */
 ```

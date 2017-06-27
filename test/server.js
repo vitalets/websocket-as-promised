@@ -21,8 +21,7 @@ exports.start = function (callback) {
   wsServer.on('connect', function (connection) {
     connection.on('message', function (message) {
       if (message.type === 'utf8') {
-        const response = handleUTF8Message(message);
-        connection.sendUTF(response);
+        handleUTF8Message(connection, message);
       } else if (message.type === 'binary') {
         connection.sendBytes(message.binaryData);
       }
@@ -36,15 +35,17 @@ exports.start = function (callback) {
     });
   });
 
-  function handleUTF8Message(message) {
+  function handleUTF8Message(connection, message) {
     const data = JSON.parse(message.utf8Data);
     if (data.nonJSONResponse) {
-      return 'non JSON response';
+      connection.sendUTF('non JSON response');
     } else if (data.noId) {
       delete data.id;
-      return JSON.stringify(data);
+      connection.sendUTF(JSON.stringify(data));
+    } else if (data.delay) {
+      setTimeout(() => connection.sendUTF(message.utf8Data), data.delay);
     } else {
-      return message.utf8Data;
+      connection.sendUTF(message.utf8Data);
     }
   }
 };

@@ -88,4 +88,17 @@ describe('WebSocketAsPromised', function () {
       assert.eventually.property(res, 'myId'),
     ]);
   });
+
+  it('should reject after timeout', function () {
+    this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
+    const res = this.wsp.open(this.url).then(() => this.wsp.send({foo: 'bar', delay: 100}));
+    return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
+  });
+
+  it('should resolve before timeout', function () {
+    this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
+    const res = this.wsp.open(this.url).then(() => this.wsp.send({foo: 'bar', delay: 50}));
+    return assert.eventually.propertyVal(res, 'foo', 'bar');
+  });
+
 });
