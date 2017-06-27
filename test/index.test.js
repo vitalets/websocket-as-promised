@@ -109,7 +109,7 @@ describe('WebSocketAsPromised', function () {
   it('should reject request after custom timeout', function () {
     this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
     const options = {timeout: 50};
-    const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', delay: 100}, options));
+    const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', delay: 70}, options));
     return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
   });
 
