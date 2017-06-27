@@ -77,6 +77,16 @@ wsp.open('ws://echo.websocket.org')
    */
 ```
 
+#### .onMessage
+```
+  /**
+   * OnMessage channel with `.addListener` / `.removeListener` methods.
+   * @see https://github.com/vitalets/chnl
+   *
+   * @returns {Channel}
+   */
+```
+
 #### .ws
 ```
   /**

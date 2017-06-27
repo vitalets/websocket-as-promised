@@ -36,6 +36,7 @@
     ]
   },
   "dependencies": {
+    "chnl": "^0.2.5",
     "pendings": "^0.1.5"
   },
   "devDependencies": {

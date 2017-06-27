@@ -86,31 +86,40 @@ describe('WebSocketAsPromised', function () {
   });
 
   it('should customize idProp', function () {
-    this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, idProp: 'myId'});
-    const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar'}));
+    const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, idProp: 'myId'});
+    const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
     return Promise.all([
       assert.eventually.propertyVal(res, 'foo', 'bar'),
       assert.eventually.property(res, 'myId'),
     ]);
   });
 
+  it('should dispatch data via onMessage channel', function () {
+    const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket});
+    const res = new Promise(resolve => {
+      wsp.onMessage.addListener(resolve);
+      wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+    });
+    return assert.eventually.propertyVal(res, 'foo', 'bar');
+  });
+
   describe('timeout', function () {
     it('should reject request after timeout', function () {
-      this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
-      const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', delay: 100}));
+      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
+      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 100}));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
     });
 
     it('should resolve request before timeout', function () {
-      this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
-      const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', delay: 50}));
+      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
+      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 50}));
       return assert.eventually.propertyVal(res, 'foo', 'bar');
     });
 
     it('should reject request after custom timeout', function () {
-      this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
+      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
       const options = {timeout: 50};
-      const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', delay: 70}, options));
+      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 70}, options));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
     });
   });

@@ -4,6 +4,7 @@
 
 'use strict';
 
+const Channel = require('chnl');
 const Pendings = require('pendings');
 
 const OPENING_ID = 'open';
@@ -27,6 +28,7 @@ module.exports = class WebSocketAsPromised {
   constructor(options) {
     this._options = Object.assign({}, DEFAULT_OPTIONS, options);
     this._pendings = new Pendings({timeout: this._options.timeout});
+    this._onMessage = new Channel();
     this._ws = null;
   }
 
@@ -40,6 +42,16 @@ module.exports = class WebSocketAsPromised {
   }
 
   /**
+   * OnMessage channel with `.addListener` / `.removeListener` methods.
+   * @see https://github.com/vitalets/chnl
+   *
+   * @returns {Channel}
+   */
+  get onMessage() {
+    return this._onMessage;
+  }
+
+  /**
    * Open WebSocket connection
    *
    * @param {String} url
@@ -48,10 +60,10 @@ module.exports = class WebSocketAsPromised {
   open(url) {
     return this._pendings.set(OPENING_ID, () => {
       this._ws = new this._options.WebSocket(url);
-      this._ws.addEventListener('open', event => this._onOpen(event));
-      this._ws.addEventListener('message', event => this._onMessage(event));
-      this._ws.addEventListener('error', event => this._onError(event));
-      this._ws.addEventListener('close', event => this._onClose(event));
+      this._ws.addEventListener('open', event => this._handleOpen(event));
+      this._ws.addEventListener('message', event => this._handleMessage(event));
+      this._ws.addEventListener('error', event => this._handleError(event));
+      this._ws.addEventListener('close', event => this._handleClose(event));
     });
   }
 
@@ -87,26 +99,27 @@ module.exports = class WebSocketAsPromised {
     return this._pendings.set(CLOSING_ID, () => this._ws.close());
   }
 
-  _onOpen(event) {
+  _handleOpen(event) {
     this._pendings.resolve(OPENING_ID, event);
   }
 
-  _onMessage(event) {
+  _handleMessage(event) {
     if (event.data) {
       const data = JSON.parse(event.data);
       const id = data && data[this._options.idProp];
       if (id) {
         this._pendings.resolve(id, data);
       }
+      this._onMessage.dispatch(data);
     }
   }
 
-  _onError(event) {
+  _handleError(event) {
     this._pendings.reject(OPENING_ID, event);
     this._pendings.reject(CLOSING_ID, event);
   }
 
-  _onClose(event) {
+  _handleClose(event) {
     this._ws = null;
     this._pendings.resolve(CLOSING_ID, event);
     this._pendings.rejectAll(new Error('Connection closed.'));
