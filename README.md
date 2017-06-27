@@ -59,7 +59,7 @@ wsp.open('ws://echo.websocket.org')
    * @returns {Promise}
    */
 ```
-#### .send(data)
+#### .request(data)
 ```
   /**
    * Send data and wait for response containing `id` property

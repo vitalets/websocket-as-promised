@@ -56,12 +56,12 @@ module.exports = class WebSocketAsPromised {
   }
 
   /**
-   * Send data and wait for response containing `id` property
+   * Performs request with data and waits for response containing `id` property
    *
    * @param {Object} data
    * @returns {Promise}
    */
-  send(data) {
+  request(data) {
     const idProp = this._options.idProp;
     return this._pendings.add(id => {
       if (!data || typeof data !== 'object') {
