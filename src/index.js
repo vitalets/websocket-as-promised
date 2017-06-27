@@ -68,7 +68,7 @@ module.exports = class WebSocketAsPromised {
   }
 
   /**
-   * Performs request with data and waits for response containing `id` property
+   * Performs request and resolves after response with corresponding `id`.
    *
    * @param {Object} data
    * @param {Object} [options]
