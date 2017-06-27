@@ -41,12 +41,17 @@ describe('WebSocketAsPromised', function () {
     return assert.eventually.propertyVal(res, 'type', 'open');
   });
 
-  it('should request and resolve on response with id', function () {
+  it('should request and resolve with generated id', function () {
     const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar'}));
     return Promise.all([
       assert.eventually.propertyVal(res, 'foo', 'bar'),
       assert.eventually.property(res, 'id')
     ]);
+  });
+
+  it('should request and resolve with specified id', function () {
+    const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', id: 1}));
+    return assert.eventually.propertyVal(res, 'id', 1);
   });
 
   it('should not resolve/reject for response without ID', function () {

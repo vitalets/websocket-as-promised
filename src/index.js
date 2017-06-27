@@ -62,18 +62,18 @@ module.exports = class WebSocketAsPromised {
    * @returns {Promise}
    */
   request(data) {
+    if (!data || typeof data !== 'object') {
+      return Promise.reject(new Error(`WebSocket data should be a plain object, got ${data}`));
+    }
     const idProp = this._options.idProp;
-    return this._pendings.add(id => {
-      if (!data || typeof data !== 'object') {
-        throw new Error(`WebSocket data should be a plain object, got ${data}`);
-      }
-      if (data[idProp] !== undefined) {
-        throw new Error(`WebSocket data should not contain system property: ${idProp}`);
-      }
+    const fn = id => {
       data[idProp] = id;
       const dataStr = JSON.stringify(data);
       this._ws.send(dataStr);
-    });
+    };
+    return data[idProp] === undefined
+      ? this._pendings.add(fn)
+      : this._pendings.set(data[idProp], fn);
   }
 
   /**
