@@ -41,6 +41,13 @@ describe('WebSocketAsPromised', function () {
     return assert.eventually.propertyVal(res, 'type', 'open');
   });
 
+  it('should return opening promise on several open calls', function () {
+    const p1 = this.wsp.open(this.url);
+    const p2 = this.wsp.open(this.url);
+    assert.equal(p1, p2);
+    return assert.eventually.propertyVal(p1, 'type', 'open');
+  });
+
   it('should request and resolve with generated id', function () {
     const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar'}));
     return Promise.all([
@@ -67,6 +74,17 @@ describe('WebSocketAsPromised', function () {
   it('should close connection', function () {
     const CLOSE_NORMAL = 1000;
     const res = this.wsp.open(this.url).then(() => this.wsp.close());
+    return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+  });
+
+  it('should return closing promise for several close calls', function () {
+    const CLOSE_NORMAL = 1000;
+    const res = this.wsp.open(this.url).then(() => {
+      const p1 = this.wsp.close();
+      const p2 = this.wsp.close();
+      assert.equal(p1, p2);
+      return p2;
+    });
     return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
   });
 
