@@ -41,7 +41,7 @@ describe('WebSocketAsPromised', function () {
     return assert.eventually.propertyVal(res, 'type', 'open');
   });
 
-  it('should return opening promise on several open calls', function () {
+  it('should return the same opening promise on several open calls', function () {
     const p1 = this.wsp.open(this.url);
     const p2 = this.wsp.open(this.url);
     assert.equal(p1, p2);
@@ -77,7 +77,7 @@ describe('WebSocketAsPromised', function () {
     return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
   });
 
-  it('should return closing promise for several close calls', function () {
+  it('should return the same closing promise for several close calls', function () {
     const CLOSE_NORMAL = 1000;
     const res = this.wsp.open(this.url).then(() => {
       const p1 = this.wsp.close();
@@ -139,6 +139,26 @@ describe('WebSocketAsPromised', function () {
       const options = {timeout: 50};
       const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 70}, options));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
+    });
+
+    it('should return the same opening promise on several open calls', function () {
+      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
+      const p1 = wsp.open(this.url);
+      const p2 = wsp.open(this.url);
+      assert.equal(p1, p2);
+      return assert.eventually.propertyVal(p1, 'type', 'open');
+    });
+
+    it('should return the same closing promise for several close calls', function () {
+      const CLOSE_NORMAL = 1000;
+      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
+      const res = wsp.open(this.url).then(() => {
+        const p1 = wsp.close();
+        const p2 = wsp.close();
+        assert.equal(p1, p2);
+        return p2;
+      });
+      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
     });
   });
 
