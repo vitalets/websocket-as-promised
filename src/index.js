@@ -33,7 +33,7 @@ module.exports = class WebSocketAsPromised {
   }
 
   /**
-   * Returns raw WebSocket instance
+   * Returns original WebSocket instance
    *
    * @returns {WebSocket}
    */

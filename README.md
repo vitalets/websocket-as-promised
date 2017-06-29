@@ -92,7 +92,7 @@ wsp.open('ws://echo.websocket.org')
 #### .ws
 ```
   /**
-   * Returns raw WebSocket instance
+   * Returns original WebSocket instance
    *
    * @returns {WebSocket}
    */
