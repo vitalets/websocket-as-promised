@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "chnl": "^0.2.5",
-    "pendings": "^0.1.8"
+    "pendings": "^0.1.9"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
