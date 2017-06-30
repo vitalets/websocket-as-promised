@@ -73,7 +73,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Performs request and resolves after response with corresponding `id`.
+   * Performs JSON request and waits for response.
    *
    * @param {Object} data
    * @param {Object} [options]
@@ -86,12 +86,21 @@ class WebSocketAsPromised {
     }
     const fn = id => {
       data[this._idProp] = id;
-      const dataStr = JSON.stringify(data);
-      this._ws.send(dataStr);
+      this.send(data);
     };
     return data[this._idProp] === undefined
       ? this._pendings.add(fn, options)
       : this._pendings.set(data[this._idProp], fn, options);
+  }
+
+  /**
+   * Performs JSON request and does not wait for response.
+   *
+   * @param {Object} data
+   */
+  send(data) {
+    const dataStr = JSON.stringify(data);
+    this._ws.send(dataStr);
   }
 
   /**

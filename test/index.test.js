@@ -166,4 +166,14 @@ describe('WebSocketAsPromised', function () {
     });
   });
 
+  describe('send', function () {
+    it('should not return Promise', function () {
+      const p = this.wsp.open(this.url).then(() => {
+        const res = this.wsp.send({foo: 'bar', id: 1});
+        assert.equal(res, undefined);
+      });
+      return assert.isFulfilled(p);
+    });
+  });
+
 });
