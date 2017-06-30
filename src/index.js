@@ -11,9 +11,9 @@ const OPENING_ID = 'open';
 const CLOSING_ID = 'close';
 
 const DEFAULT_OPTIONS = {
+  createWebSocket: url => new WebSocket(url),
   idProp: 'id',
   timeout: 0,
-  WebSocket: typeof WebSocket !== 'undefined' ? WebSocket : null,
 };
 
 module.exports = class WebSocketAsPromised {
@@ -21,13 +21,15 @@ module.exports = class WebSocketAsPromised {
    * Constructor
    *
    * @param {Object} [options]
+   * @param {Function} [options.createWebSocket] custom WebSocket creation method
    * @param {String} [options.idProp="id"] id property name attached to each message
-   * @param {Object} [options.timeout=0] default timeout for requests
-   * @param {Object} [options.WebSocket=WebSocket] custom WebSocket constructor
+   * @param {Number} [options.timeout=0] default timeout for requests
    */
   constructor(options) {
-    this._options = Object.assign({}, DEFAULT_OPTIONS, options);
-    this._pendings = new Pendings({timeout: this._options.timeout});
+    options = Object.assign({}, DEFAULT_OPTIONS, options);
+    this._idProp = options.idProp;
+    this._createWebSocket = options.createWebSocket;
+    this._pendings = new Pendings({timeout: options.timeout});
     this._onMessage = new Channel();
     this._ws = null;
   }
@@ -62,7 +64,7 @@ module.exports = class WebSocketAsPromised {
       return this._pendings.getPromise(OPENING_ID);
     }
     return this._pendings.set(OPENING_ID, () => {
-      this._ws = new this._options.WebSocket(url);
+      this._ws = this._createWebSocket(url);
       this._ws.addEventListener('open', event => this._handleOpen(event));
       this._ws.addEventListener('message', event => this._handleMessage(event));
       this._ws.addEventListener('error', event => this._handleError(event));
@@ -82,15 +84,14 @@ module.exports = class WebSocketAsPromised {
     if (!data || typeof data !== 'object') {
       return Promise.reject(new Error(`WebSocket data should be a plain object, got ${data}`));
     }
-    const idProp = this._options.idProp;
     const fn = id => {
-      data[idProp] = id;
+      data[this._idProp] = id;
       const dataStr = JSON.stringify(data);
       this._ws.send(dataStr);
     };
-    return data[idProp] === undefined
+    return data[this._idProp] === undefined
       ? this._pendings.add(fn, options)
-      : this._pendings.set(data[idProp], fn, options);
+      : this._pendings.set(data[this._idProp], fn, options);
   }
 
   /**
@@ -111,7 +112,7 @@ module.exports = class WebSocketAsPromised {
   _handleMessage(event) {
     if (event.data) {
       const data = JSON.parse(event.data);
-      const id = data && data[this._options.idProp];
+      const id = data && data[this._idProp];
       if (id) {
         this._pendings.resolve(id, data);
       }

@@ -13,6 +13,10 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function createWebSocket(url) {
+  return new W3CWebSocket(url);
+}
+
 describe('WebSocketAsPromised', function () {
 
   before(function (done) {
@@ -27,7 +31,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   beforeEach(function () {
-    this.wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket});
+    this.wsp = new WebSocketAsPromised({createWebSocket});
   });
 
   afterEach(function () {
@@ -104,7 +108,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   it('should customize idProp', function () {
-    const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, idProp: 'myId'});
+    const wsp = new WebSocketAsPromised({createWebSocket, idProp: 'myId'});
     const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
     return Promise.all([
       assert.eventually.propertyVal(res, 'foo', 'bar'),
@@ -113,7 +117,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   it('should dispatch data via onMessage channel', function () {
-    const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket});
+    const wsp = new WebSocketAsPromised({createWebSocket});
     const res = new Promise(resolve => {
       wsp.onMessage.addListener(resolve);
       wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
@@ -123,26 +127,26 @@ describe('WebSocketAsPromised', function () {
 
   describe('timeout', function () {
     it('should reject request after timeout', function () {
-      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
+      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
       const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 100}));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
     });
 
     it('should resolve request before timeout', function () {
-      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
+      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 100});
       const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 50}));
       return assert.eventually.propertyVal(res, 'foo', 'bar');
     });
 
     it('should reject request after custom timeout', function () {
-      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 100});
+      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 100});
       const options = {timeout: 50};
       const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 70}, options));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
     });
 
     it('should return the same opening promise on several open calls', function () {
-      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
+      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
       const p1 = wsp.open(this.url);
       const p2 = wsp.open(this.url);
       assert.equal(p1, p2);
@@ -151,7 +155,7 @@ describe('WebSocketAsPromised', function () {
 
     it('should return the same closing promise for several close calls', function () {
       const CLOSE_NORMAL = 1000;
-      const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket, timeout: 50});
+      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
       const res = wsp.open(this.url).then(() => {
         const p1 = wsp.close();
         const p2 = wsp.close();
