@@ -52,6 +52,7 @@ wsp.open('ws://echo.websocket.org')
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.open(url)](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
+    * [.send(data)](#WebSocketAsPromised+send)
     * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise</code>
 
 <a name="new_WebSocketAsPromised_new"></a>
@@ -94,7 +95,7 @@ Opens WebSocket connection.
 <a name="WebSocketAsPromised+request"></a>
 
 ### wsp.request(data, [options]) ⇒ <code>Promise</code>
-Performs request and resolves after response with corresponding `id`.
+Performs JSON request and waits for response.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
@@ -103,6 +104,17 @@ Performs request and resolves after response with corresponding `id`.
 | data | <code>Object</code> | 
 | [options] | <code>Object</code> | 
 | [options.timeout] | <code>Number</code> | 
+
+<a name="WebSocketAsPromised+send"></a>
+
+### wsp.send(data)
+Performs JSON request and does not wait for response.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+
+| Param | Type |
+| --- | --- |
+| data | <code>Object</code> | 
 
 <a name="WebSocketAsPromised+close"></a>
 
