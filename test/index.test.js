@@ -40,89 +40,110 @@ describe('WebSocketAsPromised', function () {
     }
   });
 
-  it('should open connection', function () {
-    const res = this.wsp.open(this.url);
-    return assert.eventually.propertyVal(res, 'type', 'open');
-  });
+  describe('open', function () {
+    it('should open connection', function () {
+      const res = this.wsp.open(this.url);
+      return assert.eventually.propertyVal(res, 'type', 'open');
+    });
 
-  it('should return the same opening promise on several open calls', function () {
-    const p1 = this.wsp.open(this.url);
-    const p2 = this.wsp.open(this.url);
-    assert.equal(p1, p2);
-    return assert.eventually.propertyVal(p1, 'type', 'open');
-  });
-
-  it('should request and resolve with generated id', function () {
-    const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar'}));
-    return Promise.all([
-      assert.eventually.propertyVal(res, 'foo', 'bar'),
-      assert.eventually.property(res, 'id')
-    ]);
-  });
-
-  it('should request and resolve with specified id', function () {
-    const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', id: 1}));
-    return assert.eventually.propertyVal(res, 'id', 1);
-  });
-
-  it('should not resolve/reject for response without ID', function () {
-    let a = 0;
-    const res = this.wsp.open(this.url)
-      .then(() => {
-        this.wsp.request({noId: true}).then(() => a = a + 1, () => {});
-        return sleep(100).then(() => a);
-      });
-    return assert.eventually.equal(res, 0);
-  });
-
-  it('should close connection', function () {
-    const CLOSE_NORMAL = 1000;
-    const res = this.wsp.open(this.url).then(() => this.wsp.close());
-    return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
-  });
-
-  it('should return the same closing promise for several close calls', function () {
-    const CLOSE_NORMAL = 1000;
-    const res = this.wsp.open(this.url).then(() => {
-      const p1 = this.wsp.close();
-      const p2 = this.wsp.close();
+    it('should return the same opening promise on several calls', function () {
+      const p1 = this.wsp.open(this.url);
+      const p2 = this.wsp.open(this.url);
       assert.equal(p1, p2);
-      return p2;
+      return assert.eventually.propertyVal(p1, 'type', 'open');
     });
-    return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+
+    it('should reject for invalid url', function () {
+      const res = this.wsp.open('abc');
+      return assert.isRejected(res, 'You must specify a full WebSocket URL, including protocol.');
+    });
   });
 
-  it('should reject all pending requests on close', function () {
-    let a = '';
-    const res = this.wsp.open(this.url)
-      .then(() => {
-         this.wsp.request({noId: true}).catch(e => a = e.message);
-         return sleep(10).then(() => this.wsp.close()).then(() => a);
+  describe('request', function () {
+    it('should send data with generated id', function () {
+      const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar'}));
+      return Promise.all([
+        assert.eventually.propertyVal(res, 'foo', 'bar'),
+        assert.eventually.property(res, 'id')
+      ]);
+    });
+
+    it('should send data with specified id', function () {
+      const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', id: 1}));
+      return assert.eventually.propertyVal(res, 'id', 1);
+    });
+
+    it('should not fulfill for response without ID', function () {
+      let a = 0;
+      const res = this.wsp.open(this.url)
+        .then(() => {
+          this.wsp.request({noId: true}).then(() => a = a + 1, () => {
+          });
+          return sleep(100).then(() => a);
+        });
+      return assert.eventually.equal(res, 0);
+    });
+  });
+
+  describe('send', function () {
+    it('should not return Promise', function () {
+      const p = this.wsp.open(this.url).then(() => {
+        const res = this.wsp.send({foo: 'bar', id: 1});
+        assert.equal(res, undefined);
       });
-    return assert.eventually.equal(res, 'Connection closed.');
-  });
-
-  it('should reject connection for invalid url', function () {
-    const res = this.wsp.open('abc');
-    return assert.isRejected(res, 'You must specify a full WebSocket URL, including protocol.');
-  });
-
-  it('should customize idProp', function () {
-    const wsp = new WebSocketAsPromised({createWebSocket, idProp: 'myId'});
-    const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
-    return Promise.all([
-      assert.eventually.propertyVal(res, 'foo', 'bar'),
-      assert.eventually.property(res, 'myId'),
-    ]);
-  });
-
-  it('should dispatch data via onMessage channel', function () {
-    const wsp = new WebSocketAsPromised({createWebSocket});
-    const res = new Promise(resolve => {
-      wsp.onMessage.addListener(resolve);
-      wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+      return assert.isFulfilled(p);
     });
-    return assert.eventually.propertyVal(res, 'foo', 'bar');
+  });
+
+  describe('close', function () {
+    it('should close connection', function () {
+      const CLOSE_NORMAL = 1000;
+      const res = this.wsp.open(this.url).then(() => this.wsp.close());
+      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+    });
+
+    it('should return the same closing promise for several calls', function () {
+      const CLOSE_NORMAL = 1000;
+      const res = this.wsp.open(this.url).then(() => {
+        const p1 = this.wsp.close();
+        const p2 = this.wsp.close();
+        assert.equal(p1, p2);
+        return p2;
+      });
+      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+    });
+
+    it('should reject all pending requests', function () {
+      let a = '';
+      const res = this.wsp.open(this.url)
+        .then(() => {
+          this.wsp.request({noId: true}).catch(e => a = e.message);
+          return sleep(10).then(() => this.wsp.close()).then(() => a);
+        });
+      return assert.eventually.equal(res, 'Connection closed.');
+    });
+  });
+
+  describe('idProp', function () {
+    it('should be customized by options', function () {
+      const wsp = new WebSocketAsPromised({createWebSocket, idProp: 'myId'});
+      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+      return Promise.all([
+        assert.eventually.propertyVal(res, 'foo', 'bar'),
+        assert.eventually.property(res, 'myId'),
+      ]);
+    });
+  });
+
+  describe('onMessage', function () {
+    it('should dispatch data', function () {
+      const wsp = new WebSocketAsPromised({createWebSocket});
+      const res = new Promise(resolve => {
+        wsp.onMessage.addListener(resolve);
+        wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+      });
+      return assert.eventually.propertyVal(res, 'foo', 'bar');
+    });
   });
 
   describe('timeout', function () {
@@ -163,16 +184,6 @@ describe('WebSocketAsPromised', function () {
         return p2;
       });
       return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
-    });
-  });
-
-  describe('send', function () {
-    it('should not return Promise', function () {
-      const p = this.wsp.open(this.url).then(() => {
-        const res = this.wsp.send({foo: 'bar', id: 1});
-        assert.equal(res, undefined);
-      });
-      return assert.isFulfilled(p);
     });
   });
 
