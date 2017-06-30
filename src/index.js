@@ -63,9 +63,6 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   open(url) {
-    if (this._pendings.has(OPENING_ID)) {
-      return this._pendings.getPromise(OPENING_ID);
-    }
     return this._pendings.set(OPENING_ID, () => {
       this._ws = this._createWebSocket(url);
       this._ws.addEventListener('open', event => this._handleOpen(event));
@@ -103,9 +100,7 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   close() {
-    return this._pendings.has(CLOSING_ID)
-      ? this._pendings.getPromise(CLOSING_ID)
-      : this._pendings.set(CLOSING_ID, () => this._ws.close());
+    return this._pendings.set(CLOSING_ID, () => this._ws.close());
   }
 
   _handleOpen(event) {
