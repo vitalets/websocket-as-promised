@@ -31,7 +31,9 @@ The most popular W3C compatible solution is [websocket](https://www.npmjs.com/pa
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised({WebSocket: W3CWebSocket});
+const wsp = new WebSocketAsPromised({
+  createWebSocket: url => new W3CWebSocket(url)
+});
 wsp.open('ws://echo.websocket.org')
   .then(...)
 
@@ -39,64 +41,75 @@ wsp.open('ws://echo.websocket.org')
 
 ## API
 
-#### new WebSocketAsPromised(options)
-```
-  /**
-   * Constructor
-   *
-   * @param {Object} [options]
-   * @param {String} [options.idProp="id"] id property name attached to each message
-   * @param {Object} [options.timeout=0] default timeout for requests
-   * @param {Object} [options.WebSocket=WebSocket] custom WebSocket constructor
-   */
-```
-#### .open(url)
-```
-  /**
-   * Open WebSocket connection
-   *
-   * @param {String} url
-   * @returns {Promise}
-   */
-```
-#### .request(data, options)
-```
-  /**
-   * Performs request and resolves after response with corresponding `id`.
-   *
-   * @param {Object} data
-   * @param {Object} [options]
-   * @param {Number} [options.timeout]
-   * @returns {Promise}
-   */
-```
-#### .close()
-```
-  /**
-   * Close WebSocket connection
-   *
-   * @returns {Promise}
-   */
-```
+<a name="WebSocketAsPromised"></a>
 
-#### .onMessage
-```
-  /**
-   * OnMessage channel with `.addListener` / `.removeListener` methods.
-   * @see https://github.com/vitalets/chnl
-   *
-   * @returns {Channel}
-   */
-```
+## WebSocketAsPromised
+**Kind**: global class  
 
-#### .ws
-```
-  /**
-   * Returns original WebSocket instance
-   *
-   * @returns {WebSocket}
-   */
-```
+* [WebSocketAsPromised](#WebSocketAsPromised)
+    * [new WebSocketAsPromised([options])](#new_WebSocketAsPromised_new)
+    * [.ws](#WebSocketAsPromised+ws) ⇒ <code>WebSocket</code>
+    * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
+    * [.open(url)](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
+    * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
+    * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise</code>
+
+<a name="new_WebSocketAsPromised_new"></a>
+
+### new WebSocketAsPromised([options])
+Constructor
+
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [options] | <code>Object</code> |  |  |
+| [options.createWebSocket] | <code>function</code> | <code>url =&gt; new Websocket(url)</code> | custom WebSocket creation method |
+| [options.idProp] | <code>String</code> | <code>&quot;id&quot;</code> | id property name attached to each message |
+| [options.timeout] | <code>Number</code> | <code>0</code> | default timeout for requests |
+
+<a name="WebSocketAsPromised+ws"></a>
+
+### wsp.ws ⇒ <code>WebSocket</code>
+Returns original WebSocket instance created by `options.createWebSocket`.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+onMessage"></a>
+
+### wsp.onMessage ⇒ <code>Channel</code>
+OnMessage channel with `.addListener` / `.removeListener` methods.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+**See**: https://github.com/vitalets/chnl  
+<a name="WebSocketAsPromised+open"></a>
+
+### wsp.open(url) ⇒ <code>Promise</code>
+Opens WebSocket connection.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+
+| Param | Type |
+| --- | --- |
+| url | <code>String</code> | 
+
+<a name="WebSocketAsPromised+request"></a>
+
+### wsp.request(data, [options]) ⇒ <code>Promise</code>
+Performs request and resolves after response with corresponding `id`.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+
+| Param | Type |
+| --- | --- |
+| data | <code>Object</code> | 
+| [options] | <code>Object</code> | 
+| [options.timeout] | <code>Number</code> | 
+
+<a name="WebSocketAsPromised+close"></a>
+
+### wsp.close() ⇒ <code>Promise</code>
+Closes WebSocket connection.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)

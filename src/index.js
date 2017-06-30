@@ -16,12 +16,15 @@ const DEFAULT_OPTIONS = {
   timeout: 0,
 };
 
-module.exports = class WebSocketAsPromised {
+/**
+ * @typicalname wsp
+ */
+class WebSocketAsPromised {
   /**
    * Constructor
    *
    * @param {Object} [options]
-   * @param {Function} [options.createWebSocket] custom WebSocket creation method
+   * @param {Function} [options.createWebSocket=url => new Websocket(url)] custom WebSocket creation method
    * @param {String} [options.idProp="id"] id property name attached to each message
    * @param {Number} [options.timeout=0] default timeout for requests
    */
@@ -35,7 +38,7 @@ module.exports = class WebSocketAsPromised {
   }
 
   /**
-   * Returns original WebSocket instance
+   * Returns original WebSocket instance created by `options.createWebSocket`.
    *
    * @returns {WebSocket}
    */
@@ -54,7 +57,7 @@ module.exports = class WebSocketAsPromised {
   }
 
   /**
-   * Open WebSocket connection
+   * Opens WebSocket connection.
    *
    * @param {String} url
    * @returns {Promise}
@@ -95,7 +98,7 @@ module.exports = class WebSocketAsPromised {
   }
 
   /**
-   * Close WebSocket connection
+   * Closes WebSocket connection.
    *
    * @returns {Promise}
    */
@@ -130,4 +133,6 @@ module.exports = class WebSocketAsPromised {
     this._pendings.resolve(CLOSING_ID, event);
     this._pendings.rejectAll(new Error('Connection closed.'));
   }
-};
+}
+
+module.exports = WebSocketAsPromised;

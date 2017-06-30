@@ -19,6 +19,7 @@
     "lint-staged": "lint-staged",
     "test": "mocha test/index.test.js",
     "ci": "npm run code && npm test",
+    "docs": "jsdoc2md --template README_TEMPLATE.md --files src/*.js > README.md",
     "release": "npm run code && npm test && npm version $VER && npm publish && git push --follow-tags --no-verify",
     "release-patch": "VER=patch npm run release",
     "release-minor": "VER=minor npm run release",
@@ -47,6 +48,7 @@
     "eslint": "^4.1.1",
     "get-port": "^3.1.0",
     "husky": "^0.14.1",
+    "jsdoc-to-markdown": "^3.0.0",
     "lint-staged": "^4.0.0",
     "mocha": "^3.4.2",
     "websocket": "^1.0.24"
