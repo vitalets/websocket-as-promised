@@ -41,7 +41,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   describe('open', function () {
-    it('should open connection', function () {
+    it('should resolve with correct type', function () {
       const res = this.wsp.open(this.url);
       return assert.eventually.propertyVal(res, 'type', 'open');
     });
@@ -53,6 +53,11 @@ describe('WebSocketAsPromised', function () {
       return assert.eventually.propertyVal(p1, 'type', 'open');
     });
 
+    it('should reject promise if server rejects the request', function () {
+      const res = this.wsp.open(this.url + '?reject=1');
+      return assert.isRejected(res, 'Connection closed with reason: connection failed (1006)');
+    });
+
     it('should reject for invalid url', function () {
       const res = this.wsp.open('abc');
       return assert.isRejected(res, 'You must specify a full WebSocket URL, including protocol.');
@@ -60,7 +65,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   describe('request', function () {
-    it('should send data with generated id', function () {
+    it('should resolve promise after response', function () {
       const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar'}));
       return Promise.all([
         assert.eventually.propertyVal(res, 'foo', 'bar'),
@@ -68,7 +73,7 @@ describe('WebSocketAsPromised', function () {
       ]);
     });
 
-    it('should send data with specified id', function () {
+    it('should allow to set id manually', function () {
       const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', id: 1}));
       return assert.eventually.propertyVal(res, 'id', 1);
     });
@@ -114,13 +119,35 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should reject all pending requests', function () {
-      let a = '';
+      const a = [];
       const res = this.wsp.open(this.url)
         .then(() => {
-          this.wsp.request({noId: true}).catch(e => a = e.message);
-          return sleep(10).then(() => this.wsp.close()).then(() => a);
-        });
-      return assert.eventually.equal(res, 'Connection closed.');
+          this.wsp.request({delay: 100}).catch(e => a.push(e.message));
+          this.wsp.request({delay: 200}).catch(e => a.push(e.message));
+        })
+        .then(() => sleep(10).then(() => this.wsp.close()).then(() => a));
+      return assert.eventually.deepEqual(res, [
+        'Connection closed with reason: Normal connection closure (1000)',
+        'Connection closed with reason: Normal connection closure (1000)',
+      ]);
+    });
+  });
+
+  describe('close by server', function () {
+    it('should reject for close', function () {
+      const res = this.wsp.open(this.url)
+        .then(() => this.wsp.request({
+          close: true,
+          code: 1009,
+          reason: 'Message is too big'
+        }));
+      return assert.isRejected(res, 'Connection closed with reason: Message is too big (1009)');
+    });
+
+    it('should reject for drop', function () {
+      const res = this.wsp.open(this.url)
+        .then(() => this.wsp.request({drop: true}));
+      return assert.isRejected(res, 'Connection closed with reason: Protocol error (1002)');
     });
   });
 

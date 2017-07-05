@@ -1,3 +1,5 @@
+// todo: make this a separate project!
+
 'use strict';
 
 const WebSocketServer = require('websocket').server;
@@ -15,7 +17,18 @@ exports.start = function (callback) {
 
   wsServer = new WebSocketServer({
     httpServer: server,
-    autoAcceptConnections: true
+    autoAcceptConnections: false
+  });
+
+  wsServer.on('request', function (request) {
+    const query = request.resourceURL.query;
+    if (query.delay) {
+      setTimeout(() => request.accept(), query.delay);
+    } else if (query.reject) {
+      request.reject();
+    } else {
+      request.accept();
+    }
   });
 
   wsServer.on('connect', function (connection) {
@@ -35,7 +48,7 @@ exports.start = function (callback) {
     });
   });
 
-  function handleUTF8Message(connection, message) {
+  function handleUTF8Message(connection, message) { // eslint-disable-line complexity
     const data = JSON.parse(message.utf8Data);
     if (data.nonJSONResponse) {
       connection.sendUTF('non JSON response');
@@ -44,6 +57,12 @@ exports.start = function (callback) {
       connection.sendUTF(JSON.stringify(data));
     } else if (data.delay) {
       setTimeout(() => connection.sendUTF(message.utf8Data), data.delay);
+    } else if (data.error) {
+      throw new Error(data.error);
+    } else if (data.close) {
+      connection.close(data.code, data.reason);
+    } else if (data.drop) {
+      connection.drop();
     } else {
       connection.sendUTF(message.utf8Data);
     }

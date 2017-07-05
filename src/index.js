@@ -16,6 +16,14 @@ const DEFAULT_OPTIONS = {
   timeout: 0,
 };
 
+// see: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#Ready_state_constants
+const STATE = {
+  CONNECTING: 0,
+  OPEN: 1,
+  CLOSING: 2,
+  CLOSED: 3,
+};
+
 /**
  * @typicalname wsp
  */
@@ -44,6 +52,42 @@ class WebSocketAsPromised {
    */
   get ws() {
     return this._ws;
+  }
+
+  /**
+   * Is WebSocket in connecting state.
+   *
+   * @returns {Boolean}
+   */
+  get isConnecting() {
+    return this._ws && this._ws.readyState === STATE.CONNECTING;
+  }
+
+  /**
+   * Is WebSocket connected.
+   *
+   * @returns {Boolean}
+   */
+  get isConnected() {
+    return this._ws && this._ws.readyState === STATE.OPEN;
+  }
+
+  /**
+   * Is WebSocket in disconnecting state.
+   *
+   * @returns {Boolean}
+   */
+  get isDisconnecting() {
+    return this._ws && this._ws.readyState === STATE.CLOSING;
+  }
+
+  /**
+   * Is WebSocket disconnected.
+   *
+   * @returns {Boolean}
+   */
+  get isDisconnected() {
+    return !this._ws || this._ws.readyState === STATE.CLOSED;
   }
 
   /**
@@ -120,22 +164,28 @@ class WebSocketAsPromised {
     if (event.data) {
       const data = JSON.parse(event.data);
       const id = data && data[this._idProp];
-      if (id) {
-        this._pendings.resolve(id, data);
-      }
+      this._pendings.tryResolve(id, data);
       this._onMessage.dispatch(data);
     }
   }
 
-  _handleError(event) {
-    this._pendings.reject(OPENING_ID, event);
-    this._pendings.reject(CLOSING_ID, event);
+  _handleError() {
+    // console.log('error!!', event.target.url)
+    if (this.isConnected) {
+      // todo:
+    }
   }
 
-  _handleClose(event) {
+  _handleClose({code, reason}) {
     this._ws = null;
-    this._pendings.resolve(CLOSING_ID, event);
-    this._pendings.rejectAll(new Error('Connection closed.'));
+    const error = new Error(`Connection closed with reason: ${reason} (${code})`);
+    if (this._pendings.has(OPENING_ID)) {
+      this._pendings.reject(OPENING_ID, error);
+    }
+    if (this._pendings.has(CLOSING_ID)) {
+      this._pendings.resolve(CLOSING_ID, {code, reason});
+    }
+    this._pendings.rejectAll(error);
   }
 }
 
