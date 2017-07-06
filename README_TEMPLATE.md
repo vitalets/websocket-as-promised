@@ -6,6 +6,8 @@
 
 > [Promise]-based [W3C WebSocket] wrapper
 
+This library allows to use promises when connecting, disconnecting and messaging with WebSocket server.
+
 ## Installation
 ```bash
 npm install websocket-as-promised --save
@@ -45,6 +47,19 @@ wsp.open('ws://echo.websocket.org')
   .then(...)
 
 ```
+
+## Messaging
+1. if you want to send message and expect server's response - you should use `.request()` method that returns promise:
+    ```js
+    wsp.request({foo: 'bar'}); // returns promise
+    // actually sends message with unique id: {id: 'xxxxx', foo: 'bar'}
+    // promise waits response message with the same id: {id: 'xxxxx', response: 'ok'}
+    ```
+
+2. if you want to just send data and do not expect any response - use `.send()` method that does not return promise:
+    ```js
+    wsp.send({foo: 'bar'}); // returns undefined
+    ```
 
 ## API
 
