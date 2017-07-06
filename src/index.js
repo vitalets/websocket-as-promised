@@ -82,15 +82,6 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Is WebSocket disconnected.
-   *
-   * @returns {Boolean}
-   */
-  get isDisconnected() {
-    return !this._ws || this._ws.readyState === STATE.CLOSED;
-  }
-
-  /**
    * OnMessage channel with `.addListener` / `.removeListener` methods.
    * @see https://github.com/vitalets/chnl
    *

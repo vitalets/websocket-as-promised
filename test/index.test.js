@@ -147,7 +147,7 @@ describe('WebSocketAsPromised', function () {
     it('should reject for drop', function () {
       const res = this.wsp.open(this.url)
         .then(() => this.wsp.request({drop: true}));
-      return assert.isRejected(res, 'Connection closed with reason: Protocol error (1002)');
+      return assert.isRejected(res, /Connection closed/);
     });
   });
 
@@ -211,6 +211,60 @@ describe('WebSocketAsPromised', function () {
         return p2;
       });
       return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+    });
+  });
+
+  describe('isConnecting', function () {
+    it('should be true while opening', function () {
+      assert.notOk(this.wsp.isConnecting);
+      const p = this.wsp.open(this.url);
+      assert.ok(this.wsp.isConnecting);
+      return p.then(() => assert.notOk(this.wsp.isConnecting));
+    });
+
+    it('should be false when closing and close', function () {
+      const p = this.wsp.open(this.url).then(() => {
+        const p1 = this.wsp.close();
+        assert.notOk(this.wsp.isConnecting);
+        return p1;
+      });
+      return p.then(() => assert.notOk(this.wsp.isConnecting));
+    });
+  });
+
+  describe('isConnected', function () {
+    it('should be true after open', function () {
+      assert.notOk(this.wsp.isConnected);
+      const p = this.wsp.open(this.url);
+      assert.notOk(this.wsp.isConnected);
+      return p.then(() => assert.ok(this.wsp.isConnected));
+    });
+
+    it('should be false when closing and after close', function () {
+      const p = this.wsp.open(this.url).then(() => {
+        const p1 = this.wsp.close();
+        assert.notOk(this.wsp.isConnected);
+        return p1;
+      });
+      return p.then(() => assert.notOk(this.wsp.isConnected));
+    });
+  });
+
+  describe('isDisconnecting', function () {
+    it('should be false while opening and after open', function () {
+      assert.notOk(this.wsp.isDisconnecting);
+      const p = this.wsp.open(this.url);
+      assert.notOk(this.wsp.isDisconnecting);
+      return p.then(() => assert.notOk(this.wsp.isDisconnecting));
+    });
+
+    it('should be true while closing', function () {
+      const p = this.wsp.open(this.url).then(() => {
+        const p1 = this.wsp.close();
+        assert.ok(this.wsp.isDisconnecting);
+        return p1;
+      });
+      return p.then(() => assert.notOk(this.wsp.isDisconnecting));
     });
   });
 

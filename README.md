@@ -49,6 +49,9 @@ wsp.open('ws://echo.websocket.org')
 * [WebSocketAsPromised](#WebSocketAsPromised)
     * [new WebSocketAsPromised([options])](#new_WebSocketAsPromised_new)
     * [.ws](#WebSocketAsPromised+ws) ⇒ <code>WebSocket</code>
+    * [.isConnecting](#WebSocketAsPromised+isConnecting) ⇒ <code>Boolean</code>
+    * [.isConnected](#WebSocketAsPromised+isConnected) ⇒ <code>Boolean</code>
+    * [.isDisconnecting](#WebSocketAsPromised+isDisconnecting) ⇒ <code>Boolean</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.open(url)](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
@@ -72,6 +75,24 @@ Constructor
 
 ### wsp.ws ⇒ <code>WebSocket</code>
 Returns original WebSocket instance created by `options.createWebSocket`.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+isConnecting"></a>
+
+### wsp.isConnecting ⇒ <code>Boolean</code>
+Is WebSocket in connecting state.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+isConnected"></a>
+
+### wsp.isConnected ⇒ <code>Boolean</code>
+Is WebSocket connected.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+isDisconnecting"></a>
+
+### wsp.isDisconnecting ⇒ <code>Boolean</code>
+Is WebSocket in disconnecting state.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+onMessage"></a>
