@@ -16,11 +16,18 @@ npm install websocket-as-promised --save
 const WebSocketAsPromised = require('websocket-as-promised');
 
 const wsp = new WebSocketAsPromised();
+
+// connect
 wsp.open('ws://echo.websocket.org')
-  .then(() => wsp.send({foo: 'bar'}))
-  .then(response => console.log(response.id))
-  .then(() => wsp.close())
-  .catch(e => console.error(e));
+  .then(() => console.log('Connected.'));
+
+// send data and expect response message
+wsp.request({foo: 'bar'})
+  .then(response => console.log('Response message received', response));
+
+// disconnect
+wsp.close()
+  .then(() => console.log('Disconnected.'));
 
 ```
 
