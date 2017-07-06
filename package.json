@@ -17,15 +17,17 @@
     "code": "npm run lint-all",
     "lint-all": "eslint src test",
     "lint-staged": "lint-staged",
+    "babel": "babel src --out-dir lib",
     "test": "mocha test/index.test.js",
-    "ci": "npm run code && npm test",
+    "test-lib": "TEST_LIB=1 npm t",
+    "ci": "npm run code && npm run babel && npm run test-lib",
     "docs": "jsdoc2md --template README_TEMPLATE.md --files src/*.js > README.md",
     "release": "npm run code && npm test && npm version $VER && npm publish && git push --follow-tags --no-verify",
     "release-patch": "VER=patch npm run release",
     "release-minor": "VER=minor npm run release",
     "precommit": "npm run lint-staged && npm t",
     "prepush": "npm run code && npm t",
-    "prepublish": "babel src --out-dir lib"
+    "prepublish": "npm run babel && npm run test-lib"
   },
   "lint-staged": {
     "{src,test}/**/*.js": "eslint"

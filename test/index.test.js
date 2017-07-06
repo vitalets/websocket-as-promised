@@ -3,7 +3,7 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const W3CWebSocket = require('websocket').w3cwebsocket;
-const WebSocketAsPromised = require('../src');
+const WebSocketAsPromised = process.env.TEST_LIB ? require('../lib') : require('../src');
 const server = require('./server');
 
 chai.use(chaiAsPromised);
