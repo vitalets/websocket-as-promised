@@ -63,6 +63,29 @@ wsp.open('ws://echo.websocket.org')
 
 ## API
 
+## Classes
+
+<dl>
+<dt><a href="#WebSocketAsPromised">WebSocketAsPromised</a></dt>
+<dd></dd>
+</dl>
+
+## Constants
+
+<dl>
+<dt><a href="#Channel">Channel</a></dt>
+<dd><p>WebSocket with promise api</p>
+</dd>
+</dl>
+
+## Functions
+
+<dl>
+<dt><a href="#removeUndefined">removeUndefined()</a></dt>
+<dd><p>Utils</p>
+</dd>
+</dl>
+
 <a name="WebSocketAsPromised"></a>
 
 ## WebSocketAsPromised
@@ -74,9 +97,11 @@ wsp.open('ws://echo.websocket.org')
     * [.isConnecting](#WebSocketAsPromised+isConnecting) ⇒ <code>Boolean</code>
     * [.isConnected](#WebSocketAsPromised+isConnected) ⇒ <code>Boolean</code>
     * [.isDisconnecting](#WebSocketAsPromised+isDisconnecting) ⇒ <code>Boolean</code>
-    * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
+    * [.isDisconnected](#WebSocketAsPromised+isDisconnected) ⇒ <code>Boolean</code>
+    * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ [<code>Channel</code>](#Channel)
     * [.open(url)](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
+    * [.sendJson(data)](#WebSocketAsPromised+sendJson)
     * [.send(data)](#WebSocketAsPromised+send)
     * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise</code>
 
@@ -117,9 +142,15 @@ Is WebSocket connected.
 Is WebSocket in disconnecting state.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+isDisconnected"></a>
+
+### wsp.isDisconnected ⇒ <code>Boolean</code>
+Is WebSocket disconnected.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+onMessage"></a>
 
-### wsp.onMessage ⇒ <code>Channel</code>
+### wsp.onMessage ⇒ [<code>Channel</code>](#Channel)
 OnMessage channel with `.addListener` / `.removeListener` methods.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -148,10 +179,10 @@ Performs JSON request and waits for response.
 | [options] | <code>Object</code> | 
 | [options.timeout] | <code>Number</code> | 
 
-<a name="WebSocketAsPromised+send"></a>
+<a name="WebSocketAsPromised+sendJson"></a>
 
-### wsp.send(data)
-Performs JSON request and does not wait for response.
+### wsp.sendJson(data)
+Sends JSON data and does not wait for response.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
@@ -159,12 +190,35 @@ Performs JSON request and does not wait for response.
 | --- | --- |
 | data | <code>Object</code> | 
 
+<a name="WebSocketAsPromised+send"></a>
+
+### wsp.send(data)
+Sends any WebSocket compatible data.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+
+| Param | Type |
+| --- | --- |
+| data | <code>String</code> \| <code>ArrayBuffer</code> \| <code>Blob</code> | 
+
 <a name="WebSocketAsPromised+close"></a>
 
 ### wsp.close() ⇒ <code>Promise</code>
 Closes WebSocket connection.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="Channel"></a>
+
+## Channel
+WebSocket with promise api
+
+**Kind**: global constant  
+<a name="removeUndefined"></a>
+
+## removeUndefined()
+Utils
+
+**Kind**: global function  
 
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
