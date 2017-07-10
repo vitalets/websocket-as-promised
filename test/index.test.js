@@ -51,6 +51,14 @@ describe('WebSocketAsPromised', function () {
       return assert.eventually.propertyVal(p1, 'type', 'open');
     });
 
+    it('should return the same opening promise on several open calls (with timeout)', function () {
+      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
+      const p1 = wsp.open(this.url);
+      const p2 = wsp.open(this.url);
+      assert.equal(p1, p2);
+      return assert.eventually.propertyVal(p1, 'type', 'open');
+    });
+
     it('should reject promise if server rejects the request', function () {
       const res = this.wsp.open(this.url + '?reject=1');
       return assert.isRejected(res, 'Connection closed with reason: connection failed (1006)');
@@ -116,6 +124,18 @@ describe('WebSocketAsPromised', function () {
       return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
     });
 
+    it('should return the same closing promise for several close calls (with timeout)', function () {
+      const CLOSE_NORMAL = 1000;
+      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
+      const res = wsp.open(this.url).then(() => {
+        const p1 = wsp.close();
+        const p2 = wsp.close();
+        assert.equal(p1, p2);
+        return p2;
+      });
+      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+    });
+
     it('should reject all pending requests', function () {
       const a = [];
       const res = this.wsp.open(this.url)
@@ -171,7 +191,7 @@ describe('WebSocketAsPromised', function () {
     });
   });
 
-  describe('timeout', function () {
+  describe('request timeout', function () {
     it('should reject request after timeout', function () {
       const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
       const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 100}));
@@ -189,26 +209,6 @@ describe('WebSocketAsPromised', function () {
       const options = {timeout: 50};
       const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 70}, options));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
-    });
-
-    it('should return the same opening promise on several open calls', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
-      const p1 = wsp.open(this.url);
-      const p2 = wsp.open(this.url);
-      assert.equal(p1, p2);
-      return assert.eventually.propertyVal(p1, 'type', 'open');
-    });
-
-    it('should return the same closing promise for several close calls', function () {
-      const CLOSE_NORMAL = 1000;
-      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
-      const res = wsp.open(this.url).then(() => {
-        const p1 = wsp.close();
-        const p2 = wsp.close();
-        assert.equal(p1, p2);
-        return p2;
-      });
-      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
     });
   });
 

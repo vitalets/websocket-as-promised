@@ -4,6 +4,7 @@
 
 const Channel = require('chnl');
 const Pendings = require('pendings');
+const utils = require('./utils');
 
 const OPENING_ID = 'open';
 const CLOSING_ID = 'close';
@@ -35,7 +36,7 @@ class WebSocketAsPromised {
    * @param {Number} [options.timeout=0] default timeout for requests
    */
   constructor(options) {
-    options = Object.assign({}, DEFAULT_OPTIONS, options);
+    options = Object.assign({}, DEFAULT_OPTIONS, utils.removeUndefined(options));
     this._idProp = options.idProp;
     this._createWebSocket = options.createWebSocket;
     this._pendings = new Pendings({timeout: options.timeout});
