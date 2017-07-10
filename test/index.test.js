@@ -197,6 +197,15 @@ describe('WebSocketAsPromised', function () {
         assert.eventually.property(res, 'myId'),
       ]);
     });
+
+    it('should not overwrite if options.idProp is undefined', function () {
+      const wsp = new WebSocketAsPromised({createWebSocket, idProp: undefined});
+      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+      return Promise.all([
+        assert.eventually.propertyVal(res, 'foo', 'bar'),
+        assert.eventually.property(res, 'id'),
+      ]);
+    });
   });
 
   describe('onMessage', function () {
