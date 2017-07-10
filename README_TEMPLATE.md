@@ -56,9 +56,9 @@ wsp.open('ws://echo.websocket.org')
     // promise waits response message with the same id: {id: 'xxxxx', response: 'ok'}
     ```
 
-2. if you want to just send data and do not expect any response - use `.send()` method that does not return promise:
+2. if you want to just send data and do not expect any response - use `.sendJson() / .send()` methods:
     ```js
-    wsp.send({foo: 'bar'}); // returns undefined
+    wsp.sendJson({foo: 'bar'}); // does not return promise
     ```
 
 ## API
