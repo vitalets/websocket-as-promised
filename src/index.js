@@ -4,7 +4,6 @@
 
 /**
  * @external Channel
- * @see https://github.com/vitalets/chnl
  */
 
 const Channel = require('chnl');
@@ -96,7 +95,7 @@ class WebSocketAsPromised {
 
   /**
    * OnMessage channel with `.addListener` / `.removeListener` methods.
-   * @see https://github.com/vitalets/chnl
+   * @see https://vitalets.github.io/chnl/#channel
    *
    * @returns {Channel}
    */

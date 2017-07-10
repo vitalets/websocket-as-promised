@@ -131,7 +131,7 @@ Is WebSocket disconnected.
 OnMessage channel with `.addListener` / `.removeListener` methods.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
-**See**: https://github.com/vitalets/chnl  
+**See**: https://vitalets.github.io/chnl/#channel  
 <a name="WebSocketAsPromised+open"></a>
 
 ### wsp.open(url) ⇒ <code>Promise</code>
