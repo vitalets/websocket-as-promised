@@ -129,7 +129,7 @@ class WebSocketAsPromised {
     }
     const fn = id => {
       data[this._idProp] = id;
-      this.send(data);
+      this.sendJson(data);
     };
     return data[this._idProp] === undefined
       ? this._pendings.add(fn, options)
@@ -137,13 +137,22 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Performs JSON request and does not wait for response.
+   * Sends JSON data and does not wait for response.
    *
    * @param {Object} data
    */
-  send(data) {
+  sendJson(data) {
     const dataStr = JSON.stringify(data);
     this._ws.send(dataStr);
+  }
+
+  /**
+   * Sends any WebSocket compatible data.
+   *
+   * @param {String|ArrayBuffer|Blob} data
+   */
+  send(data) {
+    this._ws.send(data);
   }
 
   /**
