@@ -59,7 +59,7 @@ class WebSocketAsPromised {
    * @returns {Boolean}
    */
   get isConnecting() {
-    return this._ws && this._ws.readyState === STATE.CONNECTING;
+    return Boolean(this._ws && this._ws.readyState === STATE.CONNECTING);
   }
 
   /**
@@ -68,7 +68,7 @@ class WebSocketAsPromised {
    * @returns {Boolean}
    */
   get isConnected() {
-    return this._ws && this._ws.readyState === STATE.OPEN;
+    return Boolean(this._ws && this._ws.readyState === STATE.OPEN);
   }
 
   /**
@@ -77,7 +77,16 @@ class WebSocketAsPromised {
    * @returns {Boolean}
    */
   get isDisconnecting() {
-    return this._ws && this._ws.readyState === STATE.CLOSING;
+    return Boolean(this._ws && this._ws.readyState === STATE.CLOSING);
+  }
+
+  /**
+   * Is WebSocket disconnected.
+   *
+   * @returns {Boolean}
+   */
+  get isDisconnected() {
+    return Boolean(!this._ws || this._ws.readyState === STATE.CLOSED);
   }
 
   /**
