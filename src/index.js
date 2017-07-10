@@ -2,8 +2,6 @@
  * WebSocket with promise api
  */
 
-'use strict';
-
 const Channel = require('chnl');
 const Pendings = require('pendings');
 

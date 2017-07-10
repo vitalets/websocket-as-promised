@@ -1,7 +1,5 @@
 // todo: make this a separate project!
 
-'use strict';
-
 const WebSocketServer = require('websocket').server;
 const http = require('http');
 const getPort = require('get-port');

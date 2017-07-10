@@ -1,5 +1,3 @@
-'use strict';
-
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
 const W3CWebSocket = require('websocket').w3cwebsocket;
