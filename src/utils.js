@@ -1,5 +1,6 @@
 /**
  * Utils
+ * @private
  */
 
 exports.removeUndefined = function (obj) {

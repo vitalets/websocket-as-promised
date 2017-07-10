@@ -2,6 +2,11 @@
  * WebSocket with promise api
  */
 
+/**
+ * @external Channel
+ * @see https://github.com/vitalets/chnl
+ */
+
 const Channel = require('chnl');
 const Pendings = require('pendings');
 const utils = require('./utils');

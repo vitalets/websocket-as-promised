@@ -63,29 +63,6 @@ wsp.open('ws://echo.websocket.org')
 
 ## API
 
-## Classes
-
-<dl>
-<dt><a href="#WebSocketAsPromised">WebSocketAsPromised</a></dt>
-<dd></dd>
-</dl>
-
-## Constants
-
-<dl>
-<dt><a href="#Channel">Channel</a></dt>
-<dd><p>WebSocket with promise api</p>
-</dd>
-</dl>
-
-## Functions
-
-<dl>
-<dt><a href="#removeUndefined">removeUndefined()</a></dt>
-<dd><p>Utils</p>
-</dd>
-</dl>
-
 <a name="WebSocketAsPromised"></a>
 
 ## WebSocketAsPromised
@@ -98,7 +75,7 @@ wsp.open('ws://echo.websocket.org')
     * [.isConnected](#WebSocketAsPromised+isConnected) ⇒ <code>Boolean</code>
     * [.isDisconnecting](#WebSocketAsPromised+isDisconnecting) ⇒ <code>Boolean</code>
     * [.isDisconnected](#WebSocketAsPromised+isDisconnected) ⇒ <code>Boolean</code>
-    * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ [<code>Channel</code>](#Channel)
+    * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.open(url)](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
     * [.sendJson(data)](#WebSocketAsPromised+sendJson)
@@ -150,7 +127,7 @@ Is WebSocket disconnected.
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+onMessage"></a>
 
-### wsp.onMessage ⇒ [<code>Channel</code>](#Channel)
+### wsp.onMessage ⇒ <code>Channel</code>
 OnMessage channel with `.addListener` / `.removeListener` methods.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -207,18 +184,6 @@ Sends any WebSocket compatible data.
 Closes WebSocket connection.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
-<a name="Channel"></a>
-
-## Channel
-WebSocket with promise api
-
-**Kind**: global constant  
-<a name="removeUndefined"></a>
-
-## removeUndefined()
-Utils
-
-**Kind**: global function  
 
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
