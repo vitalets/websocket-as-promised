@@ -147,7 +147,7 @@ class WebSocketAsPromised {
    */
   sendJson(data) {
     const dataStr = JSON.stringify(data);
-    this._ws.send(dataStr);
+    this.send(dataStr);
   }
 
   /**
@@ -156,7 +156,11 @@ class WebSocketAsPromised {
    * @param {String|ArrayBuffer|Blob} data
    */
   send(data) {
-    this._ws.send(data);
+    if (this.isConnected) {
+      this._ws.send(data);
+    } else {
+      throw new Error('Can not send data because WebSocket is not connected.');
+    }
   }
 
   /**
@@ -165,7 +169,7 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   close() {
-    return this._pendings.set(CLOSING_ID, () => this._ws.close());
+    return this.isDisconnected ? Promise.resolve() : this._pendings.set(CLOSING_ID, () => this._ws.close());
   }
 
   _handleOpen(event) {

@@ -33,9 +33,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   afterEach(function () {
-    if (this.wsp.ws) {
-      return this.wsp.close();
-    }
+    return this.wsp.close();
   });
 
   describe('open', function () {
@@ -67,6 +65,12 @@ describe('WebSocketAsPromised', function () {
     it('should reject for invalid url', function () {
       const res = this.wsp.open('abc');
       return assert.isRejected(res, 'You must specify a full WebSocket URL, including protocol.');
+    });
+
+    it.skip('should throw when opening already opened connection', function () {
+      const p = this.wsp.open(this.url)
+        .then(() => this.wsp.open(this.url));
+      return assert.isRejected(p, '???');
     });
   });
 
@@ -123,6 +127,10 @@ describe('WebSocketAsPromised', function () {
       });
       return assert.isFulfilled(p);
     });
+
+    it('should throw if sending without open', function () {
+      return assert.throws(() => this.wsp.send('foo'), 'Can not send data because WebSocket is not connected.');
+    });
   });
 
   describe('close', function () {
@@ -153,6 +161,18 @@ describe('WebSocketAsPromised', function () {
         return p2;
       });
       return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+    });
+
+    it('should not reject for closing already closed connection', function () {
+      const p = this.wsp.open(this.url)
+        .then(() => this.wsp.close())
+        .then(() => this.wsp.close());
+      return assert.isFulfilled(p);
+    });
+
+    it('should not reject for not-opened connection', function () {
+      const p = this.wsp.close();
+      return assert.isFulfilled(p);
     });
 
     it('should reject all pending requests', function () {
