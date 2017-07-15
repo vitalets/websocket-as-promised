@@ -260,87 +260,87 @@ describe('WebSocketAsPromised', function () {
     });
   });
 
-  describe('isConnecting', function () {
+  describe('isOpening', function () {
     it('should be initially false', function () {
-      assert.isFalse(this.wsp.isConnecting);
+      assert.isFalse(this.wsp.isOpening);
     });
 
     it('should be true while opening', function () {
       const p = this.wsp.open(this.url);
-      assert.isTrue(this.wsp.isConnecting);
-      return p.then(() => assert.isFalse(this.wsp.isConnecting));
+      assert.isTrue(this.wsp.isOpening);
+      return p.then(() => assert.isFalse(this.wsp.isOpening));
     });
 
     it('should be false when closing and close', function () {
       const p = this.wsp.open(this.url).then(() => {
         const p1 = this.wsp.close();
-        assert.isFalse(this.wsp.isConnecting);
+        assert.isFalse(this.wsp.isOpening);
         return p1;
       });
-      return p.then(() => assert.isFalse(this.wsp.isConnecting));
+      return p.then(() => assert.isFalse(this.wsp.isOpening));
     });
   });
 
-  describe('isConnected', function () {
+  describe('isOpened', function () {
     it('should be initially false', function () {
-      assert.isFalse(this.wsp.isConnected);
+      assert.isFalse(this.wsp.isOpened);
     });
 
     it('should be true after open', function () {
       const p = this.wsp.open(this.url);
-      assert.isFalse(this.wsp.isConnected);
-      return p.then(() => assert.isTrue(this.wsp.isConnected));
+      assert.isFalse(this.wsp.isOpened);
+      return p.then(() => assert.isTrue(this.wsp.isOpened));
     });
 
     it('should be false when closing and after close', function () {
       const p = this.wsp.open(this.url).then(() => {
         const p1 = this.wsp.close();
-        assert.isFalse(this.wsp.isConnected);
+        assert.isFalse(this.wsp.isOpened);
         return p1;
       });
-      return p.then(() => assert.isFalse(this.wsp.isConnected));
+      return p.then(() => assert.isFalse(this.wsp.isOpened));
     });
   });
 
-  describe('isDisconnecting', function () {
+  describe('isClosing', function () {
     it('should be initially false', function () {
-      assert.isFalse(this.wsp.isDisconnecting);
+      assert.isFalse(this.wsp.isClosing);
     });
 
     it('should be false while opening and after open', function () {
       const p = this.wsp.open(this.url);
-      assert.isFalse(this.wsp.isDisconnecting);
-      return p.then(() => assert.isFalse(this.wsp.isDisconnecting));
+      assert.isFalse(this.wsp.isClosing);
+      return p.then(() => assert.isFalse(this.wsp.isClosing));
     });
 
     it('should be true while closing', function () {
       const p = this.wsp.open(this.url).then(() => {
         const p1 = this.wsp.close();
-        assert.isTrue(this.wsp.isDisconnecting);
+        assert.isTrue(this.wsp.isClosing);
         return p1;
       });
-      return p.then(() => assert.isFalse(this.wsp.isDisconnecting));
+      return p.then(() => assert.isFalse(this.wsp.isClosing));
     });
   });
 
-  describe('isDisconnected', function () {
+  describe('isClosed', function () {
     it('should be initially true', function () {
-      assert.isTrue(this.wsp.isDisconnected);
+      assert.isTrue(this.wsp.isClosed);
     });
 
     it('should be false while opening and after open', function () {
       const p = this.wsp.open(this.url);
-      assert.isFalse(this.wsp.isDisconnected);
-      return p.then(() => assert.isFalse(this.wsp.isDisconnected));
+      assert.isFalse(this.wsp.isClosed);
+      return p.then(() => assert.isFalse(this.wsp.isClosed));
     });
 
     it('should be true after close', function () {
       const p = this.wsp.open(this.url).then(() => {
         const p1 = this.wsp.close();
-        assert.isFalse(this.wsp.isDisconnected);
+        assert.isFalse(this.wsp.isClosed);
         return p1;
       });
-      return p.then(() => assert.isTrue(this.wsp.isDisconnected));
+      return p.then(() => assert.isTrue(this.wsp.isClosed));
     });
   });
 

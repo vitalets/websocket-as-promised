@@ -58,38 +58,38 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Is WebSocket in connecting state.
+   * Is WebSocket in opening state.
    *
    * @returns {Boolean}
    */
-  get isConnecting() {
+  get isOpening() {
     return Boolean(this._ws && this._ws.readyState === STATE.CONNECTING);
   }
 
   /**
-   * Is WebSocket connected.
+   * Is WebSocket opened.
    *
    * @returns {Boolean}
    */
-  get isConnected() {
+  get isOpened() {
     return Boolean(this._ws && this._ws.readyState === STATE.OPEN);
   }
 
   /**
-   * Is WebSocket in disconnecting state.
+   * Is WebSocket in closing state.
    *
    * @returns {Boolean}
    */
-  get isDisconnecting() {
+  get isClosing() {
     return Boolean(this._ws && this._ws.readyState === STATE.CLOSING);
   }
 
   /**
-   * Is WebSocket disconnected.
+   * Is WebSocket closed.
    *
    * @returns {Boolean}
    */
-  get isDisconnected() {
+  get isClosed() {
     return Boolean(!this._ws || this._ws.readyState === STATE.CLOSED);
   }
 
@@ -156,7 +156,7 @@ class WebSocketAsPromised {
    * @param {String|ArrayBuffer|Blob} data
    */
   send(data) {
-    if (this.isConnected) {
+    if (this.isOpened) {
       this._ws.send(data);
     } else {
       throw new Error('Can not send data because WebSocket is not connected.');
@@ -169,7 +169,7 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   close() {
-    return this.isDisconnected ? Promise.resolve() : this._pendings.set(CLOSING_ID, () => this._ws.close());
+    return this.isClosed ? Promise.resolve() : this._pendings.set(CLOSING_ID, () => this._ws.close());
   }
 
   _handleOpen(event) {
@@ -187,7 +187,7 @@ class WebSocketAsPromised {
 
   _handleError() {
     // console.log('error!!', event.target.url)
-    if (this.isConnected) {
+    if (this.isOpened) {
       // todo:
     }
   }

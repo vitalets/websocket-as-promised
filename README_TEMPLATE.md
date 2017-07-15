@@ -21,7 +21,7 @@ const wsp = new WebSocketAsPromised();
 
 // connect
 wsp.open('ws://echo.websocket.org')
-  .then(() => console.log('Connected.'));
+  .then(() => console.log('Opened.'));
 
 // send data and expect response message
 wsp.request({foo: 'bar'})
@@ -29,7 +29,7 @@ wsp.request({foo: 'bar'})
 
 // disconnect
 wsp.close()
-  .then(() => console.log('Disconnected.'));
+  .then(() => console.log('Closed.'));
 
 ```
 
