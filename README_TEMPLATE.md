@@ -65,5 +65,5 @@ wsp.open()
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
 
-[W3C WebSocket]: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
-[Promise]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise 
+[Promises]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[WebSocket]: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
