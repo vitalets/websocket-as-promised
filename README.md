@@ -4,9 +4,9 @@
 [![npm](https://img.shields.io/npm/v/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
 [![license](https://img.shields.io/npm/l/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
 
-> [Promise]-based [W3C WebSocket] wrapper
+> Promise-based W3C WebSocket wrapper
 
-This library allows to use promises when connecting, disconnecting and messaging with WebSocket server.
+This library allows to use [Promises] when connecting, disconnecting and messaging with [WebSocket] server.
 
 ## Installation
 ```bash
@@ -17,18 +17,13 @@ npm install websocket-as-promised --save
 ```js
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised();
+const wsp = new WebSocketAsPromised('ws://echo.websocket.org');
 
-// connect
-wsp.open('ws://echo.websocket.org')
-  .then(() => console.log('Opened.'));
-
-// send data and expect response message
-wsp.request({foo: 'bar'})
-  .then(response => console.log('Response message received', response));
-
-// disconnect
-wsp.close()
+wsp.open()
+  .then(() => console.log('Opened.'))
+  .then(() => wsp.request({foo: 'bar'}))
+  .then(response => console.log('Response message received', response))
+  .then(() => wsp.close())
   .then(() => console.log('Closed.'));
 
 ```
@@ -40,11 +35,13 @@ The most popular W3C compatible solution is [websocket](https://www.npmjs.com/pa
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised({
+const wsp = new WebSocketAsPromised('ws://echo.websocket.org', {
   createWebSocket: url => new W3CWebSocket(url)
 });
-wsp.open('ws://echo.websocket.org')
-  .then(...)
+
+wsp.open()
+  .then(() => console.log('Opened.'));
+  ...
 
 ```
 
