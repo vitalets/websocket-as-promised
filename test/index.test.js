@@ -29,7 +29,7 @@ describe('WebSocketAsPromised', function () {
   });
 
   beforeEach(function () {
-    this.wsp = new WebSocketAsPromised({createWebSocket});
+    this.wsp = new WebSocketAsPromised(this.url, {createWebSocket});
   });
 
   afterEach(function () {
@@ -38,45 +38,53 @@ describe('WebSocketAsPromised', function () {
 
   describe('open', function () {
     it('should resolve with correct type', function () {
-      const res = this.wsp.open(this.url);
+      const res = this.wsp.open();
       return assert.eventually.propertyVal(res, 'type', 'open');
     });
 
     it('should return the same opening promise on several calls', function () {
-      const p1 = this.wsp.open(this.url);
-      const p2 = this.wsp.open(this.url);
+      const p1 = this.wsp.open();
+      const p2 = this.wsp.open();
       assert.equal(p1, p2);
       return assert.eventually.propertyVal(p1, 'type', 'open');
     });
 
     it('should return the same opening promise on several open calls (with timeout)', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
-      const p1 = wsp.open(this.url);
-      const p2 = wsp.open(this.url);
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 50});
+      const p1 = wsp.open();
+      const p2 = wsp.open();
       assert.equal(p1, p2);
       return assert.eventually.propertyVal(p1, 'type', 'open');
     });
 
     it('should reject promise if server rejects the request', function () {
-      const res = this.wsp.open(this.url + '?reject=1');
-      return assert.isRejected(res, 'Connection closed with reason: connection failed (1006)');
+      const wsp = new WebSocketAsPromised(this.url + '?reject=1', {createWebSocket});
+      const p = wsp.open();
+      return assert.isRejected(p, 'Connection closed with reason: connection failed (1006)');
     });
 
     it('should reject for invalid url', function () {
-      const res = this.wsp.open('abc');
-      return assert.isRejected(res, 'You must specify a full WebSocket URL, including protocol.');
+      const wsp = new WebSocketAsPromised('abc', {createWebSocket});
+      const p = wsp.open();
+      return assert.isRejected(p, 'You must specify a full WebSocket URL, including protocol.');
     });
 
-    it.skip('should throw when opening already opened connection', function () {
-      const p = this.wsp.open(this.url)
-        .then(() => this.wsp.open(this.url));
-      return assert.isRejected(p, '???');
+    it('should resolve when opening already opened connection', function () {
+      const p = this.wsp.open().then(() => this.wsp.open());
+      return assert.eventually.propertyVal(p, 'type', 'open');
+    });
+
+    it('should re-open', function () {
+      const p = this.wsp.open()
+        .then(() => this.wsp.close())
+        .then(() => this.wsp.open());
+      return assert.eventually.propertyVal(p, 'type', 'open');
     });
   });
 
   describe('request', function () {
     it('should resolve promise after response', function () {
-      const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar'}));
+      const res = this.wsp.open().then(() => this.wsp.request({foo: 'bar'}));
       return Promise.all([
         assert.eventually.propertyVal(res, 'foo', 'bar'),
         assert.eventually.property(res, 'id')
@@ -84,13 +92,13 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should allow to set id manually', function () {
-      const res = this.wsp.open(this.url).then(() => this.wsp.request({foo: 'bar', id: 1}));
+      const res = this.wsp.open().then(() => this.wsp.request({foo: 'bar', id: 1}));
       return assert.eventually.propertyVal(res, 'id', 1);
     });
 
     it('should not fulfill for response without ID', function () {
       let a = 0;
-      const res = this.wsp.open(this.url)
+      const res = this.wsp.open()
         .then(() => {
           this.wsp.request({noId: true}).then(() => a = a + 1, () => {
           });
@@ -102,7 +110,7 @@ describe('WebSocketAsPromised', function () {
 
   describe('sendJson', function () {
     it('should send data and does not return promise', function () {
-      const p = this.wsp.open(this.url).then(() => {
+      const p = this.wsp.open().then(() => {
         const res = this.wsp.sendJson({foo: 'bar', id: 1});
         assert.equal(res, undefined);
       });
@@ -112,7 +120,7 @@ describe('WebSocketAsPromised', function () {
 
   describe('send', function () {
     it('should send String and does not return promise', function () {
-      const p = this.wsp.open(this.url).then(() => {
+      const p = this.wsp.open().then(() => {
         const res = this.wsp.send('foo');
         assert.equal(res, undefined);
       });
@@ -120,7 +128,7 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should send ArrayBuffer and does not return promise', function () {
-      const p = this.wsp.open(this.url).then(() => {
+      const p = this.wsp.open().then(() => {
         const data = new Uint8Array([1,2,3]);
         const res = this.wsp.send(data.buffer);
         assert.equal(res, undefined);
@@ -129,20 +137,20 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should throw if sending without open', function () {
-      return assert.throws(() => this.wsp.send('foo'), 'Can not send data because WebSocket is not connected.');
+      return assert.throws(() => this.wsp.send('foo'), 'Can not send data because WebSocket is not opened.');
     });
   });
 
   describe('close', function () {
     it('should close connection', function () {
       const CLOSE_NORMAL = 1000;
-      const res = this.wsp.open(this.url).then(() => this.wsp.close());
+      const res = this.wsp.open().then(() => this.wsp.close());
       return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
     });
 
     it('should return the same closing promise for several calls', function () {
       const CLOSE_NORMAL = 1000;
-      const res = this.wsp.open(this.url).then(() => {
+      const res = this.wsp.open().then(() => {
         const p1 = this.wsp.close();
         const p2 = this.wsp.close();
         assert.equal(p1, p2);
@@ -153,8 +161,8 @@ describe('WebSocketAsPromised', function () {
 
     it('should return the same closing promise for several close calls (with timeout)', function () {
       const CLOSE_NORMAL = 1000;
-      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
-      const res = wsp.open(this.url).then(() => {
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 50});
+      const res = wsp.open().then(() => {
         const p1 = wsp.close();
         const p2 = wsp.close();
         assert.equal(p1, p2);
@@ -164,7 +172,7 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should not reject for closing already closed connection', function () {
-      const p = this.wsp.open(this.url)
+      const p = this.wsp.open()
         .then(() => this.wsp.close())
         .then(() => this.wsp.close());
       return assert.isFulfilled(p);
@@ -177,7 +185,7 @@ describe('WebSocketAsPromised', function () {
 
     it('should reject all pending requests', function () {
       const a = [];
-      const res = this.wsp.open(this.url)
+      const res = this.wsp.open()
         .then(() => {
           this.wsp.request({delay: 100}).catch(e => a.push(e.message));
           this.wsp.request({delay: 200}).catch(e => a.push(e.message));
@@ -192,7 +200,7 @@ describe('WebSocketAsPromised', function () {
 
   describe('close by server', function () {
     it('should reject for close', function () {
-      const res = this.wsp.open(this.url)
+      const res = this.wsp.open()
         .then(() => this.wsp.request({
           close: true,
           code: 1009,
@@ -202,7 +210,7 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should reject for drop', function () {
-      const res = this.wsp.open(this.url)
+      const res = this.wsp.open()
         .then(() => this.wsp.request({drop: true}));
       return assert.isRejected(res, /Connection closed/);
     });
@@ -210,8 +218,8 @@ describe('WebSocketAsPromised', function () {
 
   describe('idProp', function () {
     it('should be customized by options', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket, idProp: 'myId'});
-      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket, idProp: 'myId'});
+      const res = wsp.open().then(() => wsp.request({foo: 'bar'}));
       return Promise.all([
         assert.eventually.propertyVal(res, 'foo', 'bar'),
         assert.eventually.property(res, 'myId'),
@@ -219,8 +227,8 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should not overwrite if options.idProp is undefined', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket, idProp: undefined});
-      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket, idProp: undefined});
+      const res = wsp.open().then(() => wsp.request({foo: 'bar'}));
       return Promise.all([
         assert.eventually.propertyVal(res, 'foo', 'bar'),
         assert.eventually.property(res, 'id'),
@@ -230,10 +238,10 @@ describe('WebSocketAsPromised', function () {
 
   describe('onMessage', function () {
     it('should dispatch data', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket});
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket});
       const res = new Promise(resolve => {
         wsp.onMessage.addListener(resolve);
-        wsp.open(this.url).then(() => wsp.request({foo: 'bar'}));
+        wsp.open().then(() => wsp.request({foo: 'bar'}));
       });
       return assert.eventually.propertyVal(res, 'foo', 'bar');
     });
@@ -241,21 +249,21 @@ describe('WebSocketAsPromised', function () {
 
   describe('request timeout', function () {
     it('should reject request after timeout', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 50});
-      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 100}));
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 50});
+      const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 100}));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
     });
 
     it('should resolve request before timeout', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 100});
-      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 50}));
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 100});
+      const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 50}));
       return assert.eventually.propertyVal(res, 'foo', 'bar');
     });
 
     it('should reject request after custom timeout', function () {
-      const wsp = new WebSocketAsPromised({createWebSocket, timeout: 100});
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 100});
       const options = {timeout: 50};
-      const res = wsp.open(this.url).then(() => wsp.request({foo: 'bar', delay: 70}, options));
+      const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 70}, options));
       return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
     });
   });
@@ -266,13 +274,13 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should be true while opening', function () {
-      const p = this.wsp.open(this.url);
+      const p = this.wsp.open();
       assert.isTrue(this.wsp.isOpening);
       return p.then(() => assert.isFalse(this.wsp.isOpening));
     });
 
     it('should be false when closing and close', function () {
-      const p = this.wsp.open(this.url).then(() => {
+      const p = this.wsp.open().then(() => {
         const p1 = this.wsp.close();
         assert.isFalse(this.wsp.isOpening);
         return p1;
@@ -287,13 +295,13 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should be true after open', function () {
-      const p = this.wsp.open(this.url);
+      const p = this.wsp.open();
       assert.isFalse(this.wsp.isOpened);
       return p.then(() => assert.isTrue(this.wsp.isOpened));
     });
 
     it('should be false when closing and after close', function () {
-      const p = this.wsp.open(this.url).then(() => {
+      const p = this.wsp.open().then(() => {
         const p1 = this.wsp.close();
         assert.isFalse(this.wsp.isOpened);
         return p1;
@@ -308,13 +316,13 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should be false while opening and after open', function () {
-      const p = this.wsp.open(this.url);
+      const p = this.wsp.open();
       assert.isFalse(this.wsp.isClosing);
       return p.then(() => assert.isFalse(this.wsp.isClosing));
     });
 
     it('should be true while closing', function () {
-      const p = this.wsp.open(this.url).then(() => {
+      const p = this.wsp.open().then(() => {
         const p1 = this.wsp.close();
         assert.isTrue(this.wsp.isClosing);
         return p1;
@@ -329,13 +337,13 @@ describe('WebSocketAsPromised', function () {
     });
 
     it('should be false while opening and after open', function () {
-      const p = this.wsp.open(this.url);
+      const p = this.wsp.open();
       assert.isFalse(this.wsp.isClosed);
       return p.then(() => assert.isFalse(this.wsp.isClosed));
     });
 
     it('should be true after close', function () {
-      const p = this.wsp.open(this.url).then(() => {
+      const p = this.wsp.open().then(() => {
         const p1 = this.wsp.close();
         assert.isFalse(this.wsp.isClosed);
         return p1;

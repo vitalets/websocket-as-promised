@@ -32,20 +32,25 @@ const STATE = {
  */
 class WebSocketAsPromised {
   /**
-   * Constructor
+   * Constructor. Instead of original WebSocket it does not immediately open connection.
+   * Please call `open()` method manually to connect.
    *
+   * @param {String} url WebSocket URL
    * @param {Object} [options]
    * @param {Function} [options.createWebSocket=url => new Websocket(url)] custom WebSocket creation method
    * @param {String} [options.idProp="id"] id property name attached to each message
    * @param {Number} [options.timeout=0] default timeout for requests
    */
-  constructor(options) {
+  constructor(url, options) {
     options = Object.assign({}, DEFAULT_OPTIONS, utils.removeUndefined(options));
+    this._url = url;
     this._idProp = options.idProp;
     this._createWebSocket = options.createWebSocket;
     this._pendings = new Pendings({timeout: options.timeout});
     this._onMessage = new Channel();
     this._ws = null;
+    this._lastOpenEvent = null;
+    this._lastCloseEvent = null;
   }
 
   /**
@@ -106,17 +111,22 @@ class WebSocketAsPromised {
   /**
    * Opens WebSocket connection.
    *
-   * @param {String} url
    * @returns {Promise}
    */
-  open(url) {
-    return this._pendings.set(OPENING_ID, () => {
-      this._ws = this._createWebSocket(url);
-      this._ws.addEventListener('open', event => this._handleOpen(event));
-      this._ws.addEventListener('message', event => this._handleMessage(event));
-      this._ws.addEventListener('error', event => this._handleError(event));
-      this._ws.addEventListener('close', event => this._handleClose(event));
-    });
+  open() {
+    if (this.isOpened) {
+      return Promise.resolve(this._lastOpenEvent);
+    } else if (this.isClosing) {
+      return Promise.reject(`Can not open closing WebSocket`);
+    } else {
+      return this._pendings.set(OPENING_ID, () => {
+        this._ws = this._createWebSocket(this._url);
+        this._ws.addEventListener('open', event => this._handleOpen(event));
+        this._ws.addEventListener('message', event => this._handleMessage(event));
+        this._ws.addEventListener('error', event => this._handleError(event));
+        this._ws.addEventListener('close', event => this._handleClose(event));
+      });
+    }
   }
 
   /**
@@ -159,7 +169,7 @@ class WebSocketAsPromised {
     if (this.isOpened) {
       this._ws.send(data);
     } else {
-      throw new Error('Can not send data because WebSocket is not connected.');
+      throw new Error('Can not send data because WebSocket is not opened.');
     }
   }
 
@@ -169,10 +179,13 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   close() {
-    return this.isClosed ? Promise.resolve() : this._pendings.set(CLOSING_ID, () => this._ws.close());
+    return this.isClosed
+      ? Promise.resolve(this._lastCloseEvent)
+      : this._pendings.set(CLOSING_ID, () => this._ws.close());
   }
 
   _handleOpen(event) {
+    this._lastOpenEvent = event;
     this._pendings.resolve(OPENING_ID, event);
   }
 
@@ -192,14 +205,15 @@ class WebSocketAsPromised {
     }
   }
 
-  _handleClose({code, reason}) {
+  _handleClose(event) {
+    this._lastCloseEvent = event;
     this._ws = null;
-    const error = new Error(`Connection closed with reason: ${reason} (${code})`);
+    const error = new Error(`Connection closed with reason: ${event.reason} (${event.code})`);
     if (this._pendings.has(OPENING_ID)) {
       this._pendings.reject(OPENING_ID, error);
     }
     if (this._pendings.has(CLOSING_ID)) {
-      this._pendings.resolve(CLOSING_ID, {code, reason});
+      this._pendings.resolve(CLOSING_ID, this._lastCloseEvent);
     }
     this._pendings.rejectAll(error);
   }

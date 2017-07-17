@@ -69,14 +69,14 @@ wsp.open('ws://echo.websocket.org')
 **Kind**: global class  
 
 * [WebSocketAsPromised](#WebSocketAsPromised)
-    * [new WebSocketAsPromised([options])](#new_WebSocketAsPromised_new)
+    * [new WebSocketAsPromised(url, [options])](#new_WebSocketAsPromised_new)
     * [.ws](#WebSocketAsPromised+ws) ⇒ <code>WebSocket</code>
     * [.isOpening](#WebSocketAsPromised+isOpening) ⇒ <code>Boolean</code>
     * [.isOpened](#WebSocketAsPromised+isOpened) ⇒ <code>Boolean</code>
     * [.isClosing](#WebSocketAsPromised+isClosing) ⇒ <code>Boolean</code>
     * [.isClosed](#WebSocketAsPromised+isClosed) ⇒ <code>Boolean</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
-    * [.open(url)](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
+    * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
     * [.sendJson(data)](#WebSocketAsPromised+sendJson)
     * [.send(data)](#WebSocketAsPromised+send)
@@ -84,12 +84,14 @@ wsp.open('ws://echo.websocket.org')
 
 <a name="new_WebSocketAsPromised_new"></a>
 
-### new WebSocketAsPromised([options])
-Constructor
+### new WebSocketAsPromised(url, [options])
+Constructor. Instead of original WebSocket it does not immediately open connection.
+Please call `open()` method manually to connect.
 
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
+| url | <code>String</code> |  | WebSocket URL |
 | [options] | <code>Object</code> |  |  |
 | [options.createWebSocket] | <code>function</code> | <code>url =&gt; new Websocket(url)</code> | custom WebSocket creation method |
 | [options.idProp] | <code>String</code> | <code>&quot;id&quot;</code> | id property name attached to each message |
@@ -134,15 +136,10 @@ OnMessage channel with `.addListener` / `.removeListener` methods.
 **See**: https://vitalets.github.io/chnl/#channel  
 <a name="WebSocketAsPromised+open"></a>
 
-### wsp.open(url) ⇒ <code>Promise</code>
+### wsp.open() ⇒ <code>Promise</code>
 Opens WebSocket connection.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
-
-| Param | Type |
-| --- | --- |
-| url | <code>String</code> | 
-
 <a name="WebSocketAsPromised+request"></a>
 
 ### wsp.request(data, [options]) ⇒ <code>Promise</code>
