@@ -49,8 +49,6 @@ class WebSocketAsPromised {
     this._pendings = new Pendings({timeout: options.timeout});
     this._onMessage = new Channel();
     this._ws = null;
-    this._lastOpenEvent = null;
-    this._lastCloseEvent = null;
   }
 
   /**
@@ -115,7 +113,7 @@ class WebSocketAsPromised {
    */
   open() {
     if (this.isOpened) {
-      return Promise.resolve(this._lastOpenEvent);
+      return Promise.resolve();
     } else if (this.isClosing) {
       return Promise.reject(`Can not open closing WebSocket`);
     } else {
@@ -180,12 +178,11 @@ class WebSocketAsPromised {
    */
   close() {
     return this.isClosed
-      ? Promise.resolve(this._lastCloseEvent)
+      ? Promise.resolve()
       : this._pendings.set(CLOSING_ID, () => this._ws.close());
   }
 
   _handleOpen(event) {
-    this._lastOpenEvent = event;
     this._pendings.resolve(OPENING_ID, event);
   }
 
@@ -206,14 +203,14 @@ class WebSocketAsPromised {
   }
 
   _handleClose(event) {
-    this._lastCloseEvent = event;
+    const {reason, code} = event;
     this._ws = null;
-    const error = new Error(`Connection closed with reason: ${event.reason} (${event.code})`);
+    const error = new Error(`Connection closed with reason: ${reason} (${code})`);
     if (this._pendings.has(OPENING_ID)) {
       this._pendings.reject(OPENING_ID, error);
     }
     if (this._pendings.has(CLOSING_ID)) {
-      this._pendings.resolve(CLOSING_ID, this._lastCloseEvent);
+      this._pendings.resolve(CLOSING_ID, {reason, code});
     }
     this._pendings.rejectAll(error);
   }

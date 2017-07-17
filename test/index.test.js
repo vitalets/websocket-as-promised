@@ -15,6 +15,8 @@ function createWebSocket(url) {
   return new W3CWebSocket(url);
 }
 
+const NORMAL_CLOSE_CODE = 1000;
+
 describe('WebSocketAsPromised', function () {
 
   before(function (done) {
@@ -69,9 +71,9 @@ describe('WebSocketAsPromised', function () {
       return assert.isRejected(p, 'You must specify a full WebSocket URL, including protocol.');
     });
 
-    it('should resolve when opening already opened connection', function () {
+    it('should resolve with undefined when opening already opened connection', function () {
       const p = this.wsp.open().then(() => this.wsp.open());
-      return assert.eventually.propertyVal(p, 'type', 'open');
+      return assert.eventually.equal(p, undefined);
     });
 
     it('should re-open', function () {
@@ -143,24 +145,21 @@ describe('WebSocketAsPromised', function () {
 
   describe('close', function () {
     it('should close connection', function () {
-      const CLOSE_NORMAL = 1000;
       const res = this.wsp.open().then(() => this.wsp.close());
-      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+      return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
     });
 
     it('should return the same closing promise for several calls', function () {
-      const CLOSE_NORMAL = 1000;
       const res = this.wsp.open().then(() => {
         const p1 = this.wsp.close();
         const p2 = this.wsp.close();
         assert.equal(p1, p2);
         return p2;
       });
-      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+      return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
     });
 
     it('should return the same closing promise for several close calls (with timeout)', function () {
-      const CLOSE_NORMAL = 1000;
       const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 50});
       const res = wsp.open().then(() => {
         const p1 = wsp.close();
@@ -168,19 +167,19 @@ describe('WebSocketAsPromised', function () {
         assert.equal(p1, p2);
         return p2;
       });
-      return assert.eventually.propertyVal(res, 'code', CLOSE_NORMAL);
+      return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
     });
 
-    it('should not reject for closing already closed connection', function () {
+    it('should resolve with undefined for closing already closed connection', function () {
       const p = this.wsp.open()
         .then(() => this.wsp.close())
         .then(() => this.wsp.close());
-      return assert.isFulfilled(p);
+      return assert.eventually.equal(p, undefined);
     });
 
-    it('should not reject for not-opened connection', function () {
+    it('should resolve with undefined for not-opened connection', function () {
       const p = this.wsp.close();
-      return assert.isFulfilled(p);
+      return assert.eventually.equal(p, undefined);
     });
 
     it('should reject all pending requests', function () {
