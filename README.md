@@ -82,7 +82,7 @@ wsp.open()
 <a name="new_WebSocketAsPromised_new"></a>
 
 ### new WebSocketAsPromised(url, [options])
-Constructor. Instead of original WebSocket it does not immediately open connection.
+Constructor. Unlike original WebSocket it does not immediately open connection.
 Please call `open()` method manually to connect.
 
 

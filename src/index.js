@@ -32,7 +32,7 @@ const STATE = {
  */
 class WebSocketAsPromised {
   /**
-   * Constructor. Instead of original WebSocket it does not immediately open connection.
+   * Constructor. Unlike original WebSocket it does not immediately open connection.
    * Please call `open()` method manually to connect.
    *
    * @param {String} url WebSocket URL
