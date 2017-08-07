@@ -73,6 +73,7 @@ wsp.open()
     * [.isClosing](#WebSocketAsPromised+isClosing) ⇒ <code>Boolean</code>
     * [.isClosed](#WebSocketAsPromised+isClosed) ⇒ <code>Boolean</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
+    * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
     * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
     * [.sendJson(data)](#WebSocketAsPromised+sendJson)
@@ -103,31 +104,40 @@ Returns original WebSocket instance created by `options.createWebSocket`.
 <a name="WebSocketAsPromised+isOpening"></a>
 
 ### wsp.isOpening ⇒ <code>Boolean</code>
-Is WebSocket in opening state.
+Is WebSocket connection in opening state.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isOpened"></a>
 
 ### wsp.isOpened ⇒ <code>Boolean</code>
-Is WebSocket opened.
+Is WebSocket connection opened.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isClosing"></a>
 
 ### wsp.isClosing ⇒ <code>Boolean</code>
-Is WebSocket in closing state.
+Is WebSocket connection in closing state.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isClosed"></a>
 
 ### wsp.isClosed ⇒ <code>Boolean</code>
-Is WebSocket closed.
+Is WebSocket connection closed.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+onMessage"></a>
 
 ### wsp.onMessage ⇒ <code>Channel</code>
-OnMessage channel with `.addListener` / `.removeListener` methods.
+Event channel triggered every time when message from server arrives.
+Has `.addListener` / `.removeListener` methods.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+**See**: https://vitalets.github.io/chnl/#channel  
+<a name="WebSocketAsPromised+onClose"></a>
+
+### wsp.onClose ⇒ <code>Channel</code>
+Event channel triggered when connection closed.
+Has `.addListener` / `.removeListener` methods.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  

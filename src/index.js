@@ -48,6 +48,7 @@ class WebSocketAsPromised {
     this._createWebSocket = options.createWebSocket;
     this._pendings = new Pendings({timeout: options.timeout});
     this._onMessage = new Channel();
+    this._onClose = new Channel();
     this._ws = null;
   }
 
@@ -105,6 +106,17 @@ class WebSocketAsPromised {
    */
   get onMessage() {
     return this._onMessage;
+  }
+
+  /**
+   * Event channel triggered when connection closed.
+   * Has `.addListener` / `.removeListener` methods.
+   * @see https://vitalets.github.io/chnl/#channel
+   *
+   * @returns {Channel}
+   */
+  get onClose() {
+    return this._onClose;
   }
 
   /**
@@ -214,6 +226,7 @@ class WebSocketAsPromised {
       this._pendings.resolve(CLOSING_ID, {reason, code});
     }
     this._pendings.rejectAll(error);
+    this._onClose.dispatch({reason, code});
   }
 }
 
