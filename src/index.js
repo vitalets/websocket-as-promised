@@ -97,7 +97,8 @@ class WebSocketAsPromised {
   }
 
   /**
-   * OnMessage channel with `.addListener` / `.removeListener` methods.
+   * Event channel triggered every time when message from server arrives.
+   * Has `.addListener` / `.removeListener` methods.
    * @see https://vitalets.github.io/chnl/#channel
    *
    * @returns {Channel}
