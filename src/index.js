@@ -61,7 +61,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Is WebSocket in opening state.
+   * Is WebSocket connection in opening state.
    *
    * @returns {Boolean}
    */
@@ -70,7 +70,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Is WebSocket opened.
+   * Is WebSocket connection opened.
    *
    * @returns {Boolean}
    */
@@ -79,7 +79,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Is WebSocket in closing state.
+   * Is WebSocket connection in closing state.
    *
    * @returns {Boolean}
    */
@@ -88,7 +88,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Is WebSocket closed.
+   * Is WebSocket connection closed.
    *
    * @returns {Boolean}
    */
