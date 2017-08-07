@@ -236,13 +236,28 @@ describe('WebSocketAsPromised', function () {
   });
 
   describe('onMessage', function () {
-    it('should dispatch data after JSON response', function () {
+    it('should dispatch data and jsonData after json response', function () {
       const wsp = new WebSocketAsPromised(this.url, {createWebSocket});
       const res = new Promise(resolve => {
-        wsp.onMessage.addListener(resolve);
+        wsp.onMessage.addListener((jsonData, data) => resolve({jsonData, data}));
         wsp.open().then(() => wsp.request({foo: 'bar'}));
       });
-      return assert.eventually.propertyVal(res, 'foo', 'bar');
+      return assert.isFulfilled(res).then(r => {
+        assert.include(r.data, '"foo":"bar"');
+        assert.propertyVal(r.jsonData, 'foo', 'bar');
+      });
+    });
+
+    it('should dispatch data and jsonData=undefined after non-json response', function () {
+      const wsp = new WebSocketAsPromised(this.url, {createWebSocket});
+      const res = new Promise(resolve => {
+        wsp.onMessage.addListener((jsonData, data) => resolve({jsonData, data}));
+        wsp.open().then(() => wsp.request({nonJSONResponse: true})).catch(() => {});
+      });
+      return assert.isFulfilled(res).then(r => {
+        assert.include(r.data, 'non JSON response');
+        assert.equal(r.jsonData, undefined);
+      });
     });
 
     // todo: find way to write this test. Currently it fails because mocha listens window.onerror
@@ -256,7 +271,7 @@ describe('WebSocketAsPromised', function () {
     });
   });
 
-  describe.only('onClose', function () {
+  describe('onClose', function () {
     it('should trigger after client close', function () {
       const wsp = new WebSocketAsPromised(this.url, {createWebSocket});
       const res = new Promise(resolve => {

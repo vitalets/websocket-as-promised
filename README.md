@@ -129,15 +129,21 @@ Is WebSocket connection closed.
 
 ### wsp.onMessage ⇒ <code>Channel</code>
 Event channel triggered every time when message from server arrives.
-Has `.addListener` / `.removeListener` methods.
+Listener accepts two arguments:
+1. original `event.data`
+2. `jsonData` if JSON parse succeeded
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  
+**Example**  
+```js
+wsp.onMessage.addListener((data, jsonData) => console.log(data, jsonData));
+```
 <a name="WebSocketAsPromised+onClose"></a>
 
 ### wsp.onClose ⇒ <code>Channel</code>
 Event channel triggered when connection closed.
-Has `.addListener` / `.removeListener` methods.
+Listener accepts single argument `{code, reason}`.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  

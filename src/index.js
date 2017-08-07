@@ -99,8 +99,13 @@ class WebSocketAsPromised {
 
   /**
    * Event channel triggered every time when message from server arrives.
-   * Has `.addListener` / `.removeListener` methods.
+   * Listener accepts two arguments:
+   * 1. `jsonData` if JSON parse succeeded
+   * 2. original `event.data`
+   *
    * @see https://vitalets.github.io/chnl/#channel
+   * @example
+   * wsp.onMessage.addListener((data, jsonData) => console.log(data, jsonData));
    *
    * @returns {Channel}
    */
@@ -110,7 +115,8 @@ class WebSocketAsPromised {
 
   /**
    * Event channel triggered when connection closed.
-   * Has `.addListener` / `.removeListener` methods.
+   * Listener accepts single argument `{code, reason}`.
+   *
    * @see https://vitalets.github.io/chnl/#channel
    *
    * @returns {Channel}
@@ -132,10 +138,7 @@ class WebSocketAsPromised {
     } else {
       return this._pendings.set(OPENING_ID, () => {
         this._ws = this._createWebSocket(this._url);
-        this._ws.addEventListener('open', event => this._handleOpen(event));
-        this._ws.addEventListener('message', event => this._handleMessage(event));
-        this._ws.addEventListener('error', event => this._handleError(event));
-        this._ws.addEventListener('close', event => this._handleClose(event));
+        this._addWsListeners();
       });
     }
   }
@@ -195,17 +198,27 @@ class WebSocketAsPromised {
       : this._pendings.set(CLOSING_ID, () => this._ws.close());
   }
 
+  _addWsListeners() {
+    this._ws.addEventListener('open', event => this._handleOpen(event));
+    this._ws.addEventListener('message', event => this._handleMessage(event));
+    this._ws.addEventListener('error', event => this._handleError(event));
+    this._ws.addEventListener('close', event => this._handleClose(event));
+  }
+
   _handleOpen(event) {
     this._pendings.resolve(OPENING_ID, event);
   }
 
-  _handleMessage(event) {
-    if (event.data) {
-      const data = JSON.parse(event.data);
-      const id = data && data[this._idProp];
-      this._pendings.tryResolve(id, data);
-      this._onMessage.dispatch(data);
+  _handleMessage({data}) {
+    let jsonData;
+    try {
+      jsonData = JSON.parse(data);
+      const id = jsonData && jsonData[this._idProp];
+      this._pendings.tryResolve(id, jsonData);
+    } catch(e) {
+      // do nothing if can not parse data
     }
+    this._onMessage.dispatch(jsonData, data);
   }
 
   _handleError() {
@@ -215,16 +228,11 @@ class WebSocketAsPromised {
     }
   }
 
-  _handleClose(event) {
-    const {reason, code} = event;
-    this._ws = null;
+  _handleClose({reason, code}) {
     const error = new Error(`Connection closed with reason: ${reason} (${code})`);
-    if (this._pendings.has(OPENING_ID)) {
-      this._pendings.reject(OPENING_ID, error);
-    }
-    if (this._pendings.has(CLOSING_ID)) {
-      this._pendings.resolve(CLOSING_ID, {reason, code});
-    }
+    this._ws = null;
+    this._pendings.tryResolve(CLOSING_ID, {reason, code});
+    this._pendings.tryReject(OPENING_ID, error);
     this._pendings.rejectAll(error);
     this._onClose.dispatch({reason, code});
   }
