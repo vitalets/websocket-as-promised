@@ -10,9 +10,6 @@ const Channel = require('chnl');
 const Pendings = require('pendings');
 const utils = require('./utils');
 
-const OPENING_ID = 'open';
-const CLOSING_ID = 'close';
-
 const DEFAULT_OPTIONS = {
   createWebSocket: url => new WebSocket(url),
   idProp: 'id',
@@ -42,11 +39,11 @@ class WebSocketAsPromised {
    * @param {Number} [options.timeout=0] default timeout for requests
    */
   constructor(url, options) {
-    options = Object.assign({}, DEFAULT_OPTIONS, utils.removeUndefined(options));
     this._url = url;
-    this._idProp = options.idProp;
-    this._createWebSocket = options.createWebSocket;
-    this._pendings = new Pendings({timeout: options.timeout});
+    this._options = Object.assign({}, DEFAULT_OPTIONS, utils.removeUndefined(options));
+    this._opening = new Pendings.Pending();
+    this._closing = new Pendings.Pending();
+    this._pendingRequests = new Pendings({timeout: this._options.timeout});
     this._onMessage = new Channel();
     this._onClose = new Channel();
     this._ws = null;
@@ -131,15 +128,15 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   open() {
-    if (this.isOpened) {
-      return Promise.resolve();
-    } else if (this.isClosing) {
+    if (this.isClosing) {
       return Promise.reject(`Can not open closing WebSocket`);
     } else {
-      return this._pendings.set(OPENING_ID, () => {
-        this._ws = this._createWebSocket(this._url);
+      const {timeout, createWebSocket} = this._options;
+      return this._opening.call(() => {
+        this._closing.reset();
+        this._ws = createWebSocket(this._url);
         this._addWsListeners();
-      });
+      }, timeout);
     }
   }
 
@@ -155,12 +152,15 @@ class WebSocketAsPromised {
     if (!data || typeof data !== 'object') {
       return Promise.reject(new Error(`WebSocket request data should be a plain object, got ${data}`));
     }
+    const {idProp} = this._options;
     const fn = id => {
-      data[this._idProp] = id;
+      data[idProp] = id;
       this.sendJson(data);
     };
-    const id = data[this._idProp];
-    const promise = id === undefined ? this._pendings.add(fn, options) : this._pendings.set(id, fn, options);
+    const id = data[idProp];
+    const promise = id === undefined
+      ? this._pendingRequests.add(fn, options)
+      : this._pendingRequests.set(id, fn, options);
     return promise.catch(handleTimeoutError);
   }
 
@@ -193,9 +193,15 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   close() {
-    return this.isClosed
-      ? Promise.resolve()
-      : this._pendings.set(CLOSING_ID, () => this._ws.close());
+    this._opening.reset(new Error('Connection closing by client'));
+    return this._closing.call(() => {
+      if (this._ws) {
+        this._ws.close();
+      } else {
+        // case: close without open
+        this._closing.resolve();
+      }
+    }, this._options.timeout);
   }
 
   _addWsListeners() {
@@ -206,15 +212,15 @@ class WebSocketAsPromised {
   }
 
   _handleOpen(event) {
-    this._pendings.resolve(OPENING_ID, event);
+    this._opening.resolve(event);
   }
 
   _handleMessage({data}) {
     let jsonData;
     try {
       jsonData = JSON.parse(data);
-      const id = jsonData && jsonData[this._idProp];
-      this._pendings.tryResolve(id, jsonData);
+      const id = jsonData && jsonData[this._options.idProp];
+      this._pendingRequests.tryResolve(id, jsonData);
     } catch(e) {
       // do nothing if can not parse data
     }
@@ -222,19 +228,17 @@ class WebSocketAsPromised {
   }
 
   _handleError() {
-    // console.log('error!!', event.target.url)
-    if (this.isOpened) {
-      // todo:
-    }
+    // todo: when this event comes?
   }
 
   _handleClose({reason, code}) {
     const error = new Error(`Connection closed with reason: ${reason} (${code})`);
+    // todo: removeWsListeners
     this._ws = null;
-    this._pendings.tryResolve(CLOSING_ID, {reason, code});
-    this._pendings.tryReject(OPENING_ID, error);
-    this._pendings.rejectAll(error);
-    this._onClose.dispatch({reason, code});
+    this._closing.resolve({reason, code});
+    this._pendingRequests.rejectAll(error);
+    this._opening.reset(error);
+    this._onClose.dispatchAsync({reason, code});
   }
 }
 

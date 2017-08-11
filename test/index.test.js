@@ -71,9 +71,12 @@ describe('WebSocketAsPromised', function () {
       return assert.isRejected(p, 'You must specify a full WebSocket URL, including protocol.');
     });
 
-    it('should resolve with undefined when opening already opened connection', function () {
-      const p = this.wsp.open().then(() => this.wsp.open());
-      return assert.eventually.equal(p, undefined);
+    it('should resolve with the same promise when opening already opened connection', function () {
+      let p1 = this.wsp.open();
+      let p2;
+      const res = p1.then(() => p2 = this.wsp.open());
+      return assert.eventually.propertyVal(res, 'type', 'open')
+        .then(() => assert.equal(p1, p2));
     });
 
     it('should re-open', function () {
@@ -170,11 +173,14 @@ describe('WebSocketAsPromised', function () {
       return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
     });
 
-    it('should resolve with undefined for closing already closed connection', function () {
-      const p = this.wsp.open()
-        .then(() => this.wsp.close())
-        .then(() => this.wsp.close());
-      return assert.eventually.equal(p, undefined);
+    it('should resolve with the same promise for already closed connection', function () {
+      let p1;
+      let p2;
+      const res = this.wsp.open()
+        .then(() => p1 = this.wsp.close())
+        .then(() => p2 = this.wsp.close());
+      return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE)
+        .then(() => assert.equal(p1, p2));
     });
 
     it('should resolve with undefined for not-opened connection', function () {
