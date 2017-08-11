@@ -39,20 +39,20 @@
     ]
   },
   "dependencies": {
-    "chnl": "^0.2.5",
-    "pendings": "^0.1.10"
+    "chnl": "^0.4.0",
+    "pendings": "^0.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
-    "chai": "^4.0.2",
+    "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^4.1.1",
+    "eslint": "^4.4.1",
     "get-port": "^3.1.0",
     "husky": "^0.14.3",
     "jsdoc-to-markdown": "^3.0.0",
-    "lint-staged": "^4.0.0",
-    "mocha": "^3.4.2",
+    "lint-staged": "^4.0.3",
+    "mocha": "^3.5.0",
     "websocket": "^1.0.24"
   },
   "keywords": [

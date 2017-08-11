@@ -292,23 +292,23 @@ describe('WebSocketAsPromised', function () {
   });
 
   describe('request timeout', function () {
-    it('should reject request after timeout', function () {
+    it('should reject after timeout', function () {
       const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 50});
       const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 100}));
-      return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
+      return assert.isRejected(res, 'Request rejected by timeout (50 ms)');
     });
 
-    it('should resolve request before timeout', function () {
+    it('should request before timeout', function () {
       const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 100});
       const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 50}));
       return assert.eventually.propertyVal(res, 'foo', 'bar');
     });
 
-    it('should reject request after custom timeout', function () {
+    it('should reject after custom timeout', function () {
       const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 100});
       const options = {timeout: 50};
       const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 70}, options));
-      return assert.isRejected(res, 'Promise rejected by timeout (50 ms)');
+      return assert.isRejected(res, 'Request rejected by timeout (50 ms)');
     });
   });
 

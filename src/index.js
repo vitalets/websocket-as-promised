@@ -153,15 +153,15 @@ class WebSocketAsPromised {
    */
   request(data, options) {
     if (!data || typeof data !== 'object') {
-      return Promise.reject(new Error(`WebSocket data should be a plain object, got ${data}`));
+      return Promise.reject(new Error(`WebSocket request data should be a plain object, got ${data}`));
     }
     const fn = id => {
       data[this._idProp] = id;
       this.sendJson(data);
     };
-    return data[this._idProp] === undefined
-      ? this._pendings.add(fn, options)
-      : this._pendings.set(data[this._idProp], fn, options);
+    const id = data[this._idProp];
+    const promise = id === undefined ? this._pendings.add(fn, options) : this._pendings.set(id, fn, options);
+    return promise.catch(handleTimeoutError);
   }
 
   /**
@@ -236,6 +236,14 @@ class WebSocketAsPromised {
     this._pendings.rejectAll(error);
     this._onClose.dispatch({reason, code});
   }
+}
+
+function handleTimeoutError(e) {
+  // inheritance from built-in classes does not work after babel transpile :(
+  // does not work: e instanceof Pendings.TimeoutError --> always false
+  // see: https://stackoverflow.com/questions/42064466/instanceof-using-es6-class-inheritance-chain-doesnt-work
+  const error = e && e.timeout !== undefined ? new Error(`Request rejected by timeout (${e.timeout} ms)`) : e;
+  return Promise.reject(error);
 }
 
 module.exports = WebSocketAsPromised;
