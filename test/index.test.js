@@ -59,10 +59,17 @@ describe('WebSocketAsPromised', function () {
       return assert.eventually.propertyVal(p1, 'type', 'open');
     });
 
-    it('should reject promise if server rejects the request', function () {
+    it('should reject if server rejects the request', function () {
       const wsp = new WebSocketAsPromised(this.url + '?reject=1', {createWebSocket});
       const p = wsp.open();
       return assert.isRejected(p, 'Connection closed with reason: connection failed (1006)');
+    });
+
+    it.skip('should reject after timeout and close connection', function () {
+      const wsp = new WebSocketAsPromised(this.url + '?delay=20', {createWebSocket, timeout: 10});
+      const p1 = wsp.open();
+      return assert.isRejected(p1, 'Promise rejected by timeout (10 ms)')
+        .then(() => assert.ok(wsp.isClosed));
     });
 
     it('should reject for invalid url', function () {
