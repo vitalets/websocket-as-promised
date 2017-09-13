@@ -129,7 +129,7 @@ class WebSocketAsPromised {
    */
   open() {
     if (this.isClosing) {
-      return Promise.reject(`Can not open closing WebSocket`);
+      return Promise.reject(new Error(`Can not open closing WebSocket`));
     } else {
       const {timeout, createWebSocket} = this._options;
       return this._opening.call(() => {
