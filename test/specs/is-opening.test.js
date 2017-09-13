@@ -1,6 +1,4 @@
 
-const {createWSP} = require('../helper');
-
 describe('isOpening', function () {
   it('should be initially false', function () {
     assert.isFalse(this.wsp.isOpening);
@@ -12,12 +10,20 @@ describe('isOpening', function () {
     return p.then(() => assert.isFalse(this.wsp.isOpening));
   });
 
-  it('should be false when closing and close', function () {
-    const p = this.wsp.open().then(() => {
-      const p1 = this.wsp.close();
+  it('should be false after open', function () {
+    const p = this.wsp.open();
+    return p.then(() => assert.isFalse(this.wsp.isOpening));
+  });
+
+  it('should be false while closing', function () {
+    return this.wsp.open().then(() => {
+      this.wsp.close();
       assert.isFalse(this.wsp.isOpening);
-      return p1;
     });
+  });
+
+  it('should be false after close', function () {
+    const p = this.wsp.open().then(() => this.wsp.close());
     return p.then(() => assert.isFalse(this.wsp.isOpening));
   });
 });

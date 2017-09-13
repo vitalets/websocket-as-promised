@@ -1,7 +1,7 @@
 
 const {createWSP} = require('../helper');
 
-describe.only('open', function () {
+describe('open', function () {
   it('should resolve with correct type', function () {
     const res = this.wsp.open();
     return assert.eventually.propertyVal(res, 'type', 'open');

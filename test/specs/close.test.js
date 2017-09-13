@@ -1,6 +1,5 @@
 
-const {createWSP} = require('../helper');
-
+const {createWSP, NORMAL_CLOSE_CODE} = require('../helper');
 
 describe('close', function () {
   it('should close connection', function () {
@@ -8,7 +7,7 @@ describe('close', function () {
     return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
   });
 
-  it('should return the same closing promise for several calls', function () {
+  it('should return the same closing promise for several calls while closing', function () {
     const res = this.wsp.open().then(() => {
       const p1 = this.wsp.close();
       const p2 = this.wsp.close();
@@ -19,7 +18,7 @@ describe('close', function () {
   });
 
   it('should return the same closing promise for several close calls (with timeout)', function () {
-    const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 50});
+    const wsp = createWSP(this.url, {timeout: 50});
     const res = wsp.open().then(() => {
       const p1 = wsp.close();
       const p2 = wsp.close();
@@ -29,14 +28,15 @@ describe('close', function () {
     return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
   });
 
-  it('should resolve with the same promise for already closed connection', function () {
+  it('should resolve with the same event for already closed connection', function () {
     let p1;
     let p2;
     const res = this.wsp.open()
       .then(() => p1 = this.wsp.close())
       .then(() => p2 = this.wsp.close());
-    return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE)
-      .then(() => assert.equal(p1, p2));
+    return assert.isFulfilled(res)
+      .then(() => Promise.all([p1, p2]))
+      .then(arr => assert.equal(arr[0].code, arr[1].code));
   });
 
   it('should resolve with undefined for not-opened connection', function () {

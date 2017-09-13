@@ -1,7 +1,7 @@
 
-const {createWSP} = require('../helper');
+// const {createWSP} = require('../helper');
 
-describe('sendJson', function () {
+describe.skip('sendJson', function () {
   it('should send data and does not return promise', function () {
     const p = this.wsp.open().then(() => {
       const res = this.wsp.sendJson({foo: 'bar', id: 1});
@@ -11,7 +11,7 @@ describe('sendJson', function () {
   });
 });
 
-describe('send', function () {
+describe.skip('send', function () {
   it('should send String and does not return promise', function () {
     const p = this.wsp.open().then(() => {
       const res = this.wsp.send('foo');

@@ -4,7 +4,9 @@
   },
 
   "globals": {
-    "assert": false
+    "assert": false,
+    "wait": false,
+    "noop": false
   },
 
   "rules": {

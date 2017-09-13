@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "chnl": "^0.4.0",
-    "controlled-promise": "^0.1.1"
+    "controlled-promise": "^0.1.1",
+    "promise.prototype.finally": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

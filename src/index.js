@@ -8,11 +8,33 @@
 
 const Channel = require('chnl');
 const ControlledPromise = require('controlled-promise');
+const promiseFinally = require('promise.prototype.finally');
 const utils = require('./utils');
 
 const DEFAULT_OPTIONS = {
+  /**
+   * WebSocket creation function
+   *
+   * @param {String} url
+   * @returns {WebSocket}
+   */
   createWebSocket: url => new WebSocket(url),
-  idProp: 'id',
+  /**
+   * Packs message
+   *
+   * @param {String} requestId
+   * @param {*} data
+   * @returns {String|ArrayBuffer|Blob}
+   */
+  packMessage: (requestId, data) => JSON.stringify(Object.assign({requestId}, data)),
+  /**
+   * Unpacks message
+   *
+   * @param {String|ArrayBuffer|Blob} message
+   * @returns {Object<{requestId, ...}>}
+   */
+  unpackMessage: message => JSON.parse(message),
+  // idProp: 'id',
   timeout: 0,
 };
 
@@ -40,10 +62,9 @@ class WebSocketAsPromised {
    */
   constructor(url, options) {
     this._url = url;
-    this._options = Object.assign({}, DEFAULT_OPTIONS, utils.removeUndefined(options));
+    this._options = utils.mergeDefaults(options, DEFAULT_OPTIONS);
     this._opening = new ControlledPromise();
     this._closing = new ControlledPromise();
-    // this._pendingRequests = new Pendings({timeout: this._options.timeout});
     this._pendingRequests = new Map();
     this._onMessage = new Channel();
     this._onClose = new Channel();
@@ -144,41 +165,29 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Performs JSON request and waits for response.
+   * Performs request and waits for response.
    *
    * @param {Object} data
    * @param {Object} [options]
+   * @param {String} [options.requestId]
+   * @param {String} [options.requestIdPrefix]
    * @param {Number} [options.timeout]
    * @returns {Promise}
    */
-  request(data, options) {
+  request(data, options = {}) {
     if (!data || typeof data !== 'object') {
       return Promise.reject(new Error(`WebSocket request data should be a plain object, got ${data}`));
     }
-    const {idProp} = this._options;
-    const fn = id => {
-      data[idProp] = id;
-      this.sendJson(data);
-    };
-    const id = data[idProp];
-    const promise = id === undefined
-      ? this._pendingRequests.add(fn, options)
-      : this._pendingRequests.set(id, fn, options);
-    return promise.catch(handleTimeoutError);
+    const requestId = options.requestId || utils.generateId(options.requestIdPrefix);
+    // todo: try..catch
+    const message = this._options.packMessage(requestId, data);
+    const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
+    const request = this._addRequest(requestId, message, timeout);
+    return request.promise;
   }
 
   /**
-   * Sends JSON data and does not wait for response.
-   *
-   * @param {Object} data
-   */
-  sendJson(data) {
-    const dataStr = JSON.stringify(data);
-    this.send(dataStr);
-  }
-
-  /**
-   * Sends any WebSocket compatible data.
+   * Sends any data by WebSocket.
    *
    * @param {String|ArrayBuffer|Blob} data
    */
@@ -197,7 +206,7 @@ class WebSocketAsPromised {
    */
   close() {
     if (this.isClosed) {
-      return Promise.resolve();
+      return Promise.resolve(this._closing.value);
     }
     return this._closing.call(() => {
       const {timeout} = this._options;
@@ -217,41 +226,50 @@ class WebSocketAsPromised {
     this._opening.resolve(event);
   }
 
-  _handleMessage({data}) {
-    let jsonData;
+  _handleMessage(event) {
+    const message = event.data;
+    let unpackedData;
     try {
-      jsonData = JSON.parse(data);
-      const id = jsonData && jsonData[this._options.idProp];
-      this._pendingRequests.tryResolve(id, jsonData);
+      unpackedData = this._options.unpackMessage(message);
     } catch(e) {
-      // do nothing if can not parse data
+      // do nothing if can not unpack data
     }
-    this._onMessage.dispatch(jsonData, data);
+    this._tryResolveRequest(unpackedData);
+    this._onMessage.dispatch(message, unpackedData);
   }
 
   _handleError() {
     // todo: when this event comes?
   }
 
-  _handleClose({reason, code}) {
-    const error = new Error(`Connection closed with reason: ${reason} (${code})`);
+  _handleClose(event) {
     // todo: removeWsListeners
     this._ws = null;
-    this._closing.resolve({reason, code});
-    // this._pendingRequests.rejectAll(error);
+    this._closing.resolve(event);
+    const error = new Error(`Connection closed with reason: ${event.reason} (${event.code})`);
     if (this._opening.isPending) {
       this._opening.reject(error);
     }
-    this._onClose.dispatchAsync({reason, code});
+    this._pendingRequests.forEach(request => request.isPending ? request.reject(error) : null);
+    this._onClose.dispatchAsync(event);
   }
-}
 
-function handleTimeoutError(e) {
-  // inheritance from built-in classes does not work after babel transpile :(
-  // does not work: e instanceof Pendings.TimeoutError --> always false
-  // see: https://stackoverflow.com/questions/42064466/instanceof-using-es6-class-inheritance-chain-doesnt-work
-  const error = e && e.timeout !== undefined ? new Error(`Request rejected by timeout (${e.timeout} ms)`) : e;
-  return Promise.reject(error);
+  _addRequest(requestId, message, timeout) {
+    // todo: if request with the same id still pending?
+    const request = new ControlledPromise();
+    request.timeout(timeout, `Request "${requestId}" was rejected by timeout (${timeout}ms)`);
+    request.call(() => this.send(message));
+    this._pendingRequests.set(requestId, request);
+    promiseFinally(request.promise, () => this._pendingRequests.delete(requestId));
+    return request;
+  }
+
+  _tryResolveRequest(unpackedData) {
+    const requestId = unpackedData && unpackedData.requestId;
+    if (requestId && this._pendingRequests.has(requestId)) {
+      this._pendingRequests.get(requestId).resolve(unpackedData);
+    }
+  }
 }
 
 module.exports = WebSocketAsPromised;
