@@ -7,7 +7,7 @@
  */
 
 const Channel = require('chnl');
-const Pendings = require('pendings');
+const ControlledPromise = require('controlled-promise');
 const utils = require('./utils');
 
 const DEFAULT_OPTIONS = {
@@ -41,9 +41,10 @@ class WebSocketAsPromised {
   constructor(url, options) {
     this._url = url;
     this._options = Object.assign({}, DEFAULT_OPTIONS, utils.removeUndefined(options));
-    this._opening = new Pendings.Pending();
-    this._closing = new Pendings.Pending();
-    this._pendingRequests = new Pendings({timeout: this._options.timeout});
+    this._opening = new ControlledPromise();
+    this._closing = new ControlledPromise();
+    // this._pendingRequests = new Pendings({timeout: this._options.timeout});
+    this._pendingRequests = new Map();
     this._onMessage = new Channel();
     this._onClose = new Channel();
     this._ws = null;
@@ -130,14 +131,16 @@ class WebSocketAsPromised {
   open() {
     if (this.isClosing) {
       return Promise.reject(new Error(`Can not open closing WebSocket`));
-    } else {
-      const {timeout, createWebSocket} = this._options;
-      return this._opening.call(() => {
-        this._closing.reset();
-        this._ws = createWebSocket(this._url);
-        this._addWsListeners();
-      }, timeout);
     }
+    if (this.isOpened) {
+      return this._opening.promise;
+    }
+    return this._opening.call(() => {
+      const {timeout, createWebSocket} = this._options;
+      this._opening.timeout(timeout, `Can't open connection within allowed timeout: ${timeout}ms`);
+      this._ws = createWebSocket(this._url);
+      this._addWsListeners();
+    });
   }
 
   /**
@@ -193,15 +196,14 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   close() {
-    this._opening.reset(new Error('Connection closing by client'));
+    if (this.isClosed) {
+      return Promise.resolve();
+    }
     return this._closing.call(() => {
-      if (this._ws) {
-        this._ws.close();
-      } else {
-        // case: close without open
-        this._closing.resolve();
-      }
-    }, this._options.timeout);
+      const {timeout} = this._options;
+      this._closing.timeout(timeout, `Can't close connection within allowed timeout: ${timeout}ms`);
+      this._ws.close();
+    });
   }
 
   _addWsListeners() {
@@ -236,8 +238,10 @@ class WebSocketAsPromised {
     // todo: removeWsListeners
     this._ws = null;
     this._closing.resolve({reason, code});
-    this._pendingRequests.rejectAll(error);
-    this._opening.reset(error);
+    // this._pendingRequests.rejectAll(error);
+    if (this._opening.isPending) {
+      this._opening.reject(error);
+    }
     this._onClose.dispatchAsync({reason, code});
   }
 }

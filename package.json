@@ -18,7 +18,7 @@
     "lint-all": "eslint src test",
     "lint-staged": "lint-staged",
     "babel": "babel src --out-dir lib",
-    "test": "mocha test/index.test.js",
+    "test": "mocha test/specs --require=test/globals.js",
     "test-lib": "TEST_LIB=1 npm t",
     "ci": "npm run code && npm run babel && npm run test-lib",
     "docs": "jsdoc2md --template README_TEMPLATE.md --files src/*.js > README.md",
@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "chnl": "^0.4.0",
-    "pendings": "^0.2.3"
+    "controlled-promise": "^0.1.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
