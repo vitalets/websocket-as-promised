@@ -1,17 +1,5 @@
 
-// const {createWSP} = require('../helper');
-
-describe.skip('sendJson', function () {
-  it('should send data and does not return promise', function () {
-    const p = this.wsp.open().then(() => {
-      const res = this.wsp.sendJson({foo: 'bar', id: 1});
-      assert.equal(res, undefined);
-    });
-    return assert.isFulfilled(p);
-  });
-});
-
-describe.skip('send', function () {
+describe('send', function () {
   it('should send String and does not return promise', function () {
     const p = this.wsp.open().then(() => {
       const res = this.wsp.send('foo');
