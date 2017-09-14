@@ -22,10 +22,10 @@ describe('open', function () {
     return assert.eventually.propertyVal(p1, 'type', 'open');
   });
 
-  it('should reject if server rejects the request', function () {
+  it('should reject if server rejects connection', function () {
     const wsp = createWSP(this.url + '?reject=1');
     const p = wsp.open();
-    return assert.isRejected(p, 'Connection closed with reason: connection failed (1006)');
+    return assert.isRejected(p, 'WebSocket connection closed with reason: connection failed (1006)');
   });
 
   it.skip('should reject after timeout and close connection', function () {

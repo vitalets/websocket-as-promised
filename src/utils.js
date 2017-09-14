@@ -15,6 +15,5 @@ exports.removeUndefined = function (obj) {
 };
 
 exports.generateId = function (prefix) {
-  prefix = prefix ? `${prefix}-` : '';
-  return `${prefix}${Date.now()}-${Math.random()}`;
+  return `${prefix || ''}${Date.now()}-${Math.random()}`;
 };

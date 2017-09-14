@@ -1,49 +1,51 @@
-//
-// const {createWSP} = require('../helper');
-//
-// describe.skip('request', function () {
-//   it('should resolve promise after response', function () {
-//     const res = this.wsp.open().then(() => this.wsp.request({foo: 'bar'}));
-//     return Promise.all([
-//       assert.eventually.propertyVal(res, 'foo', 'bar'),
-//       assert.eventually.property(res, 'id')
-//     ]);
-//   });
-//
-//   it('should allow to set id manually', function () {
-//     const res = this.wsp.open().then(() => this.wsp.request({foo: 'bar', id: 1}));
-//     return assert.eventually.propertyVal(res, 'id', 1);
-//   });
-//
-//   it('should not fulfill for response without ID', function () {
-//     let a = 0;
-//     const res = this.wsp.open()
-//       .then(() => {
-//         this.wsp.request({noId: true}).then(() => a = a + 1, () => {
-//         });
-//         return wait(100).then(() => a);
-//       });
-//     return assert.eventually.equal(res, 0);
-//   });
-// });
-//
-// describe.skip('request timeout', function () {
-//   it('should reject after timeout', function () {
-//     const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 50});
-//     const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 100}));
-//     return assert.isRejected(res, 'Request rejected by timeout (50 ms)');
-//   });
-//
-//   it('should request before timeout', function () {
-//     const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 100});
-//     const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 50}));
-//     return assert.eventually.propertyVal(res, 'foo', 'bar');
-//   });
-//
-//   it('should reject after custom timeout', function () {
-//     const wsp = new WebSocketAsPromised(this.url, {createWebSocket, timeout: 100});
-//     const options = {timeout: 50};
-//     const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 70}, options));
-//     return assert.isRejected(res, 'Request rejected by timeout (50 ms)');
-//   });
-// });
+
+const {createWSP} = require('../helper');
+
+describe('request', function () {
+  it('should resolve promise after response', function () {
+    const res = this.wsp.open().then(() => this.wsp.request({foo: 'bar'}));
+    return Promise.all([
+      assert.eventually.propertyVal(res, 'foo', 'bar'),
+      assert.eventually.property(res, 'requestId')
+    ]);
+  });
+
+  it('should allow to set requestId', function () {
+    const res = this.wsp.open()
+      .then(() => this.wsp.request({foo: 'bar'}, {requestId: '1'}));
+    return assert.eventually.propertyVal(res, 'requestId', '1');
+  });
+
+  it('should allow to set requestIdPrefix', function () {
+    const res = this.wsp.open()
+      .then(() => this.wsp.request({foo: 'bar'}, {requestIdPrefix: 'req'}));
+    return assert.isFulfilled(res)
+      .then(data => assert.ok(data.requestId.startsWith('req')));
+  });
+
+  describe('timeout', function () {
+    it('should reject after timeout', function () {
+      const wsp = createWSP(this.url, {timeout: 50});
+      const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 100}));
+      return assert.isRejected(res)
+      // todo: use assert match
+        .then(e => assert.ok(e.message.startsWith('WebSocket request was rejected by timeout (50 ms)')));
+    });
+
+    it('should request before timeout', function () {
+      const wsp = createWSP(this.url, {timeout: 100});
+      const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 50}));
+      return assert.eventually.propertyVal(res, 'foo', 'bar');
+    });
+
+    it('should reject after custom timeout', function () {
+      const wsp = createWSP(this.url, {timeout: 100});
+      const options = {timeout: 50};
+      const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 70}, options));
+      return assert.isRejected(res)
+      // todo: use assert match
+        .then(e => assert.ok(e.message.startsWith('WebSocket request was rejected by timeout (50 ms)')));
+    });
+  });
+});
+

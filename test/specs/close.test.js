@@ -53,8 +53,8 @@ describe('close', function () {
       })
       .then(() => wait(10).then(() => this.wsp.close()).then(() => a));
     return assert.eventually.deepEqual(res, [
-      'Connection closed with reason: Normal connection closure (1000)',
-      'Connection closed with reason: Normal connection closure (1000)',
+      'WebSocket connection closed with reason: Normal connection closure (1000)',
+      'WebSocket connection closed with reason: Normal connection closure (1000)',
     ]);
   });
 });
@@ -67,12 +67,12 @@ describe('close by server', function () {
         code: 1009,
         reason: 'Message is too big'
       }));
-    return assert.isRejected(res, 'Connection closed with reason: Message is too big (1009)');
+    return assert.isRejected(res, 'WebSocket connection closed with reason: Message is too big (1009)');
   });
 
   it('should reject for drop', function () {
     const res = this.wsp.open()
       .then(() => this.wsp.request({drop: true}));
-    return assert.isRejected(res, /Connection closed/);
+    return assert.isRejected(res, /WebSocket connection closed/);
   });
 });
