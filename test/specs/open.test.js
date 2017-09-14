@@ -28,10 +28,10 @@ describe('open', function () {
     return assert.isRejected(p, 'WebSocket connection closed with reason: connection failed (1006)');
   });
 
-  it.skip('should reject after timeout and close connection', function () {
+  it('should reject after timeout and close connection', function () {
     const wsp = createWSP(this.url + '?delay=20', {timeout: 10});
     const p1 = wsp.open();
-    return assert.isRejected(p1, 'Promise rejected by timeout (10 ms)')
+    return assert.isRejected(p1, 'Can\'t open WebSocket connection within allowed timeout: 10 ms')
       .then(() => assert.ok(wsp.isClosed));
   });
 

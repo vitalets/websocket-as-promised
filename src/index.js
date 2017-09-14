@@ -163,10 +163,10 @@ class WebSocketAsPromised {
       return this._opening.promise;
     }
     return this._opening.call(() => {
-      const {timeout, createWebSocket} = this._options;
+      const {timeout} = this._options;
       this._opening.timeout(timeout, `Can't open WebSocket connection within allowed timeout: ${timeout} ms`);
-      this._ws = createWebSocket(this._url);
-      this._addWsListeners();
+      this._opening.promise.catch(e => this._cleanupForClose(e));
+      this._createWS();
     });
   }
 
@@ -220,7 +220,12 @@ class WebSocketAsPromised {
     });
   }
 
-  _addWsListeners() {
+  _createWS() {
+    this._ws = this._options.createWebSocket(this._url);
+    this._addWSListeners();
+  }
+
+  _addWSListeners() {
     this._ws.addEventListener('open', event => this._handleOpen(event));
     this._ws.addEventListener('message', event => this._handleMessage(event));
     this._ws.addEventListener('error', event => this._handleError(event));
@@ -250,15 +255,23 @@ class WebSocketAsPromised {
   }
 
   _handleClose(event) {
-    // todo: removeWsListeners, use Channel.Subscription
-    this._ws = null;
+    this._onClose.dispatchAsync(event);
     this._closing.resolve(event);
     const error = new Error(`WebSocket connection closed with reason: ${event.reason} (${event.code})`);
     if (this._opening.isPending) {
       this._opening.reject(error);
     }
-    this._pendingRequests.forEach(request => request.isPending ? request.reject(error) : null);
-    this._onClose.dispatchAsync(event);
+    this._cleanupForClose(error);
+  }
+
+  _cleanupWS() {
+    // todo: removeWsListeners, use Channel.Subscription
+    this._ws = null;
+  }
+
+  _cleanupForClose(error) {
+    this._cleanupWS();
+    this._rejectAllRequests(error);
   }
 
   _addRequest(requestId, message, timeout) {
@@ -275,6 +288,10 @@ class WebSocketAsPromised {
     if (requestId && this._pendingRequests.has(requestId)) {
       this._pendingRequests.get(requestId).resolve(data);
     }
+  }
+
+  _rejectAllRequests(error) {
+    this._pendingRequests.forEach(request => request.isPending ? request.reject(error) : null);
   }
 }
 
