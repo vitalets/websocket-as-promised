@@ -19,7 +19,11 @@ module.exports = class Requests {
    * @returns {Promise}
    */
   create(requestId, fn, timeout) {
-    // todo: if request with the same id still pending?
+    // todo: handle existing pending request with the same id
+    // const existingRequest = this._items.get(requestId);
+    // if (existingRequest && existingRequest.isPending) {
+    //   existingRequest.reject(new Error(`WebSocket request is replaced, id: ${requestId}`));
+    // }
     const request = new ControlledPromise();
     this._items.set(requestId, request);
     request.timeout(timeout, `WebSocket request was rejected by timeout (${timeout} ms). RequestId: ${requestId}`);

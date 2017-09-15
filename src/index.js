@@ -224,7 +224,7 @@ class WebSocketAsPromised {
   }
 
   _handleError() {
-    // todo: when this event comes?
+    // currently no specific handling of this event
   }
 
   _handleClose(event) {
