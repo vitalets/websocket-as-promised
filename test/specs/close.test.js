@@ -48,10 +48,13 @@ describe('close', function () {
     const a = [];
     const res = this.wsp.open()
       .then(() => {
-        this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
-        this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
+         this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
+         this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
       })
+      // need this tiny delay, as otherwise server hangs on getting 2 requests and closing simultaneously
+      .then(() => wait(10))
       .then(() => this.wsp.close())
+      // need this tiny delay to reject all responses
       .then(() => wait(10))
       .then(() => a);
     return assert.isFulfilled(res).then(() => {

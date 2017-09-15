@@ -10,39 +10,7 @@ const Channel = require('chnl');
 const ControlledPromise = require('controlled-promise');
 const Requests = require('./requests');
 const utils = require('./utils');
-
-const DEFAULT_OPTIONS = {
-  /**
-   * WebSocket creation function
-   *
-   * @param {String} url
-   * @returns {WebSocket}
-   */
-  createWebSocket: url => new WebSocket(url),
-  /**
-   * Packs message to send by WebSocket.
-   *
-   * @param {String} requestId
-   * @param {*} data
-   * @returns {String|ArrayBuffer|Blob}
-   */
-  packMessage: (requestId, data) => {
-    const message = Object.assign({requestId}, data);
-    return JSON.stringify(message);
-  },
-  /**
-   * Unpacks message received by WebSocket.
-   * Returned value should be object with {requestId, data} fields.
-   *
-   * @param {String|ArrayBuffer|Blob} message
-   * @returns {Object<{requestId, data}>}
-   */
-  unpackMessage: message => {
-    const data = JSON.parse(message);
-    return {requestId: data.requestId, data};
-  },
-  timeout: 0,
-};
+const defaultOptions = require('./options');
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#Ready_state_constants
 const STATE = {
@@ -68,7 +36,7 @@ class WebSocketAsPromised {
    */
   constructor(url, options) {
     this._url = url;
-    this._options = utils.mergeDefaults(options, DEFAULT_OPTIONS);
+    this._options = utils.mergeDefaults(options, defaultOptions);
     this._opening = new ControlledPromise();
     this._closing = new ControlledPromise();
     this._requests = new Requests();
