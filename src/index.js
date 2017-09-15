@@ -28,10 +28,12 @@ class WebSocketAsPromised {
    * Constructor. Unlike original WebSocket it does not immediately open connection.
    * Please call `open()` method manually to connect.
    *
+   * // todo: use options.js
    * @param {String} url WebSocket URL
    * @param {Object} [options]
-   * @param {Function} [options.createWebSocket=url => new Websocket(url)] custom WebSocket creation method
-   * @param {String} [options.idProp="id"] id property name attached to each message
+   * @param {Function} [options.createWebSocket=url => new Websocket(url)] custom WebSocket creation function
+   * @param {Function} [options.packMessage] custom packing message function
+   * @param {Function} [options.packMessage] custom unpacking message function
    * @param {Number} [options.timeout=0] default timeout for requests
    */
   constructor(url, options) {
