@@ -53,6 +53,8 @@ exports.start = function (callback) {
     } else if (data.noId) {
       delete data.id;
       connection.sendUTF(JSON.stringify(data));
+    } else if (data.noResponse) {
+      // nothing
     } else if (data.delay) {
       setTimeout(() => connection.sendUTF(message.utf8Data), data.delay);
     } else if (data.error) {

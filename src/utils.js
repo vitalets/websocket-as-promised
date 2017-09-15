@@ -1,6 +1,5 @@
 /**
  * Utils
- * @private
  */
 
 exports.mergeDefaults = function (options, defaultOptions) {

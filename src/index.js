@@ -8,7 +8,7 @@
 
 const Channel = require('chnl');
 const ControlledPromise = require('controlled-promise');
-const promiseFinally = require('promise.prototype.finally');
+const Requests = require('./requests');
 const utils = require('./utils');
 
 const DEFAULT_OPTIONS = {
@@ -71,7 +71,7 @@ class WebSocketAsPromised {
     this._options = utils.mergeDefaults(options, DEFAULT_OPTIONS);
     this._opening = new ControlledPromise();
     this._closing = new ControlledPromise();
-    this._pendingRequests = new Map();
+    this._requests = new Requests();
     this._onMessage = new Channel();
     this._onClose = new Channel();
     this._ws = null;
@@ -187,8 +187,7 @@ class WebSocketAsPromised {
     const requestId = options.requestId || utils.generateId(options.requestIdPrefix);
     const message = this._options.packMessage(requestId, data);
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
-    const request = this._addRequest(requestId, message, timeout);
-    return request.promise;
+    return this._requests.create(requestId, () => this.send(message), timeout);
   }
 
   /**
@@ -247,7 +246,7 @@ class WebSocketAsPromised {
       // do nothing if can not unpack message
     }
     this._onMessage.dispatchAsync(message, data);
-    this._tryResolveRequest(requestId, data);
+    this._requests.resolve(requestId, data);
   }
 
   _handleError() {
@@ -271,27 +270,7 @@ class WebSocketAsPromised {
 
   _cleanupForClose(error) {
     this._cleanupWS();
-    this._rejectAllRequests(error);
-  }
-
-  _addRequest(requestId, message, timeout) {
-    // todo: if request with the same id still pending?
-    const request = new ControlledPromise();
-    request.timeout(timeout, `WebSocket request was rejected by timeout (${timeout} ms). RequestId: ${requestId}`);
-    request.call(() => this.send(message));
-    this._pendingRequests.set(requestId, request);
-    promiseFinally(request.promise, () => this._pendingRequests.delete(requestId)).catch(() => {});
-    return request;
-  }
-
-  _tryResolveRequest(requestId, data) {
-    if (requestId && this._pendingRequests.has(requestId)) {
-      this._pendingRequests.get(requestId).resolve(data);
-    }
-  }
-
-  _rejectAllRequests(error) {
-    this._pendingRequests.forEach(request => request.isPending ? request.reject(error) : null);
+    this._requests.rejectAll(error);
   }
 }
 

@@ -21,7 +21,7 @@
     "test": "mocha test/specs --require=test/globals.js",
     "test-lib": "TEST_LIB=1 npm t",
     "ci": "npm run code && npm run babel && npm run test-lib",
-    "docs": "jsdoc2md --template README_TEMPLATE.md --files src/*.js > README.md",
+    "docs": "jsdoc2md --template README_TEMPLATE.md --files src/index.js > README.md",
     "release": "npm run code && npm test && npm version $VER && npm publish && git push --follow-tags --no-verify",
     "release-patch": "VER=patch npm run release",
     "release-minor": "VER=minor npm run release",

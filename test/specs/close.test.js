@@ -48,14 +48,18 @@ describe('close', function () {
     const a = [];
     const res = this.wsp.open()
       .then(() => {
-        this.wsp.request({delay: 100}).catch(e => a.push(e.message));
-        this.wsp.request({delay: 200}).catch(e => a.push(e.message));
+        this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
+        this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
       })
-      .then(() => wait(10).then(() => this.wsp.close()).then(() => a));
-    return assert.eventually.deepEqual(res, [
-      'WebSocket connection closed with reason: Normal connection closure (1000)',
-      'WebSocket connection closed with reason: Normal connection closure (1000)',
-    ]);
+      .then(() => this.wsp.close())
+      .then(() => wait(10))
+      .then(() => a);
+    return assert.isFulfilled(res).then(() => {
+      assert.deepEqual(a, [
+        'WebSocket connection closed with reason: Normal connection closure (1000)',
+        'WebSocket connection closed with reason: Normal connection closure (1000)',
+      ]);
+    });
   });
 });
 
