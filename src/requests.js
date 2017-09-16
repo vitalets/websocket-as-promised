@@ -1,5 +1,6 @@
 /**
  * Class for manage pending requests.
+ * @private
  */
 
 const ControlledPromise = require('controlled-promise');

@@ -64,6 +64,20 @@ wsp.open()
 
 ## API
 
+## Classes
+
+<dl>
+<dt><a href="#WebSocketAsPromised">WebSocketAsPromised</a></dt>
+<dd></dd>
+</dl>
+
+## Typedefs
+
+<dl>
+<dt><a href="#Options">Options</a> : <code>Object</code></dt>
+<dd></dd>
+</dl>
+
 <a name="WebSocketAsPromised"></a>
 
 ## WebSocketAsPromised
@@ -89,17 +103,11 @@ wsp.open()
 Constructor. Unlike original WebSocket it does not immediately open connection.
 Please call `open()` method manually to connect.
 
-// todo: use options.js
 
-
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| url | <code>String</code> |  | WebSocket URL |
-| [options] | <code>Object</code> |  |  |
-| [options.createWebSocket] | <code>function</code> | <code>url =&gt; new Websocket(url)</code> | custom WebSocket creation function |
-| [options.packMessage] | <code>function</code> |  | custom packing message function |
-| [options.packMessage] | <code>function</code> |  | custom unpacking message function |
-| [options.timeout] | <code>Number</code> | <code>0</code> | default timeout for requests |
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>String</code> | WebSocket URL |
+| [options] | [<code>Options</code>](#Options) |  |
 
 <a name="WebSocketAsPromised+ws"></a>
 
@@ -166,13 +174,13 @@ Performs request and waits for response.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
-| Param | Type |
-| --- | --- |
-| data | <code>Object</code> | 
-| [options] | <code>Object</code> | 
-| [options.requestId] | <code>String</code> | 
-| [options.requestIdPrefix] | <code>String</code> | 
-| [options.timeout] | <code>Number</code> | 
+| Param | Type | Default |
+| --- | --- | --- |
+| data | <code>Object</code> |  | 
+| [options] | <code>Object</code> |  | 
+| [options.requestId] | <code>String</code> | <code>&lt;auto-generated&gt;</code> | 
+| [options.requestIdPrefix] | <code>String</code> | <code>&quot;&quot;</code> | 
+| [options.timeout] | <code>Number</code> | <code>0</code> | 
 
 <a name="WebSocketAsPromised+send"></a>
 
@@ -191,6 +199,21 @@ Sends any data by WebSocket.
 Closes WebSocket connection.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="Options"></a>
+
+## Options : <code>Object</code>
+**Kind**: global typedef  
+**Defaults**: please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)
+for default values  
+**Properties**
+
+| Name | Type | Default | Description |
+| --- | --- | --- | --- |
+| createWebSocket | <code>function</code> |  | custom WebSocket creation function |
+| packMessage | <code>function</code> |  | custom packing message function |
+| unpackMessage | <code>function</code> |  | custom unpacking message function |
+| timeout | <code>Number</code> | <code>0</code> | default timeout for requests |
+
 
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)

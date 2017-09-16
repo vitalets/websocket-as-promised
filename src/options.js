@@ -1,5 +1,17 @@
 /**
- * Default options
+ * Default options.
+ */
+
+/**
+ * @typedef {Object} Options
+ * @property {Function} createWebSocket - custom WebSocket creation function
+ * @property {Function} packMessage - custom packing message function
+ * @property {Function} unpackMessage - custom unpacking message function
+ * @property {Number} timeout=0 - default timeout for requests
+ *
+ * @defaults
+ * please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)
+ * for default values
  */
 
 module.exports = {
