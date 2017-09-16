@@ -20,7 +20,7 @@ describe('request', function () {
     const res = this.wsp.open()
       .then(() => this.wsp.request({foo: 'bar'}, {requestIdPrefix: 'req'}));
     return assert.isFulfilled(res)
-      .then(data => assert.ok(data.requestId.startsWith('req')));
+      .then(data => assert.match(data.requestId, /^req/));
   });
 
   it.skip('should reject request if another request with the same requestId starts', function () {
@@ -41,8 +41,7 @@ describe('request', function () {
       const wsp = createWSP(this.url, {timeout: 50});
       const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 100}));
       return assert.isRejected(res)
-      // todo: use assert match
-        .then(e => assert.ok(e.message.startsWith('WebSocket request was rejected by timeout (50 ms)')));
+        .then(e => assert.match(e.message, /^WebSocket request was rejected by timeout \(50 ms\)/));
     });
 
     it('should request before timeout', function () {
@@ -56,8 +55,7 @@ describe('request', function () {
       const options = {timeout: 50};
       const res = wsp.open().then(() => wsp.request({foo: 'bar', delay: 70}, options));
       return assert.isRejected(res)
-      // todo: use assert match
-        .then(e => assert.ok(e.message.startsWith('WebSocket request was rejected by timeout (50 ms)')));
+        .then(e => assert.match(e.message, /^WebSocket request was rejected by timeout \(50 ms\)/));
     });
   });
 
@@ -82,6 +80,20 @@ describe('request', function () {
       const res = wsp.open()
         .then(() => wsp.request());
       return assert.isRejected(res, 'err');
+    });
+  });
+
+  describe('unpackResponse', function () {
+    it('should catch error in unpackResponse', function () {
+      const wsp = createWSP(this.url, {
+        unpackResponse: () => {
+          throw new Error('err');
+        }
+      });
+      const res = wsp.open()
+        .then(() => wsp.request({}, {timeout: 10}));
+      return assert.isRejected(res)
+        .then(e => assert.match(e.message, /^WebSocket request was rejected by timeout \(10 ms\)/));
     });
   });
 
