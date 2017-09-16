@@ -147,13 +147,12 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   request(data, options = {}) {
-    if (!data || typeof data !== 'object') {
-      return Promise.reject(new Error(`WebSocket request data should be a plain object, got ${data}`));
-    }
     const requestId = options.requestId || utils.generateId(options.requestIdPrefix);
-    const message = this._options.packMessage(requestId, data);
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
-    return this._requests.create(requestId, () => this.send(message), timeout);
+    return this._requests.create(requestId, () => {
+      const message = this._options.packRequest(requestId, data);
+      this.send(message);
+    }, timeout);
   }
 
   /**
@@ -195,13 +194,6 @@ class WebSocketAsPromised {
     ]).on();
   }
 
-  _addWSListeners() {
-    this._ws.addEventListener('open', event => this._handleOpen(event));
-    this._ws.addEventListener('message', event => this._handleMessage(event));
-    this._ws.addEventListener('error', event => this._handleError(event));
-    this._ws.addEventListener('close', event => this._handleClose(event));
-  }
-
   _handleOpen(event) {
     this._opening.resolve(event);
   }
@@ -210,9 +202,7 @@ class WebSocketAsPromised {
     const message = event.data;
     let requestId, data;
     try {
-      const result = this._options.unpackMessage(message);
-      requestId = result.requestId;
-      data = result.data;
+      ({requestId, data} = this._options.unpackResponse(message));
     } catch(e) {
       // do nothing if can not unpack message
     }

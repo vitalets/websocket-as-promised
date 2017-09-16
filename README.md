@@ -210,8 +210,8 @@ for default values
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | createWebSocket | <code>function</code> |  | custom WebSocket creation function |
-| packMessage | <code>function</code> |  | custom packing message function |
-| unpackMessage | <code>function</code> |  | custom unpacking message function |
+| packRequest | <code>function</code> |  | custom packing request function |
+| unpackResponse | <code>function</code> |  | custom unpacking response function |
 | timeout | <code>Number</code> | <code>0</code> | default timeout for requests |
 
 

@@ -60,5 +60,30 @@ describe('request', function () {
         .then(e => assert.ok(e.message.startsWith('WebSocket request was rejected by timeout (50 ms)')));
     });
   });
+
+  describe('packRequest', function () {
+    it('should pack request', function () {
+      const wsp = createWSP(this.url, {
+        packRequest: requestId => {
+          return JSON.stringify({requestId, x: '123'});
+        }
+      });
+      const res = wsp.open()
+        .then(() => wsp.request({foo: 'bar'}));
+      return assert.eventually.propertyVal(res, 'x', '123');
+    });
+
+    it('should reject in case of error in packRequest', function () {
+      const wsp = createWSP(this.url, {
+        packRequest: () => {
+          throw new Error('err');
+        }
+      });
+      const res = wsp.open()
+        .then(() => wsp.request());
+      return assert.isRejected(res, 'err');
+    });
+  });
+
 });
 

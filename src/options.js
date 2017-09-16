@@ -5,8 +5,8 @@
 /**
  * @typedef {Object} Options
  * @property {Function} createWebSocket - custom WebSocket creation function
- * @property {Function} packMessage - custom packing message function
- * @property {Function} unpackMessage - custom unpacking message function
+ * @property {Function} packRequest - custom packing request function
+ * @property {Function} unpackResponse - custom unpacking response function
  * @property {Number} timeout=0 - default timeout for requests
  *
  * @defaults
@@ -30,7 +30,7 @@ module.exports = {
    * @param {*} data
    * @returns {String|ArrayBuffer|Blob}
    */
-  packMessage: (requestId, data) => {
+  packRequest: (requestId, data) => {
     const message = Object.assign({requestId}, data);
     return JSON.stringify(message);
   },
@@ -42,7 +42,7 @@ module.exports = {
    * @param {String|ArrayBuffer|Blob} message
    * @returns {Object<{requestId, data}>}
    */
-  unpackMessage: message => {
+  unpackResponse: message => {
     const data = JSON.parse(message);
     return {requestId: data.requestId, data};
   },
