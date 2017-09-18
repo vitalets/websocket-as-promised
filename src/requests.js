@@ -14,7 +14,7 @@ module.exports = class Requests {
   /**
    * Creates new request andd stores it in the list.
    *
-   * @param {String} requestId
+   * @param {String|Number} requestId
    * @param {Function} fn
    * @param {Number} timeout
    * @returns {Promise}

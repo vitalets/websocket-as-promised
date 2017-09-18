@@ -49,18 +49,55 @@ wsp.open()
 ```
 
 ## Messaging
-1. if you want to send message and expect server's response - you should use `.request()` method that returns promise:
-    ```js
-    wsp.request({foo: 'bar'})
-     .then(response => console.log(response));
-    // actually sends message with unique requestId: {requestId: 'xxxxx', foo: 'bar'}
-    // and waits response from server with the same requestId: {requestId: 'xxxxx', response: 'ok'}
-    ```
+The `.request()` method is used to send WebSocket message to the server and wait for the response.
+Matching between request and response is performed by unique identifier `requestId` that should present
+in both incoming and outcoming message. By default, `requestId` is auto-generated and attached to data
+assuming you are sending JSON:
+```js
+wsp.request({foo: 'bar'})                  // actually sends {requestId: '12345', foo: 'bar'}
+ .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: '12345', status: 'ok'}
 
-2. if you want to just send data and do not expect any response - use `.send()` method:
-    ```js
-    wsp.send(JSON.stringify({foo: 'bar'})); // does not return promise
-    ```
+```
+You can set `requestId` manually:
+```js
+wsp.request({foo: 'bar'}, {requestId: '123'});
+```
+If you need full control over messaging you can use `packRequest` / `unpackResponse` options. 
+For example, you can use custom property `id` for unique request identifier:
+```js
+const wsp = new WebSocketAsPromised(url, {
+  packRequest: (requestId, data) => {
+    data.id = requestId;               // attach requestId as 'id'       
+    return JSON.stringify(data);
+  },
+  unpackResponse: message => {
+    const data = JSON.parse(message);
+    return {requestId: data.id, data}; // read requestId from 'id' prop
+  }
+});
+
+wsp.open()
+  .then(() => wsp.request({foo: 'bar'}, {requestId: 1}));
+```
+Or send requests in **binary format**:
+```js
+const wsp = new WebSocketAsPromised(url, {
+  packRequest: (requestId, data) => new Uint8Array([requestId, data]),
+  unpackResponse: message => {
+    const arr = new Uint8Array(message);
+    return {requestId: arr[0], data: arr[1]};
+  }
+});
+
+wsp.open()
+  .then(() => wsp.request(42));
+```
+
+*Note:*  
+If you want just send data and do not expect any response - use `.send()` method:
+```js
+wsp.send(JSON.stringify({foo: 'bar'})); // does not return promise
+```
 
 ## API
 
