@@ -2,12 +2,23 @@
 const {createWSP} = require('../helper');
 
 describe('request', function () {
-  it('should resolve promise after response', function () {
+  it('should send json data and resolve promise after response', function () {
     const res = this.wsp.open().then(() => this.wsp.request({foo: 'bar'}));
     return Promise.all([
       assert.eventually.propertyVal(res, 'foo', 'bar'),
       assert.eventually.property(res, 'requestId')
     ]);
+  });
+
+  it('should send binary data and resolve promise after response', function () {
+    const packRequest = (requestId, data) => new Uint8Array([requestId, data]);
+    const unpackResponse = message => {
+      const arr = new Uint8Array(message);
+      return {requestId: arr[0], data: arr[1]};
+    };
+    const wsp = createWSP(this.url, {packRequest, unpackResponse});
+    const res = wsp.open().then(() => wsp.request(42, {requestId: 1}));
+    return assert.eventually.equal(res, 42);
   });
 
   it('should allow to set requestId', function () {
