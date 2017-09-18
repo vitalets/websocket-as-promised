@@ -19,6 +19,7 @@ const WebSocketAsPromised = require('websocket-as-promised');
 
 const wsp = new WebSocketAsPromised('ws://echo.websocket.org');
 
+console.log('connecting...');
 wsp.open()
   .then(() => console.log('connected'))
   .then(() => wsp.request({foo: 'bar'}))
@@ -39,6 +40,7 @@ const wsp = new WebSocketAsPromised('ws://echo.websocket.org', {
   createWebSocket: url => new W3CWebSocket(url) // custom WebSocket constructor
 });
 
+console.log('connecting...');
 wsp.open()
   .then(() => console.log('connected'))
   .then(() => wsp.request({foo: 'bar'}))
