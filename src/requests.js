@@ -20,15 +20,8 @@ module.exports = class Requests {
    * @returns {Promise}
    */
   create(requestId, fn, timeout) {
-    // todo: handle existing pending request with the same id
-    // const existingRequest = this._items.get(requestId);
-    // if (existingRequest && existingRequest.isPending) {
-    //   existingRequest.reject(new Error(`WebSocket request is replaced, id: ${requestId}`));
-    // }
-    const request = new ControlledPromise();
-    this._items.set(requestId, request);
-    request.timeout(timeout, `WebSocket request was rejected by timeout (${timeout} ms). RequestId: ${requestId}`);
-    return promiseFinally(request.call(fn), () => this._items.delete(requestId));
+    this._rejectExistingRequest(requestId);
+    return this._createNewRequest(requestId, fn, timeout);
   }
 
   resolve(requestId, data) {
@@ -39,5 +32,26 @@ module.exports = class Requests {
 
   rejectAll(error) {
     this._items.forEach(request => request.isPending ? request.reject(error) : null);
+  }
+
+  _rejectExistingRequest(requestId) {
+    const existingRequest = this._items.get(requestId);
+    if (existingRequest && existingRequest.isPending) {
+      existingRequest.reject(new Error(`WebSocket request is replaced, id: ${requestId}`));
+    }
+  }
+
+  _createNewRequest(requestId, fn, timeout) {
+    const request = new ControlledPromise();
+    this._items.set(requestId, request);
+    request.timeout(timeout, `WebSocket request was rejected by timeout (${timeout} ms). RequestId: ${requestId}`);
+    return promiseFinally(request.call(fn), () => this._deleteRequest(requestId, request));
+  }
+
+  _deleteRequest(requestId, request) {
+    // this check is important when request was replaced
+    if (this._items.get(requestId) === request) {
+      this._items.delete(requestId);
+    }
   }
 };

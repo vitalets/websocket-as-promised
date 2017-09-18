@@ -23,17 +23,15 @@ describe('request', function () {
       .then(data => assert.match(data.requestId, /^req/));
   });
 
-  it.skip('should reject request if another request with the same requestId starts', function () {
+  it('should reject request if another request with the same requestId starts', function () {
     let p1;
     const res = this.wsp.open()
       .then(() => {
         p1 = this.wsp.request({noResponse: true}, {requestId: '1'});
+        p1.catch(noop);
       })
       .then(() => this.wsp.request({}, {requestId: '1'}));
-    return Promise.all([
-      assert.isFulfilled(res),
-      assert.isRejected(p1),
-    ]);
+    return assert.isFulfilled(res).then(() => assert.isRejected(p1));
   });
 
   describe('timeout', function () {
