@@ -7,7 +7,8 @@
  * @property {Function} createWebSocket - custom WebSocket creation function
  * @property {Function} packRequest - custom packing request function
  * @property {Function} unpackResponse - custom unpacking response function
- * @property {Number} timeout=0 - default timeout for requests
+ * @property {Number} timeout=0 - timeout for opening connection and sending messages
+ * @property {Number} connectionTimeout=0 - special timeout for opening connection (defaults to `timeout`)
  *
  * @defaults
  * please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)
@@ -51,4 +52,9 @@ module.exports = {
    * Timeout for connection and all requests
    */
   timeout: 0,
+
+  /**
+   * Special timeout for opening connection
+   */
+  connectionTimeout: 0,
 };

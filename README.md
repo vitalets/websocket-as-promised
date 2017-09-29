@@ -251,7 +251,8 @@ for default values
 | createWebSocket | <code>function</code> |  | custom WebSocket creation function |
 | packRequest | <code>function</code> |  | custom packing request function |
 | unpackResponse | <code>function</code> |  | custom unpacking response function |
-| timeout | <code>Number</code> | <code>0</code> | default timeout for requests |
+| timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages |
+| connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection (defaults to `timeout`) |
 
 
 ## License

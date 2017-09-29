@@ -35,6 +35,22 @@ describe('open', function () {
       .then(() => assert.ok(wsp.isClosed));
   });
 
+  describe('connectionTimeout', function () {
+    it('should not reject after timeout if connectionTimeout set', function () {
+      const wsp = createWSP(this.url + '?delay=20', {connectionTimeout: 50, timeout: 10});
+      const p1 = wsp.open();
+      return assert.isFulfilled(p1)
+        .then(() => assert.ok(wsp.isOpened));
+    });
+
+    it('should reject after connectionTimeout and close connection', function () {
+      const wsp = createWSP(this.url + '?delay=20', {connectionTimeout: 10, timeout: 30});
+      const p1 = wsp.open();
+      return assert.isRejected(p1, 'Can\'t open WebSocket connection within allowed timeout: 10 ms')
+        .then(() => assert.ok(wsp.isClosed));
+    });
+  });
+
   it('should reject for invalid url', function () {
     const wsp = createWSP('abc', {timeout: 10});
     const p = wsp.open();

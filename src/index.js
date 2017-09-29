@@ -129,7 +129,7 @@ class WebSocketAsPromised {
       return this._opening.promise;
     }
     return this._opening.call(() => {
-      const {timeout} = this._options;
+      const timeout = this._options.connectionTimeout || this._options.timeout;
       this._opening.timeout(timeout, `Can't open WebSocket connection within allowed timeout: ${timeout} ms`);
       this._opening.promise.catch(e => this._cleanupForClose(e));
       this._createWS();
