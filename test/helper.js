@@ -1,5 +1,6 @@
+const path = require('path');
 const W3CWebSocket = require('websocket').w3cwebsocket;
-const WebSocketAsPromised = require(`../${process.env.SRC || 'src'}`);
+const WebSocketAsPromised = require(path.resolve(process.env.SRC_PATH || 'src'));
 
 const createWebSocket = url => new W3CWebSocket(url);
 const createWSP = (url, options) => new WebSocketAsPromised(url, Object.assign({createWebSocket}, options));

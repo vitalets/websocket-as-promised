@@ -6,5 +6,5 @@ node_modules/
 npm-debug.log
 .idea
 
-/lib/
-/lib-runtyped/
+/dist/
+/dist-runtyper/

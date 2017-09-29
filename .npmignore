@@ -2,3 +2,5 @@
 .travis.yml
 .editorconfig
 .eslintrc
+
+/dist-runtyper/

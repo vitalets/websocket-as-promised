@@ -13,29 +13,26 @@
   "engines": {
     "node": ">=6"
   },
-  "main": "lib/index.js",
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
+  "main": "dist/bundle.js",
   "scripts": {
     "code": "npm run lint-all",
     "lint-all": "eslint src test",
     "lint-staged": "lint-staged",
-    "babel": "babel src --out-dir lib",
-    "babel-runtyped": "babel src --out-dir lib-runtyped --plugins=runtyper",
+    "build": "webpack",
+    "build-min": "NODE_ENV=production webpack -p",
+    "build-runtyper": "RUNTYPER=1 npm run build",
     "test": "mocha test/specs --require=test/globals.js",
-    "test-lib": "SRC=lib npm t",
-    "test-runtyped": "SRC=lib-runtyped npm t",
-    "ci": "npm run code && npm run babel && npm run test-lib",
+    "test-dist": "SRC_PATH=. npm t",
+    "test-runtyper": "SRC_PATH=dist-runtyper/bundle.js npm t",
+    "ci": "run-s code build test-dist",
     "docs": "jsdoc2md --template README_TEMPLATE.md --files src/** > README.md",
-    "release": "npm run code && npm run babel && npm run test-lib && npm version $VER && npm publish && git push --follow-tags --no-verify",
+    "release": "run-s code build build-min test-dist && npm version $VER && npm publish",
+    "postrelease": "git push --follow-tags --no-verify",
     "release-patch": "VER=patch npm run release",
     "release-minor": "VER=minor npm run release",
     "diff": "git diff -- . ':!package-lock.json'",
-    "precommit": "npm run lint-staged && npm t",
-    "prepush": "npm run code && npm t"
+    "precommit": "run-s lint-staged test",
+    "prepush": "run-s code test"
   },
   "lint-staged": {
     "{src,test}/**/*.js": "eslint"
@@ -47,8 +44,10 @@
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
     "babel-plugin-runtyper": "^0.2.2",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
     "chai": "^4.1.1",
     "chai-as-promised": "^7.1.1",
     "eslint": "^4.4.1",
@@ -57,6 +56,8 @@
     "jsdoc-to-markdown": "^3.0.0",
     "lint-staged": "^4.0.3",
     "mocha": "^3.5.0",
+    "npm-run-all": "^4.1.1",
+    "webpack": "^3.6.0",
     "websocket": "^1.0.24"
   },
   "keywords": [
