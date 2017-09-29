@@ -25,14 +25,16 @@
     "test-dist": "SRC_PATH=. npm t",
     "test-runtyper": "SRC_PATH=dist-runtyper/bundle.js npm t",
     "ci": "run-s code build test-dist",
+    "runtyper": "run-s build-runtyper test-runtyper",
     "docs": "jsdoc2md --template README_TEMPLATE.md --files src/** > README.md",
-    "release": "run-s code build build-min test-dist && npm version $VER && npm publish",
+    "prerelease": "run-s code build build-min test-dist runtyper",
+    "release": "npm version $VER && npm publish",
     "postrelease": "git push --follow-tags --no-verify",
     "release-patch": "VER=patch npm run release",
     "release-minor": "VER=minor npm run release",
     "diff": "git diff -- . ':!package-lock.json'",
     "precommit": "run-s lint-staged test",
-    "prepush": "run-s code test"
+    "prepush": "run-s code test runtyper"
   },
   "lint-staged": {
     "{src,test}/**/*.js": "eslint"
