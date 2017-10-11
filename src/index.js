@@ -119,7 +119,7 @@ class WebSocketAsPromised {
   /**
    * Opens WebSocket connection.
    *
-   * @returns {Promise}
+   * @returns {Promise<Event>}
    */
   open() {
     if (this.isClosing) {
@@ -171,7 +171,7 @@ class WebSocketAsPromised {
   /**
    * Closes WebSocket connection.
    *
-   * @returns {Promise}
+   * @returns {Promise<Event>}
    */
   close() {
     if (this.isClosed) {

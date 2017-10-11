@@ -131,10 +131,10 @@ wsp.send(JSON.stringify({foo: 'bar'})); // does not return promise
     * [.isClosed](#WebSocketAsPromised+isClosed) ⇒ <code>Boolean</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
-    * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise</code>
+    * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise.&lt;Event&gt;</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
     * [.send(data)](#WebSocketAsPromised+send)
-    * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise</code>
+    * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
 
 <a name="new_WebSocketAsPromised_new"></a>
 
@@ -202,7 +202,7 @@ Listener accepts single argument `{code, reason}`.
 **See**: https://vitalets.github.io/chnl/#channel  
 <a name="WebSocketAsPromised+open"></a>
 
-### wsp.open() ⇒ <code>Promise</code>
+### wsp.open() ⇒ <code>Promise.&lt;Event&gt;</code>
 Opens WebSocket connection.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -234,7 +234,7 @@ Sends any data by WebSocket.
 
 <a name="WebSocketAsPromised+close"></a>
 
-### wsp.close() ⇒ <code>Promise</code>
+### wsp.close() ⇒ <code>Promise.&lt;Event&gt;</code>
 Closes WebSocket connection.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
