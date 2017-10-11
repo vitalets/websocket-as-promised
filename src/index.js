@@ -8,8 +8,8 @@
 
 const Channel = require('chnl');
 const ControlledPromise = require('controlled-promise');
+const flatOptions = require('flat-options');
 const Requests = require('./requests');
-const utils = require('./utils');
 const defaultOptions = require('./options');
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#Ready_state_constants
@@ -33,7 +33,7 @@ class WebSocketAsPromised {
    */
   constructor(url, options) {
     this._url = url;
-    this._options = utils.mergeDefaults(options, defaultOptions);
+    this._options = flatOptions(options, defaultOptions);
     this._opening = new ControlledPromise();
     this._closing = new ControlledPromise();
     this._requests = new Requests();
@@ -147,7 +147,7 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   request(data, options = {}) {
-    const requestId = options.requestId || utils.generateId(options.requestIdPrefix);
+    const requestId = options.requestId || generateId(options.requestIdPrefix);
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
     return this._requests.create(requestId, () => {
       const message = this._options.packRequest(requestId, data);
@@ -236,6 +236,10 @@ class WebSocketAsPromised {
     this._cleanupWS();
     this._requests.rejectAll(error);
   }
+}
+
+function generateId(prefix) {
+  return `${prefix || ''}${Date.now()}-${Math.random()}`;
 }
 
 module.exports = WebSocketAsPromised;

@@ -42,6 +42,7 @@
   "dependencies": {
     "chnl": "^0.4.0",
     "controlled-promise": "^0.1.2",
+    "flat-options": "^0.1.2",
     "promise.prototype.finally": "^3.0.1"
   },
   "devDependencies": {
