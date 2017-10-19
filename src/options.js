@@ -5,14 +5,14 @@
 /**
  * @typedef {Object} Options
  * @property {Function} createWebSocket - custom WebSocket creation function
- * @property {Function} packRequest - custom packing request function
- * @property {Function} unpackResponse - custom unpacking response function
+ * @property {Function} packRequest - custom packing request function, by default packs as JSON
+ * @property {Function} unpackResponse - custom unpacking response function, by default unpacks as JSON
  * @property {Number} timeout=0 - timeout for opening connection and sending messages
- * @property {Number} connectionTimeout=0 - special timeout for opening connection (defaults to `timeout`)
+ * @property {Number} connectionTimeout=0 - special timeout for opening connection, by default equals to `timeout`
  *
  * @defaults
  * please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)
- * for default values
+ * for default values and function parameters.
  */
 
 module.exports = {
@@ -37,14 +37,14 @@ module.exports = {
   },
 
   /**
-   * Unpacks message received by WebSocket.
+   * Unpacks raw data received by WebSocket.
    * Returned value should be object with {requestId, data} fields.
    *
-   * @param {String|ArrayBuffer|Blob} message
+   * @param {String|ArrayBuffer|Blob} rawData
    * @returns {Object<{requestId, data}>}
    */
-  unpackResponse: message => {
-    const data = JSON.parse(message);
+  unpackResponse: rawData => {
+    const data = JSON.parse(rawData);
     return {requestId: data.requestId, data};
   },
 

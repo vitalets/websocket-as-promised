@@ -243,16 +243,16 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 ## Options : <code>Object</code>
 **Kind**: global typedef  
 **Defaults**: please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)
-for default values  
+for default values and function parameters.  
 **Properties**
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | createWebSocket | <code>function</code> |  | custom WebSocket creation function |
-| packRequest | <code>function</code> |  | custom packing request function |
-| unpackResponse | <code>function</code> |  | custom unpacking response function |
+| packRequest | <code>function</code> |  | custom packing request function, by default packs as JSON |
+| unpackResponse | <code>function</code> |  | custom unpacking response function, by default unpacks as JSON |
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages |
-| connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection (defaults to `timeout`) |
+| connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout` |
 
 
 ## License
