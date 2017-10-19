@@ -13,7 +13,7 @@ module.exports = {
     path: path.resolve(outDir),
     filename: outFile,
     libraryTarget: 'umd',
-    library: 'fs',
+    library: 'WebSocketAsPromised',
   },
   devtool: 'source-map',
   module: {
