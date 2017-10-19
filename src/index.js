@@ -91,12 +91,12 @@ class WebSocketAsPromised {
   /**
    * Event channel triggered every time when message from server arrives.
    * Listener accepts two arguments:
-   * 1. `jsonData` if JSON parse succeeded
-   * 2. original `event.data`
+   * 1. `rawData` from `event.data`
+   * 2. `unpackedData` if unpack succeeded
    *
    * @see https://vitalets.github.io/chnl/#channel
    * @example
-   * wsp.onMessage.addListener((data, jsonData) => console.log(data, jsonData));
+   * wsp.onMessage.addListener((rawData, unpackedData) => console.log(unpackedData));
    *
    * @returns {Channel}
    */
@@ -150,19 +150,19 @@ class WebSocketAsPromised {
     const requestId = options.requestId || generateId(options.requestIdPrefix);
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
     return this._requests.create(requestId, () => {
-      const message = this._options.packRequest(requestId, data);
-      this.send(message);
+      const rawData = this._options.packRequest(requestId, data);
+      this.send(rawData);
     }, timeout);
   }
 
   /**
    * Sends any data by WebSocket.
    *
-   * @param {String|ArrayBuffer|Blob} data
+   * @param {String|ArrayBuffer|Blob} rawData
    */
-  send(data) {
+  send(rawData) {
     if (this.isOpened) {
-      this._ws.send(data);
+      this._ws.send(rawData);
     } else {
       throw new Error('Can not send data because WebSocket is not opened.');
     }
@@ -199,14 +199,14 @@ class WebSocketAsPromised {
   }
 
   _handleMessage(event) {
-    const message = event.data;
+    const rawData = event.data;
     let requestId, data;
     try {
-      ({requestId, data} = this._options.unpackResponse(message));
+      ({requestId, data} = this._options.unpackResponse(rawData));
     } catch(e) {
       // do nothing if can not unpack message
     }
-    this._onMessage.dispatchAsync(message, data);
+    this._onMessage.dispatchAsync(rawData, data);
     this._requests.resolve(requestId, data);
   }
 

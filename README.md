@@ -56,8 +56,8 @@ Matching between request and response is performed by unique identifier `request
 in both incoming and outcoming message. By default, `requestId` is auto-generated and attached to data
 assuming you are sending JSON:
 ```js
-wsp.request({foo: 'bar'})                  // actually sends {requestId: '12345', foo: 'bar'}
- .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: '12345', status: 'ok'}
+wsp.request({foo: 'bar'})                  // actually sends {foo: 'bar', requestId: 'xxx'}
+ .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: 'xxx', status: 'ok'}
 
 ```
 You can set `requestId` manually:
@@ -72,21 +72,21 @@ const wsp = new WebSocketAsPromised(url, {
     data.id = requestId;               // attach requestId as 'id'       
     return JSON.stringify(data);
   },
-  unpackResponse: message => {
-    const data = JSON.parse(message);
+  unpackResponse: rawData => {
+    const data = JSON.parse(rawData);
     return {requestId: data.id, data}; // read requestId from 'id' prop
   }
 });
 
 wsp.open()
-  .then(() => wsp.request({foo: 'bar'}, {requestId: 1}));
+  .then(() => wsp.request({foo: 'bar'}));
 ```
 Or send requests in **binary format**:
 ```js
 const wsp = new WebSocketAsPromised(url, {
   packRequest: (requestId, data) => new Uint8Array([requestId, data]),
-  unpackResponse: message => {
-    const arr = new Uint8Array(message);
+  unpackResponse: rawData => {
+    const arr = new Uint8Array(rawData);
     return {requestId: arr[0], data: arr[1]};
   }
 });
@@ -133,7 +133,7 @@ wsp.send(JSON.stringify({foo: 'bar'})); // does not return promise
     * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
     * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise.&lt;Event&gt;</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
-    * [.send(data)](#WebSocketAsPromised+send)
+    * [.send(rawData)](#WebSocketAsPromised+send)
     * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
 
 <a name="new_WebSocketAsPromised_new"></a>
@@ -183,14 +183,14 @@ Is WebSocket connection closed.
 ### wsp.onMessage ⇒ <code>Channel</code>
 Event channel triggered every time when message from server arrives.
 Listener accepts two arguments:
-1. `jsonData` if JSON parse succeeded
-2. original `event.data`
+1. `rawData` from `event.data`
+2. `unpackedData` if unpack succeeded
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  
 **Example**  
 ```js
-wsp.onMessage.addListener((data, jsonData) => console.log(data, jsonData));
+wsp.onMessage.addListener((rawData, unpackedData) => console.log(unpackedData));
 ```
 <a name="WebSocketAsPromised+onClose"></a>
 
@@ -223,14 +223,14 @@ Performs request and waits for response.
 
 <a name="WebSocketAsPromised+send"></a>
 
-### wsp.send(data)
+### wsp.send(rawData)
 Sends any data by WebSocket.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
 | Param | Type |
 | --- | --- |
-| data | <code>String</code> \| <code>ArrayBuffer</code> \| <code>Blob</code> | 
+| rawData | <code>String</code> \| <code>ArrayBuffer</code> \| <code>Blob</code> | 
 
 <a name="WebSocketAsPromised+close"></a>
 

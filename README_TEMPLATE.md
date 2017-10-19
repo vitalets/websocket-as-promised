@@ -56,8 +56,8 @@ Matching between request and response is performed by unique identifier `request
 in both incoming and outcoming message. By default, `requestId` is auto-generated and attached to data
 assuming you are sending JSON:
 ```js
-wsp.request({foo: 'bar'})                  // actually sends {requestId: '12345', foo: 'bar'}
- .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: '12345', status: 'ok'}
+wsp.request({foo: 'bar'})                  // actually sends {foo: 'bar', requestId: 'xxx'}
+ .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: 'xxx', status: 'ok'}
 
 ```
 You can set `requestId` manually:
@@ -72,21 +72,21 @@ const wsp = new WebSocketAsPromised(url, {
     data.id = requestId;               // attach requestId as 'id'       
     return JSON.stringify(data);
   },
-  unpackResponse: message => {
-    const data = JSON.parse(message);
+  unpackResponse: rawData => {
+    const data = JSON.parse(rawData);
     return {requestId: data.id, data}; // read requestId from 'id' prop
   }
 });
 
 wsp.open()
-  .then(() => wsp.request({foo: 'bar'}, {requestId: 1}));
+  .then(() => wsp.request({foo: 'bar'}));
 ```
 Or send requests in **binary format**:
 ```js
 const wsp = new WebSocketAsPromised(url, {
   packRequest: (requestId, data) => new Uint8Array([requestId, data]),
-  unpackResponse: message => {
-    const arr = new Uint8Array(message);
+  unpackResponse: rawData => {
+    const arr = new Uint8Array(rawData);
     return {requestId: arr[0], data: arr[1]};
   }
 });
