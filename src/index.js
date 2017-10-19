@@ -117,7 +117,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Opens WebSocket connection.
+   * Opens WebSocket connection. If connection already opened, promise will be resolved with "open event".
    *
    * @returns {Promise<Event>}
    */
@@ -169,7 +169,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Closes WebSocket connection.
+   * Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
    *
    * @returns {Promise<Event>}
    */

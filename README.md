@@ -203,7 +203,7 @@ Listener accepts single argument `{code, reason}`.
 <a name="WebSocketAsPromised+open"></a>
 
 ### wsp.open() ⇒ <code>Promise.&lt;Event&gt;</code>
-Opens WebSocket connection.
+Opens WebSocket connection. If connection already opened, promise will be resolved with "open event".
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+request"></a>
@@ -235,7 +235,7 @@ Sends any data by WebSocket.
 <a name="WebSocketAsPromised+close"></a>
 
 ### wsp.close() ⇒ <code>Promise.&lt;Event&gt;</code>
-Closes WebSocket connection.
+Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="Options"></a>
