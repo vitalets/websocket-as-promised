@@ -133,6 +133,7 @@ wsp.send({foo: 'bar'}); // does not return promise
     * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise.&lt;Event&gt;</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
     * [.send(data)](#WebSocketAsPromised+send)
+    * [.sendRaw(data)](#WebSocketAsPromised+sendRaw)
     * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
 
 <a name="new_WebSocketAsPromised_new"></a>
@@ -220,7 +221,18 @@ Performs request and waits for response.
 <a name="WebSocketAsPromised+send"></a>
 
 ### wsp.send(data)
-Sends any data by WebSocket and does not expect response.
+Sends any data by WebSocket and does not expect response. Data is packed with `options.packMessage`.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+
+| Param | Type |
+| --- | --- |
+| data | <code>\*</code> | 
+
+<a name="WebSocketAsPromised+sendRaw"></a>
+
+### wsp.sendRaw(data)
+Sends raw data by WebSocket without applying `options.packMessage`.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
