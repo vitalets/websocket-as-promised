@@ -261,7 +261,7 @@ Packs data with `options.packMessage` and sends to the server.
 <a name="WebSocketAsPromised+send"></a>
 
 ### wsp.send(data)
-Sends data as is without packing.
+Sends data without packing.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
@@ -285,10 +285,10 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | createWebSocket | <code>function</code> |  | function with `url` param, used for custom WebSocket creation. By default uses global `WebSocket` constructor. |
-| packMessage | <code>function</code> | <code></code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
-| unpackMessage | <code>function</code> | <code></code> | unpacks received message. For example, `message => JSON.parse(message)`. |
-| attachRequestId | <code>function</code> | <code></code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
-| extractRequestId | <code>function</code> | <code></code> | extracts request id from received data. For example, `data => data.requestId`. |
+| packMessage | <code>function</code> | <code>false</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
+| unpackMessage | <code>function</code> | <code>false</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
+| attachRequestId | <code>function</code> | <code>false</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
+| extractRequestId | <code>function</code> | <code>false</code> | extracts request id from received data. For example, `data => data.requestId`. |
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
 | connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
 

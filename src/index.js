@@ -192,7 +192,7 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Sends data as is without packing.
+   * Sends data without packing.
    *
    * @param {*} data
    */
