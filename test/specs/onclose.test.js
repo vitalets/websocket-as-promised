@@ -17,7 +17,7 @@ describe('onClose', function () {
     const wsp = createWSP(this.url);
     const res = new Promise(resolve => {
       wsp.onClose.addListener(resolve);
-      wsp.open().then(() => wsp.request({close: true, code: 1009})).catch(noop);
+      wsp.open().then(() => wsp.send(JSON.stringify({close: true, code: 1009}))).catch(noop);
     });
     return assert.eventually.propertyVal(res, 'code', 1009);
   });

@@ -1,6 +1,13 @@
 const server = require('../server');
 const {createWSP} = require('../helper');
 
+const wspOptionsJson = {
+  packMessage: data => JSON.stringify(data),
+  unpackMessage: message => JSON.parse(message),
+  injectRequestId: (data, requestId) => Object.assign({requestId}, data),
+  extractRequestId: data => data && data.requestId,
+};
+
 before(function (done) {
   server.start(url => {
     this.url = url;
@@ -14,6 +21,7 @@ after(function (done) {
 
 beforeEach(function () {
   this.wsp = createWSP(this.url);
+  this.wspOptionsJson = wspOptionsJson;
 });
 
 afterEach(function () {

@@ -25,13 +25,13 @@ describe('open', function () {
   it('should reject if server rejects connection', function () {
     const wsp = createWSP(this.url + '?reject=1');
     const p = wsp.open();
-    return assert.isRejected(p, 'WebSocket connection closed with reason: connection failed (1006)');
+    return assert.isRejected(p, 'WebSocket closed with reason: connection failed (1006).');
   });
 
   it('should reject after timeout and close connection', function () {
     const wsp = createWSP(this.url + '?delay=20', {timeout: 10});
     const p1 = wsp.open();
-    return assert.isRejected(p1, 'Can\'t open WebSocket connection within allowed timeout: 10 ms')
+    return assert.isRejected(p1, 'Can\'t open WebSocket within allowed timeout: 10 ms.')
       .then(() => assert.ok(wsp.isClosed));
   });
 
@@ -46,7 +46,7 @@ describe('open', function () {
     it('should reject after connectionTimeout and close connection', function () {
       const wsp = createWSP(this.url + '?delay=20', {connectionTimeout: 10, timeout: 30});
       const p1 = wsp.open();
-      return assert.isRejected(p1, 'Can\'t open WebSocket connection within allowed timeout: 10 ms')
+      return assert.isRejected(p1, 'Can\'t open WebSocket within allowed timeout: 10 ms.')
         .then(() => assert.ok(wsp.isClosed));
     });
   });

@@ -45,41 +45,45 @@ describe('close', function () {
   });
 
   it('should reject all pending requests', function () {
+    const wsp = createWSP(this.url, this.wspOptionsJson);
     const a = [];
-    const res = this.wsp.open()
+    const res = wsp.open()
       .then(() => {
-         this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
-         this.wsp.request({noResponse: true}).catch(e => a.push(e.message));
+         wsp.sendRequest({noResponse: true}).catch(e => a.push(e.message));
+         wsp.sendRequest({noResponse: true}).catch(e => a.push(e.message));
       })
       // need this tiny delay, as otherwise server hangs on getting 2 requests and closing simultaneously
       .then(() => wait(10))
-      .then(() => this.wsp.close())
+      .then(() => wsp.close())
       // need this tiny delay to reject all responses
       .then(() => wait(10))
       .then(() => a);
     return assert.isFulfilled(res).then(() => {
       assert.deepEqual(a, [
-        'WebSocket connection closed with reason: Normal connection closure (1000)',
-        'WebSocket connection closed with reason: Normal connection closure (1000)',
+        'WebSocket closed with reason: Normal connection closure (1000).',
+        'WebSocket closed with reason: Normal connection closure (1000).',
       ]);
+    });
+  });
+
+  describe('by server', function () {
+    it('should reject request', function () {
+      const wsp = createWSP(this.url, this.wspOptionsJson);
+      const res = wsp.open()
+        .then(() => wsp.sendRequest({
+          close: true,
+          code: 1009,
+          reason: 'Message is too big'
+        }));
+      return assert.isRejected(res, 'WebSocket closed with reason: Message is too big (1009).');
+    });
+
+    it('should reject for drop', function () {
+      const wsp = createWSP(this.url, this.wspOptionsJson);
+      const res = wsp.open()
+        .then(() => wsp.sendRequest({drop: true}));
+      return assert.isRejected(res, /WebSocket closed/);
     });
   });
 });
 
-describe('close by server', function () {
-  it('should reject for close', function () {
-    const res = this.wsp.open()
-      .then(() => this.wsp.request({
-        close: true,
-        code: 1009,
-        reason: 'Message is too big'
-      }));
-    return assert.isRejected(res, 'WebSocket connection closed with reason: Message is too big (1009)');
-  });
-
-  it('should reject for drop', function () {
-    const res = this.wsp.open()
-      .then(() => this.wsp.request({drop: true}));
-    return assert.isRejected(res, /WebSocket connection closed/);
-  });
-});

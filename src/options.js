@@ -7,15 +7,15 @@
  * @property {Function} createWebSocket - function with `url` param, used for custom WebSocket creation.
  * By default uses global `WebSocket` constructor.
  *
- * @property {Function} packMessage - function with `(data, requestId)` params.
- * Packs message for sending. If `requestId` param exists - data is send from
- * `.request()` method and you should pack `requestId` into message.
- * By default puts request id into `requestId` field and packs with `JSON.stringify()`.
+ * @property {Function} [packMessage=null] - packs message for sending. For example `data => JSON.stringify(data)`.
  *
- * @property {Function} unpackMessage - function with `message` param. Tries to unpack message received by WebSocket.
- * If returned value is object
- * like `{requestId, data}` - message considered to be response on request with corresponding `requestId`.
- * By default unpacks with `JSON.parse()` and looks for request id in `requestId` field.
+ * @property {Function} [unpackMessage=null] - unpacks received message. For example `message => JSON.parse(message)`.
+ *
+ * @property {Function} [injectRequestId=null] - injects request id into data.
+ * For example `(data, requestId) => Object.assign({requestId}, data)`.
+ *
+ * @property {Function} [extractRequestId=null] - extracts request id from received data.
+ * For example `data => data.requestId`.
  *
  * @property {Number} timeout=0 - timeout for opening connection and sending messages.
  *
@@ -27,7 +27,7 @@
 
 module.exports = {
   /**
-   * See [@link Options.createWebSocket]
+   * See {@link Options.createWebSocket}
    *
    * @param {String} url
    * @returns {WebSocket}
@@ -35,37 +35,45 @@ module.exports = {
   createWebSocket: url => new WebSocket(url),
 
   /**
-   * See [@link Options.packMessage]
+   * See {@link Options.packMessage}
    *
    * @param {*} data
-   * @param {String} [requestId]
    * @returns {String|ArrayBuffer|Blob}
    */
-  packMessage: (data, requestId) => {
-    if (requestId) {
-      data.requestId = requestId;
-    }
-    return JSON.stringify(data);
-  },
+  packMessage: null,
 
   /**
-   * See [@link Options.unpackMessage]
+   * See {@link Options.unpackMessage}
    *
    * @param {String|ArrayBuffer|Blob} message
-   * @returns {Object<{requestId, data}>|*}
+   * @returns {*}
    */
-  unpackMessage: message => {
-    const data = JSON.parse(message);
-    return data.requestId ? {requestId: data.requestId, data} : data;
-  },
+  unpackMessage: null,
 
   /**
-   * See typedef.
+   * See {@link Options.injectRequestId}
+   *
+   * @param {*} data
+   * @param {String|Number} requestId
+   * @returns {*}
+   */
+  injectRequestId: null,
+
+  /**
+   * See {@link Options.extractRequestId}
+   *
+   * @param {*} data
+   * @returns {String|Number|undefined}
+   */
+  extractRequestId: null,
+
+  /**
+   * See {@link Options.timeout}
    */
   timeout: 0,
 
   /**
-   * See [@link Options.timeout]
+   * See {@link Options.connectionTimeout}
    */
   connectionTimeout: 0,
 };

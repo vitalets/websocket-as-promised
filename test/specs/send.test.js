@@ -1,19 +1,34 @@
 
 describe('send', function () {
-  it('should send json and does not return promise', function () {
-    let result, response;
-    this.wsp.onMessage.addListener(data => response = data);
+  it('should not return promise', function () {
     const p = this.wsp.open()
-      .then(() => result = this.wsp.send({foo: 'bar'}))
-      .then(() => wait(100));
-    return assert.isFulfilled(p)
-      .then(() => {
-        assert.equal(result, undefined);
-        assert.deepEqual(response, {foo: 'bar'});
-      });
+      .then(() => this.wsp.send('foo'))
+      .then(r => assert.equal(r, undefined));
+    return assert.isFulfilled(p);
   });
 
   it('should throw if sending without open', function () {
-    return assert.throws(() => this.wsp.send({foo: 'bar'}), 'Can not send data because WebSocket is not opened.');
+    const fn = () => this.wsp.send('foo');
+    return assert.throws(fn, `Can't send data because WebSocket is not opened.`);
+  });
+
+  it('should send string', function () {
+    let response;
+    this.wsp.onMessage.addListener(message => response = message);
+    const p = this.wsp.open()
+      .then(() => this.wsp.send('foo'))
+      .then(() => wait(100));
+    return assert.isFulfilled(p)
+      .then(() => assert.equal(response, 'foo'));
+  });
+
+  it('should send ArrayBuffer', function () {
+    let response;
+    this.wsp.onMessage.addListener(message => response = message);
+    const p = this.wsp.open()
+      .then(() => this.wsp.send((new Uint8Array([1,2,3])).buffer))
+      .then(() => wait(100));
+    return assert.isFulfilled(p)
+      .then(() => assert.equal(String(new Uint8Array(response)), '1,2,3'));
   });
 });

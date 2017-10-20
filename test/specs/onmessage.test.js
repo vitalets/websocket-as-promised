@@ -6,7 +6,7 @@
 //     const wsp = new WebSocketAsPromised(this.url, {createWebSocket});
 //     const res = new Promise(resolve => {
 //       wsp.onMessage.addListener((jsonData, data) => resolve({jsonData, data}));
-//       wsp.open().then(() => wsp.request({foo: 'bar'}));
+//       wsp.open().then(() => wsp.sendRequest({foo: 'bar'}));
 //     });
 //     return assert.isFulfilled(res).then(r => {
 //       assert.include(r.data, '"foo":"bar"');
@@ -18,7 +18,7 @@
 //     const wsp = new WebSocketAsPromised(this.url, {createWebSocket});
 //     const res = new Promise(resolve => {
 //       wsp.onMessage.addListener((jsonData, data) => resolve({jsonData, data}));
-//       wsp.open().then(() => wsp.request({nonJSONResponse: true})).catch(() => {});
+//       wsp.open().then(() => wsp.sendRequest({nonJSONResponse: true})).catch(() => {});
 //     });
 //     return assert.isFulfilled(res).then(r => {
 //       assert.include(r.data, 'non JSON response');
@@ -31,7 +31,7 @@
 //     const wsp = new WebSocketAsPromised(this.url, {createWebSocket});
 //     const res = new Promise(resolve => {
 //       wsp.onMessage.addListener(resolve);
-//       wsp.open().then(() => wsp.request({nonJSONResponse: true})).catch(() => {});
+//       wsp.open().then(() => wsp.sendRequest({nonJSONResponse: true})).catch(() => {});
 //     });
 //     return assert.eventually.propertyVal(res, 'foo', 'bar');
 //   });

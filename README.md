@@ -256,7 +256,7 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | createWebSocket | <code>function</code> |  | function with `url` param, used for custom WebSocket creation. By default uses global `WebSocket` constructor. |
-| packMessage | <code>function</code> |  | function with `(data, requestId)` params. Packs message for sending. If `requestId` param exists - data is send from `.request()` method and you should pack `requestId` into message. By default puts request id into `requestId` field and packs with `JSON.stringify()`. |
+| packMessage | <code>function</code> | <code>data =&gt; {}</code> | Packs message for sending. For example: `data => JSON.stringify(data)`. |
 | unpackMessage | <code>function</code> |  | function with `message` param. Tries to unpack message received by WebSocket. If returned value is object like `{requestId, data}` - message considered to be response on request with corresponding `requestId`. By default unpacks with `JSON.parse()` and looks for request id in `requestId` field. |
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
 | connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
