@@ -19,11 +19,11 @@ describe('sendRequest', function () {
     return assert.isRejected(p, `Can't send data because WebSocket is not opened.`);
   });
 
-  it('should throw if injectRequestId is not defined', function () {
-    const wsp = createWSP(this.url, Object.assign({}, this.wspOptionsJson, {injectRequestId: null}));
+  it('should throw if attachRequestId is not defined', function () {
+    const wsp = createWSP(this.url, Object.assign({}, this.wspOptionsJson, {attachRequestId: null}));
     const p = wsp.open().then(() => wsp.sendRequest({foo: 'bar'}));
     return assert.isRejected(p,
-      `Please define 'options.injectRequestId / options.extractRequestId' for sending requests.`
+      `Please define 'options.attachRequestId / options.extractRequestId' for sending requests.`
     );
   });
 
@@ -31,7 +31,7 @@ describe('sendRequest', function () {
     const wsp = createWSP(this.url, Object.assign({}, this.wspOptionsJson, {extractRequestId: null}));
     const p = wsp.open().then(() => wsp.sendRequest({foo: 'bar'}));
     return assert.isRejected(p,
-      `Please define 'options.injectRequestId / options.extractRequestId' for sending requests.`
+      `Please define 'options.attachRequestId / options.extractRequestId' for sending requests.`
     );
   });
 
@@ -39,7 +39,7 @@ describe('sendRequest', function () {
     const wsp = createWSP(this.url, {
       packMessage: data => (new Uint8Array(data)).buffer,
       unpackMessage: message => new Uint8Array(message),
-      injectRequestId: (data, requestId) => [requestId].concat(data), // requestId in the first position
+      attachRequestId: (data, requestId) => [requestId].concat(data), // requestId in the first position
       extractRequestId: data => data[0],
     });
     const p = wsp.open().then(() => wsp.sendRequest([42], {requestId: 1}));

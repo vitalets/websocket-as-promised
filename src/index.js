@@ -38,7 +38,7 @@ class WebSocketAsPromised {
     this._closing = new ControlledPromise();
     this._requests = new Requests();
     this._onMessage = new Channel();
-    this._onUnpackedMessage = new Channel();
+    this._onPackedMessage = new Channel();
     this._onResponse = new Channel();
     this._onClose = new Channel();
     this._ws = null;
@@ -104,16 +104,16 @@ class WebSocketAsPromised {
   }
 
   /**
-   * Event channel triggered every time when received message is unpacked.
+   * Event channel triggered every time when received message is successfully unpacked.
    *
    * @see https://vitalets.github.io/chnl/#channel
    * @example
-   * wsp.onUnpackedMessage.addListener(data => console.log(data));
+   * wsp.onPackedMessage.addListener(data => console.log(data));
    *
    * @returns {Channel}
    */
-  get onUnpackedMessage() {
-    return this._onUnpackedMessage;
+  get onPackedMessage() {
+    return this._onPackedMessage;
   }
 
   /**
@@ -175,7 +175,7 @@ class WebSocketAsPromised {
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
     return this._requests.create(requestId, () => {
       this._assertRequestIdHandlers();
-      const finalData = this._options.injectRequestId(data, requestId);
+      const finalData = this._options.attachRequestId(data, requestId);
       this.sendPacked(finalData);
     }, timeout);
   }
@@ -243,8 +243,10 @@ class WebSocketAsPromised {
   _handleUnpackedMessage(message) {
     if (this._options.unpackMessage) {
       const data = this._options.unpackMessage(message);
-      this._onUnpackedMessage.dispatchAsync(data);
-      this._handleResponse(data);
+      if (data !== undefined) {
+        this._onPackedMessage.dispatchAsync(data);
+        this._handleResponse(data);
+      }
     }
   }
 
@@ -292,8 +294,8 @@ class WebSocketAsPromised {
   }
 
   _assertRequestIdHandlers() {
-    if (!this._options.injectRequestId || !this._options.extractRequestId) {
-      throw new Error(`Please define 'options.injectRequestId / options.extractRequestId' for sending requests.`);
+    if (!this._options.attachRequestId || !this._options.extractRequestId) {
+      throw new Error(`Please define 'options.attachRequestId / options.extractRequestId' for sending requests.`);
     }
   }
 }

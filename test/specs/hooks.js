@@ -4,7 +4,7 @@ const {createWSP} = require('../helper');
 const wspOptionsJson = {
   packMessage: data => JSON.stringify(data),
   unpackMessage: message => JSON.parse(message),
-  injectRequestId: (data, requestId) => Object.assign({requestId}, data),
+  attachRequestId: (data, requestId) => Object.assign({requestId}, data),
   extractRequestId: data => data && data.requestId,
 };
 

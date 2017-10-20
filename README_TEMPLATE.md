@@ -8,6 +8,16 @@
 
 A [WebSocket] client library that allows to use [Promises] for connecting, disconnecting and messaging with server.
 
+## Contents
+- [Installation](#installation)
+- [Usage in browser](#usage-in-browser)
+- [Usage in Node.js](#usage-in-nodejs)
+- [Sending JSON](#sending-json)
+- [Sending binary](#sending-binary)
+- [Sending requests](#sending-requests)
+- [API](#api)
+- [License](#license)
+
 ## Installation
 ```bash
 npm install websocket-as-promised --save
@@ -17,87 +27,83 @@ npm install websocket-as-promised --save
 ```js
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised('ws://echo.websocket.org');
+const wsp = new WebSocketAsPromised(wsUrl);
 
-console.log('connecting...');
 wsp.open()
-  .then(() => console.log('connected'))
-  .then(() => wsp.request({foo: 'bar'}))
-  .then(response => console.log('response message received', response))
+  .then(() => wsp.send('foo'))
   .then(() => wsp.close())
-  .then(() => console.log('disconnected'));
-
+  .catch(e => console.error(e));
 ```
 
 ## Usage in Node.js
-As there is no built-in WebSocket client in Node.js, you should use a third-party module.
-For example [websocket](https://www.npmjs.com/package/websocket) package:
+As there is no built-in WebSocket client in Node.js, you should use a third-party module
+(for example [websocket](https://www.npmjs.com/package/websocket)):
 ```js
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const options = {
-  createWebSocket: url => new W3CWebSocket(url) // custom WebSocket constructor
-};
-const wsp = new WebSocketAsPromised('ws://echo.websocket.org', options);
+const wsp = new WebSocketAsPromised(wsUrl, {
+  createWebSocket: url => new W3CWebSocket(url)
+});
 
-console.log('connecting...');
 wsp.open()
-  .then(() => console.log('connected'))
-  .then(() => wsp.request({foo: 'bar'}))
-  .then(response => console.log('response message received', response))
+  .then(() => wsp.send('foo'))
   .then(() => wsp.close())
-  .then(() => console.log('disconnected'));
-
+  .catch(e => console.error(e));
 ```
 
-## Messaging
-The `.request()` method is used to send WebSocket message to the server and wait for the response.
-Matching between request and response is performed by **unique request identifier** that should present
-in both sent and received messages. By default, `requestId` is auto-generated and attached to JSON data:
+## Sending JSON
+To send JSON you should set `options.packMessage / options.unpackMessage` and use `.sendPacked()` method:
 ```js
-wsp.request({foo: 'bar'})                  // actually sends {foo: 'bar', requestId: 'xxx'}
- .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: 'xxx', ...}
-
-```
-You can set `requestId` manually:
-```js
-wsp.request({foo: 'bar'}, {requestId: '123'});
-```
-If you need **full control over messaging** you can use `packMessage` / `unpackMessage` options. 
-For example, you can use `id` instead of `requestId`:
-```js
-const wsp = new WebSocketAsPromised(url, {
-  packMessage: (data, requestId) => {
-    const message = requestId ? Object.assign({id: requestId}, data) : data; // attach request id as 'id'
-    return JSON.stringify(message);
-  },
-  unpackMessage: message => {
-    const data = JSON.parse(message);
-    return data.id ? {requestId: data.id, data} : data; // try read request id from 'id' prop of received message
-  }
+const wsp = new WebSocketAsPromised(wsUrl, {
+  packMessage: data => JSON.strinigfy(data),
+  unpackMessage: message => JSON.parse(message)
 });
 
 wsp.open()
-  .then(() => wsp.request({foo: 'bar'}));
+  .then(() => wsp.sendPacked({foo: 'bar'}))
+  .then(() => wsp.close())
+  .catch(e => console.error(e));
 ```
-Also you can send requests in **binary format**:
+You can also subscribe to unpacked data:
 ```js
-const wsp = new WebSocketAsPromised(url, {
-  packMessage: (data, requestId) => new Uint8Array([requestId, data]),
-  unpackMessage: message => {
-    const arr = new Uint8Array(message);
-    return {requestId: arr[0], data: arr[1]};
-  }
+wsp.onPackedMessage.addListener(data => console.log(data));
+```
+
+## Sending binary
+Example of sending `Uint8Array`:
+```js
+const wsp = new WebSocketAsPromised(wsUrl, {
+    packMessage: data => (new Uint8Array(data)).buffer,
+    unpackMessage: message => new Uint8Array(message),
 });
 
 wsp.open()
-  .then(() => wsp.request(42));
+  .then(() => wsp.sendPacked([1, 2, 3]))
+  .then(() => wsp.close())
+  .catch(e => console.error(e));
 ```
 
-If you want **just send data** and do not expect any response - use `.send()` method:
+## Sending requests
+Request assumes sending WebSocket message and waiting for server response. Method `.sendRequest()` returns promise
+that resolves when response comes. Match between request and response is performed 
+by **unique request identifier** that should present in both sent and received messages. 
+There are two functions `options.attachRequestId / options.extractRequestId` for manipulating `requestId`.
 ```js
-wsp.send({foo: 'bar'}); // does not return promise
+const wsp = new WebSocketAsPromised(wsUrl, {
+  packMessage: data => JSON.strinigfy(data),
+  unpackMessage: message => JSON.parse(message),
+  attachRequestId: (data, requestId) => Object.assign({id: requestId}, data), // attach request id as `id` field
+  extractRequestId: data => data && data.id,                                  // read request id from `id` field  
+});
+
+wsp.open()
+ .then(() => wsp.sendRequest({foo: 'bar'})) // actually sends {foo: 'bar', requestId: 'xxx'}
+ .then(response => console.log(response));  // waits server message with the same requestId: {requestId: 'xxx', ...}
+```
+By default `requestId` value is auto-generated, but you can set it manually:
+```js
+wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 ```
 
 ## API

@@ -7,15 +7,15 @@
  * @property {Function} createWebSocket - function with `url` param, used for custom WebSocket creation.
  * By default uses global `WebSocket` constructor.
  *
- * @property {Function} [packMessage=null] - packs message for sending. For example `data => JSON.stringify(data)`.
+ * @property {Function} [packMessage=null] - packs message for sending. For example, `data => JSON.stringify(data)`.
  *
- * @property {Function} [unpackMessage=null] - unpacks received message. For example `message => JSON.parse(message)`.
+ * @property {Function} [unpackMessage=null] - unpacks received message. For example, `message => JSON.parse(message)`.
  *
- * @property {Function} [injectRequestId=null] - injects request id into data.
- * For example `(data, requestId) => Object.assign({requestId}, data)`.
+ * @property {Function} [attachRequestId=null] - injects request id into data.
+ * For example, `(data, requestId) => Object.assign({requestId}, data)`.
  *
  * @property {Function} [extractRequestId=null] - extracts request id from received data.
- * For example `data => data.requestId`.
+ * For example, `data => data.requestId`.
  *
  * @property {Number} timeout=0 - timeout for opening connection and sending messages.
  *
@@ -51,13 +51,13 @@ module.exports = {
   unpackMessage: null,
 
   /**
-   * See {@link Options.injectRequestId}
+   * See {@link Options.attachRequestId}
    *
    * @param {*} data
    * @param {String|Number} requestId
    * @returns {*}
    */
-  injectRequestId: null,
+  attachRequestId: null,
 
   /**
    * See {@link Options.extractRequestId}

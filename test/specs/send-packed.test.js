@@ -46,7 +46,7 @@ describe('sendPacked', function () {
 
   it('should send JSON (stringify and parse)', function () {
     let response;
-    this.wsp.onUnpackedMessage.addListener(data => response = data);
+    this.wsp.onPackedMessage.addListener(data => response = data);
     const p = this.wsp.open()
       .then(() => this.wsp.sendPacked({foo: 'bar'}))
       .then(() => wait(100));
@@ -60,7 +60,7 @@ describe('sendPacked', function () {
       unpackMessage: message => new Uint8Array(message),
     });
     let response;
-    wsp.onUnpackedMessage.addListener(data => response = data);
+    wsp.onPackedMessage.addListener(data => response = data);
     const p = wsp.open()
       .then(() => wsp.sendPacked([1, 2, 3]))
       .then(() => wait(100));
