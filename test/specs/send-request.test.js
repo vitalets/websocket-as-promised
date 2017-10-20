@@ -63,6 +63,16 @@ describe('sendRequest', function () {
     return assert.isFulfilled(res).then(() => assert.isRejected(p1));
   });
 
+  it('should trigger onResponse with response data', function () {
+    let response;
+    this.wsp.onResponse.addListener(data => response = data);
+    const p = this.wsp.open()
+      .then(() => this.wsp.sendRequest({foo: 'bar'}, {requestId: 1}))
+      .then(() => wait(100));
+    return assert.isFulfilled(p)
+      .then(() => assert.deepEqual(response, {foo: 'bar', requestId: 1}));
+  });
+
   describe('timeout', function () {
     it('should reject after timeout', function () {
       const wsp = createWSP(this.url, Object.assign({timeout: 50}, this.wspOptionsJson));
