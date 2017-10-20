@@ -36,9 +36,10 @@ For example [websocket](https://www.npmjs.com/package/websocket) package:
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised('ws://echo.websocket.org', {
+const options = {
   createWebSocket: url => new W3CWebSocket(url) // custom WebSocket constructor
-});
+};
+const wsp = new WebSocketAsPromised('ws://echo.websocket.org', options);
 
 console.log('connecting...');
 wsp.open()
@@ -52,41 +53,40 @@ wsp.open()
 
 ## Messaging
 The `.request()` method is used to send WebSocket message to the server and wait for the response.
-Matching between request and response is performed by unique identifier `requestId` that should present
-in both incoming and outcoming message. By default, `requestId` is auto-generated and attached to data
-assuming you are sending JSON:
+Matching between request and response is performed by **unique request identifier** that should present
+in both sent and received messages. By default, `requestId` is auto-generated and attached to JSON data:
 ```js
 wsp.request({foo: 'bar'})                  // actually sends {foo: 'bar', requestId: 'xxx'}
- .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: 'xxx', status: 'ok'}
+ .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: 'xxx', ...}
 
 ```
 You can set `requestId` manually:
 ```js
 wsp.request({foo: 'bar'}, {requestId: '123'});
 ```
-If you need full control over messaging you can use `packRequest` / `unpackResponse` options. 
-For example, you can use custom property `id` for unique request identifier:
+If you need **full control over messaging** you can use `packMessage` / `unpackMessage` options. 
+For example, you can use `id` instead of `requestId`:
 ```js
 const wsp = new WebSocketAsPromised(url, {
-  packRequest: (requestId, data) => {
-    data.id = requestId;               // attach requestId as 'id'       
-    return JSON.stringify(data);
+  packMessage: (data, requestId) => {
+    const message = requestId ? Object.assign({id: requestId}, data) : data; // attach request id as 'id'
+    return JSON.stringify(message);
   },
-  unpackResponse: rawData => {
-    const data = JSON.parse(rawData);
-    return {requestId: data.id, data}; // read requestId from 'id' prop
+  unpackMessage: message => {
+    const data = JSON.parse(message);
+    return data.id ? {requestId: data.id, data} : data; // try read request id from 'id' prop of received message
   }
 });
 
 wsp.open()
   .then(() => wsp.request({foo: 'bar'}));
 ```
-Or send requests in **binary format**:
+Also you can send requests in **binary format**:
 ```js
 const wsp = new WebSocketAsPromised(url, {
-  packRequest: (requestId, data) => new Uint8Array([requestId, data]),
-  unpackResponse: rawData => {
-    const arr = new Uint8Array(rawData);
+  packMessage: (data, requestId) => new Uint8Array([requestId, data]),
+  unpackMessage: message => {
+    const arr = new Uint8Array(message);
     return {requestId: arr[0], data: arr[1]};
   }
 });
@@ -95,10 +95,9 @@ wsp.open()
   .then(() => wsp.request(42));
 ```
 
-*Note:*  
-If you want just send data and do not expect any response - use `.send()` method:
+If you want **just send data** and do not expect any response - use `.send()` method:
 ```js
-wsp.send(JSON.stringify({foo: 'bar'})); // does not return promise
+wsp.send({foo: 'bar'}); // does not return promise
 ```
 
 ## API

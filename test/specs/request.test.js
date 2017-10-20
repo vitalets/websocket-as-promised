@@ -11,12 +11,12 @@ describe('request', function () {
   });
 
   it('should send binary data and resolve promise after response', function () {
-    const packRequest = (requestId, data) => new Uint8Array([requestId, data]);
-    const unpackResponse = message => {
+    const packMessage = (data, requestId) => new Uint8Array([requestId, data]);
+    const unpackMessage = message => {
       const arr = new Uint8Array(message);
       return {requestId: arr[0], data: arr[1]};
     };
-    const wsp = createWSP(this.url, {packRequest, unpackResponse});
+    const wsp = createWSP(this.url, {packMessage, unpackMessage});
     const res = wsp.open().then(() => wsp.request(42, {requestId: 1}));
     return assert.eventually.equal(res, 42);
   });
@@ -68,10 +68,10 @@ describe('request', function () {
     });
   });
 
-  describe('packRequest', function () {
+  describe('packMessage', function () {
     it('should pack request', function () {
       const wsp = createWSP(this.url, {
-        packRequest: requestId => {
+        packMessage: (data, requestId) => {
           return JSON.stringify({requestId, x: '123'});
         }
       });
@@ -80,29 +80,15 @@ describe('request', function () {
       return assert.eventually.propertyVal(res, 'x', '123');
     });
 
-    it('should reject in case of error in packRequest', function () {
+    it('should reject in case of error in packMessage', function () {
       const wsp = createWSP(this.url, {
-        packRequest: () => {
+        packMessage: () => {
           throw new Error('err');
         }
       });
       const res = wsp.open()
         .then(() => wsp.request());
       return assert.isRejected(res, 'err');
-    });
-  });
-
-  describe('unpackResponse', function () {
-    it('should catch error in unpackResponse', function () {
-      const wsp = createWSP(this.url, {
-        unpackResponse: () => {
-          throw new Error('err');
-        }
-      });
-      const res = wsp.open()
-        .then(() => wsp.request({}, {timeout: 10}));
-      return assert.isRejected(res)
-        .then(e => assert.match(e.message, /^WebSocket request was rejected by timeout \(10 ms\)/));
     });
   });
 

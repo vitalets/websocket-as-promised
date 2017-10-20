@@ -36,9 +36,10 @@ For example [websocket](https://www.npmjs.com/package/websocket) package:
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised('ws://echo.websocket.org', {
+const options = {
   createWebSocket: url => new W3CWebSocket(url) // custom WebSocket constructor
-});
+};
+const wsp = new WebSocketAsPromised('ws://echo.websocket.org', options);
 
 console.log('connecting...');
 wsp.open()
@@ -52,41 +53,40 @@ wsp.open()
 
 ## Messaging
 The `.request()` method is used to send WebSocket message to the server and wait for the response.
-Matching between request and response is performed by unique identifier `requestId` that should present
-in both incoming and outcoming message. By default, `requestId` is auto-generated and attached to data
-assuming you are sending JSON:
+Matching between request and response is performed by **unique request identifier** that should present
+in both sent and received messages. By default, `requestId` is auto-generated and attached to JSON data:
 ```js
 wsp.request({foo: 'bar'})                  // actually sends {foo: 'bar', requestId: 'xxx'}
- .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: 'xxx', status: 'ok'}
+ .then(response => console.log(response)); // waits response from server with the same requestId: {requestId: 'xxx', ...}
 
 ```
 You can set `requestId` manually:
 ```js
 wsp.request({foo: 'bar'}, {requestId: '123'});
 ```
-If you need full control over messaging you can use `packRequest` / `unpackResponse` options. 
-For example, you can use custom property `id` for unique request identifier:
+If you need **full control over messaging** you can use `packMessage` / `unpackMessage` options. 
+For example, you can use `id` instead of `requestId`:
 ```js
 const wsp = new WebSocketAsPromised(url, {
-  packRequest: (requestId, data) => {
-    data.id = requestId;               // attach requestId as 'id'       
-    return JSON.stringify(data);
+  packMessage: (data, requestId) => {
+    const message = requestId ? Object.assign({id: requestId}, data) : data; // attach request id as 'id'
+    return JSON.stringify(message);
   },
-  unpackResponse: rawData => {
-    const data = JSON.parse(rawData);
-    return {requestId: data.id, data}; // read requestId from 'id' prop
+  unpackMessage: message => {
+    const data = JSON.parse(message);
+    return data.id ? {requestId: data.id, data} : data; // try read request id from 'id' prop of received message
   }
 });
 
 wsp.open()
   .then(() => wsp.request({foo: 'bar'}));
 ```
-Or send requests in **binary format**:
+Also you can send requests in **binary format**:
 ```js
 const wsp = new WebSocketAsPromised(url, {
-  packRequest: (requestId, data) => new Uint8Array([requestId, data]),
-  unpackResponse: rawData => {
-    const arr = new Uint8Array(rawData);
+  packMessage: (data, requestId) => new Uint8Array([requestId, data]),
+  unpackMessage: message => {
+    const arr = new Uint8Array(message);
     return {requestId: arr[0], data: arr[1]};
   }
 });
@@ -95,10 +95,9 @@ wsp.open()
   .then(() => wsp.request(42));
 ```
 
-*Note:*  
-If you want just send data and do not expect any response - use `.send()` method:
+If you want **just send data** and do not expect any response - use `.send()` method:
 ```js
-wsp.send(JSON.stringify({foo: 'bar'})); // does not return promise
+wsp.send({foo: 'bar'}); // does not return promise
 ```
 
 ## API
@@ -133,7 +132,7 @@ wsp.send(JSON.stringify({foo: 'bar'})); // does not return promise
     * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
     * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise.&lt;Event&gt;</code>
     * [.request(data, [options])](#WebSocketAsPromised+request) ⇒ <code>Promise</code>
-    * [.send(rawData)](#WebSocketAsPromised+send)
+    * [.send(data)](#WebSocketAsPromised+send)
     * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
 
 <a name="new_WebSocketAsPromised_new"></a>
@@ -182,15 +181,12 @@ Is WebSocket connection closed.
 
 ### wsp.onMessage ⇒ <code>Channel</code>
 Event channel triggered every time when message from server arrives.
-Listener accepts two arguments:
-1. `rawData` from `event.data`
-2. `unpackedData` if unpack succeeded
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  
 **Example**  
 ```js
-wsp.onMessage.addListener((rawData, unpackedData) => console.log(unpackedData));
+wsp.onMessage.addListener((unpackedData, message) => console.log(unpackedData));
 ```
 <a name="WebSocketAsPromised+onClose"></a>
 
@@ -223,14 +219,14 @@ Performs request and waits for response.
 
 <a name="WebSocketAsPromised+send"></a>
 
-### wsp.send(rawData)
-Sends any data by WebSocket.
+### wsp.send(data)
+Sends any data by WebSocket and does not expect response.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 
 | Param | Type |
 | --- | --- |
-| rawData | <code>String</code> \| <code>ArrayBuffer</code> \| <code>Blob</code> | 
+| data | <code>\*</code> | 
 
 <a name="WebSocketAsPromised+close"></a>
 
@@ -242,17 +238,16 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 
 ## Options : <code>Object</code>
 **Kind**: global typedef  
-**Defaults**: please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)
-for default values and function parameters.  
+**Defaults**: please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)  
 **Properties**
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| createWebSocket | <code>function</code> |  | custom WebSocket creation function |
-| packRequest | <code>function</code> |  | custom packing request function, by default packs as JSON |
-| unpackResponse | <code>function</code> |  | custom unpacking response function, by default unpacks as JSON |
-| timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages |
-| connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout` |
+| createWebSocket | <code>function</code> |  | function with `url` param, used for custom WebSocket creation. By default uses global `WebSocket` constructor. |
+| packMessage | <code>function</code> |  | function with `(data, requestId)` params. Packs message for sending. If `requestId` param exists - data is send from `.request()` method and you should pack `requestId` into message. By default puts request id into `requestId` field and packs with `JSON.stringify()`. |
+| unpackMessage | <code>function</code> |  | function with `message` param. Tries to unpack message received by WebSocket. If returned value is object like `{requestId, data}` - message considered to be response on request with corresponding `requestId`. By default unpacks with `JSON.parse()` and looks for request id in `requestId` field. |
+| timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
+| connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
 
 
 ## License

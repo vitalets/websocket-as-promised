@@ -90,13 +90,10 @@ class WebSocketAsPromised {
 
   /**
    * Event channel triggered every time when message from server arrives.
-   * Listener accepts two arguments:
-   * 1. `rawData` from `event.data`
-   * 2. `unpackedData` if unpack succeeded
    *
    * @see https://vitalets.github.io/chnl/#channel
    * @example
-   * wsp.onMessage.addListener((rawData, unpackedData) => console.log(unpackedData));
+   * wsp.onMessage.addListener((unpackedData, message) => console.log(unpackedData));
    *
    * @returns {Channel}
    */
@@ -150,22 +147,19 @@ class WebSocketAsPromised {
     const requestId = options.requestId || generateId(options.requestIdPrefix);
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
     return this._requests.create(requestId, () => {
-      const rawData = this._options.packRequest(requestId, data);
-      this.send(rawData);
+      const message = this._options.packMessage(data, requestId);
+      this._sendRaw(message);
     }, timeout);
   }
 
   /**
-   * Sends any data by WebSocket.
+   * Sends any data by WebSocket and does not expect response.
    *
-   * @param {String|ArrayBuffer|Blob} rawData
+   * @param {*} data
    */
-  send(rawData) {
-    if (this.isOpened) {
-      this._ws.send(rawData);
-    } else {
-      throw new Error('Can not send data because WebSocket is not opened.');
-    }
+  send(data) {
+    const message = this._options.packMessage(data);
+    this._sendRaw(message);
   }
 
   /**
@@ -199,15 +193,12 @@ class WebSocketAsPromised {
   }
 
   _handleMessage(event) {
-    const rawData = event.data;
-    let requestId, data;
-    try {
-      ({requestId, data} = this._options.unpackResponse(rawData));
-    } catch(e) {
-      // do nothing if can not unpack message
+    const message = event.data;
+    const unpackedData = this._options.unpackMessage(message);
+    this._onMessage.dispatchAsync(unpackedData, message);
+    if (unpackedData && unpackedData.requestId) {
+      this._requests.resolve(unpackedData.requestId, unpackedData.data);
     }
-    this._onMessage.dispatchAsync(rawData, data);
-    this._requests.resolve(requestId, data);
   }
 
   _handleError() {
@@ -222,6 +213,14 @@ class WebSocketAsPromised {
       this._opening.reject(error);
     }
     this._cleanupForClose(error);
+  }
+
+  _sendRaw(message) {
+    if (this.isOpened) {
+      this._ws.send(message);
+    } else {
+      throw new Error('Can not send data because WebSocket is not opened.');
+    }
   }
 
   _cleanupWS() {
