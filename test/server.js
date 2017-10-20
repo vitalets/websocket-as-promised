@@ -32,9 +32,11 @@ exports.start = function (callback) {
   wsServer.on('connect', function (connection) {
     connection.on('message', function (message) {
       if (message.type === 'utf8') {
-        handleUTF8Message(connection, message);
+        handleString(connection, message);
       } else if (message.type === 'binary') {
-        connection.sendBytes(message.binaryData);
+        handleBinary(connection, message);
+      } else {
+        throw new Error(`Unknown message type: ${message.type}`);
       }
     });
   });
@@ -46,8 +48,18 @@ exports.start = function (callback) {
     });
   });
 
-  function handleUTF8Message(connection, message) { // eslint-disable-line complexity
-    const data = JSON.parse(message.utf8Data);
+  function handleString(connection, message) {
+    let data;
+    try {
+      data = JSON.parse(message.utf8Data);
+    } catch(e) {
+      connection.sendUTF(message.utf8Data);
+      return;
+    }
+    handleJSON(connection, data, message);
+  }
+
+  function handleJSON(connection, data, message) { // eslint-disable-line complexity
     if (data.nonJSONResponse) {
       connection.sendUTF('non JSON response');
     } else if (data.noId) {
@@ -66,6 +78,10 @@ exports.start = function (callback) {
     } else {
       connection.sendUTF(message.utf8Data);
     }
+  }
+
+  function handleBinary(connection, message) {
+    connection.sendBytes(message.binaryData);
   }
 };
 

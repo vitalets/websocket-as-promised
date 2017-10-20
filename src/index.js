@@ -147,19 +147,33 @@ class WebSocketAsPromised {
     const requestId = options.requestId || generateId(options.requestIdPrefix);
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
     return this._requests.create(requestId, () => {
+      this._assertPackingFunctions();
       const message = this._options.packMessage(data, requestId);
-      this._sendRaw(message);
+      this.sendRaw(message);
     }, timeout);
   }
 
   /**
-   * Sends any data by WebSocket and does not expect response.
+   * Sends any data by WebSocket and does not expect response. Data is packed with `options.packMessage`.
    *
    * @param {*} data
    */
   send(data) {
-    const message = this._options.packMessage(data);
-    this._sendRaw(message);
+    const message = this._options.packMessage ? this._options.packMessage(data) : data;
+    this.sendRaw(message);
+  }
+
+  /**
+   * Sends raw data by WebSocket without applying `options.packMessage`.
+   *
+   * @param {*} data
+   */
+  sendRaw(data) {
+    if (this.isOpened) {
+      this._ws.send(data);
+    } else {
+      throw new Error('Can not send data because WebSocket is not opened.');
+    }
   }
 
   /**
@@ -194,7 +208,7 @@ class WebSocketAsPromised {
 
   _handleMessage(event) {
     const message = event.data;
-    const unpackedData = this._options.unpackMessage(message);
+    const unpackedData = this._options.unpackMessage ? this._options.unpackMessage(message) : undefined;
     this._onMessage.dispatchAsync(unpackedData, message);
     if (unpackedData && unpackedData.requestId) {
       this._requests.resolve(unpackedData.requestId, unpackedData.data);
@@ -215,14 +229,6 @@ class WebSocketAsPromised {
     this._cleanupForClose(error);
   }
 
-  _sendRaw(message) {
-    if (this.isOpened) {
-      this._ws.send(message);
-    } else {
-      throw new Error('Can not send data because WebSocket is not opened.');
-    }
-  }
-
   _cleanupWS() {
     if (this._wsSubscription) {
       this._wsSubscription.off();
@@ -234,6 +240,12 @@ class WebSocketAsPromised {
   _cleanupForClose(error) {
     this._cleanupWS();
     this._requests.rejectAll(error);
+  }
+
+  _assertPackingFunctions() {
+    if (!this._options.packMessage || !this._options.unpackMessage) {
+      throw new Error(`You should define 'packMessage / unpackMessage' handlers for sending requests`);
+    }
   }
 }
 
