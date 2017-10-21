@@ -66,8 +66,10 @@
   },
   "keywords": [
     "websocket",
+    "websockets",
     "ws",
     "promise",
+    "promise-api",
     "promises"
   ],
   "license": "MIT"
