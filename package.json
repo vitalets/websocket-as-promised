@@ -1,7 +1,7 @@
 {
   "name": "websocket-as-promised",
   "version": "0.5.2",
-  "description": "Promise-based WebSocket client",
+  "description": "Promise-based W3C WebSocket client",
   "author": {
     "name": "Vitaliy Potapov",
     "email": "noginsk@rambler.ru"
