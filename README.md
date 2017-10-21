@@ -299,7 +299,7 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| createWebSocket | <code>function</code> |  | function with `url` param, used for custom WebSocket creation. By default uses global `WebSocket` constructor. |
+| createWebSocket | <code>function</code> | <code>url =&gt; new WebSocket(url)</code> | custom function for WebSocket construction. |
 | packMessage | <code>function</code> | <code>false</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
 | unpackMessage | <code>function</code> | <code>false</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
 | attachRequestId | <code>function</code> | <code>false</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |

@@ -4,9 +4,8 @@
 
 /**
  * @typedef {Object} Options
- * @property {Function} createWebSocket - function with `url` param, used for custom WebSocket creation.
- * By default uses global `WebSocket` constructor.
- *
+ * @property {Function} [createWebSocket=url => new WebSocket(url)] - custom function for WebSocket construction.
+  *
  * @property {Function} [packMessage=false] - packs message for sending. For example, `data => JSON.stringify(data)`.
  *
  * @property {Function} [unpackMessage=false] - unpacks received message. For example, `message => JSON.parse(message)`.
