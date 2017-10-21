@@ -171,7 +171,7 @@ class WebSocketAsPromised {
    * @returns {Promise}
    */
   sendRequest(data, options = {}) {
-    const requestId = options.requestId || Math.random();
+    const requestId = options.requestId || `${Math.random()}`;
     const timeout = options.timeout !== undefined ? options.timeout : this._options.timeout;
     return this._requests.create(requestId, () => {
       this._assertRequestIdHandlers();
