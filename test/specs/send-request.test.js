@@ -65,12 +65,12 @@ describe('sendRequest', function () {
 
   it('should trigger onResponse with response data', function () {
     let response;
-    this.wsp.onResponse.addListener(data => response = data);
+    this.wsp.onResponse.addListener((data, requestId) => response = {data, requestId});
     const p = this.wsp.open()
       .then(() => this.wsp.sendRequest({foo: 'bar'}, {requestId: 1}))
       .then(() => wait(100));
     return assert.isFulfilled(p)
-      .then(() => assert.deepEqual(response, {foo: 'bar', requestId: 1}));
+      .then(() => assert.deepEqual(response, {data: {foo: 'bar', requestId: 1}, requestId: 1}));
   });
 
   describe('timeout', function () {
