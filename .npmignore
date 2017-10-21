@@ -3,4 +3,5 @@
 .editorconfig
 .eslintrc
 
-/dist-runtyper/
+/.runtyper/
+/.installed/

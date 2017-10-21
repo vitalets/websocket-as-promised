@@ -3,14 +3,13 @@ const path = require('path');
 const webpack = require('webpack');
 const packageJson = require('./package');
 
-const isProd = process.env.NODE_ENV === 'production';
-const outDir = process.env.RUNTYPER ? 'dist-runtyper' : 'dist';
+const outDir = process.env.RUNTYPER ? '.runtyper' : 'dist';
 const runtyper = process.env.RUNTYPER ? ['babel-plugin-runtyper', {
   warnLevel: 'break',
   implicitAddStringNumber: 'allow',
 }] : null;
 const babelPlugins = [runtyper].filter(Boolean);
-const outFile = path.basename(packageJson.main).replace('.min.js', isProd ? '.min.js' : '.js');
+const outFile = path.basename(packageJson.main);
 
 module.exports = {
   entry: './src',

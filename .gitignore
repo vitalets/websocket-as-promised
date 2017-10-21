@@ -7,4 +7,5 @@ npm-debug.log
 .idea
 
 /dist/
-/dist-runtyper/
+/.runtyper/
+/.installed/
