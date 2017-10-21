@@ -16,6 +16,7 @@ A [WebSocket] client library that allows to use [Promises] for connecting, disco
 - [Sending binary](#sending-binary)
 - [Sending requests](#sending-requests)
 - [API](#api)
+- [Changelog](#changelog)
 - [License](#license)
 
 ## Installation
@@ -148,7 +149,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 
 ### new WebSocketAsPromised(url, [options])
 Constructor. Unlike original WebSocket it does not immediately open connection.
-Please call `open()` method manually to connect.
+Please call `open()` method to connect.
 
 
 | Param | Type | Description |
@@ -292,6 +293,9 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
 | connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
 
+
+## Changelog
+Please see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)

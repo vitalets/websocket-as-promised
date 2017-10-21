@@ -16,6 +16,7 @@ A [WebSocket] client library that allows to use [Promises] for connecting, disco
 - [Sending binary](#sending-binary)
 - [Sending requests](#sending-requests)
 - [API](#api)
+- [Changelog](#changelog)
 - [License](#license)
 
 ## Installation
@@ -109,6 +110,9 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 ## API
 
 {{>main}}
+
+## Changelog
+Please see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
