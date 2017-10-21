@@ -194,7 +194,7 @@ class WebSocketAsPromised {
   /**
    * Sends data without packing.
    *
-   * @param {*} data
+   * @param {String|Blob|ArrayBuffer} data
    */
   send(data) {
     if (this.isOpened) {

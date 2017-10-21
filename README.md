@@ -282,7 +282,7 @@ Sends data without packing.
 
 | Param | Type |
 | --- | --- |
-| data | <code>\*</code> | 
+| data | <code>String</code> \| <code>Blob</code> \| <code>ArrayBuffer</code> | 
 
 <a name="WebSocketAsPromised+close"></a>
 
