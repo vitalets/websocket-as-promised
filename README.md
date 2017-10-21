@@ -103,18 +103,18 @@ Sending request assumes sending WebSocket message that waits for server response
 Method `.sendRequest()` returns promise that resolves when response comes. 
 Match between request and response is performed by **unique request identifier**
 that should present in both sent and received messages. 
-There are two functions `options.attachRequestId / options.extractRequestId` for manipulating `requestId`.
+For setting/reading `requestId` there are two functions `options.attachRequestId / options.extractRequestId`:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.strinigfy(data),
   unpackMessage: message => JSON.parse(message),
-  attachRequestId: (data, requestId) => Object.assign({id: requestId}, data), // attach request id as `id` field
-  extractRequestId: data => data && data.id,                                  // read request id from `id` field  
+  attachRequestId: (data, requestId) => Object.assign({id: requestId}, data), // attach requestId to message as `id` field
+  extractRequestId: data => data && data.id,                                  // read requestId from message `id` field
 });
 
 wsp.open()
- .then(() => wsp.sendRequest({foo: 'bar'})) // actually sends {foo: 'bar', requestId: 'xxx'}
- .then(response => console.log(response));  // waits server message with the same requestId: {requestId: 'xxx', ...}
+ .then(() => wsp.sendRequest({foo: 'bar'})) // actually sends {foo: 'bar', id: 'xxx'}
+ .then(response => console.log(response));  // waits server message with corresponding requestId: {id: 'xxx', ...}
 ```
 By default `requestId` value is auto-generated, but you can set it manually:
 ```js
