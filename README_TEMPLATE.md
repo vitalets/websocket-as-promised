@@ -9,15 +9,18 @@
 A [WebSocket] client library that allows to use [Promises] for connecting, disconnecting and messaging with server.
 
 ## Contents
-- [Installation](#installation)
-- [Usage in browser](#usage-in-browser)
-- [Usage in Node.js](#usage-in-nodejs)
-- [Sending JSON](#sending-json)
-- [Sending binary](#sending-binary)
-- [Sending requests](#sending-requests)
-- [API](#api)
-- [Changelog](#changelog)
-- [License](#license)
+* [Installation](#installation)
+* [Usage](#usage-in-browser)
+  * [Browser](#usage-in-browser)
+  * [Node.js](#usage-in-nodejs)
+* [Sending data](#sending-raw)
+  * [Raw](#sending-raw)
+  * [JSON](#sending-json)
+  * [Binary](#sending-binary)
+  * [Requests](#sending-requests)
+* [API](#api)
+* [Changelog](#changelog)
+* [License](#license)
 
 ## Installation
 ```bash
@@ -53,8 +56,18 @@ wsp.open()
   .catch(e => console.error(e));
 ```
 
+## Sending raw data
+To send raw data use `.send()` method:
+```js
+wsp.send('foo');
+```
+To handle raw messages from server use `.onMessage` channel:
+```js
+wsp.onMessage.addListener(message => console.log(message));
+```
+
 ## Sending JSON
-To send JSON you should set `options.packMessage / options.unpackMessage` and use `.sendPacked()` method:
+To send JSON you should define `options.packMessage / options.unpackMessage` and use `.sendPacked()` method:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.strinigfy(data),
@@ -66,7 +79,7 @@ wsp.open()
   .then(() => wsp.close())
   .catch(e => console.error(e));
 ```
-You can also subscribe to unpacked data:
+You can also subscribe to receiving packed message:
 ```js
 wsp.onPackedMessage.addListener(data => console.log(data));
 ```
@@ -86,9 +99,10 @@ wsp.open()
 ```
 
 ## Sending requests
-Request assumes sending WebSocket message and waiting for server response. Method `.sendRequest()` returns promise
-that resolves when response comes. Match between request and response is performed 
-by **unique request identifier** that should present in both sent and received messages. 
+Sending request assumes sending WebSocket message that waits for server response. 
+Method `.sendRequest()` returns promise that resolves when response comes. 
+Match between request and response is performed by **unique request identifier**
+that should present in both sent and received messages. 
 There are two functions `options.attachRequestId / options.extractRequestId` for manipulating `requestId`.
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
