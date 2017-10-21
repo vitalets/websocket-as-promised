@@ -1,4 +1,4 @@
-## 0.6.0 (tbd)
+## 0.6.0 (Oct 21, 2017)
 
 * Two handlers for packing messages (`options.packRequest / options.unpackResponse`)
 are replaced with 4 more atomic hadlers:
