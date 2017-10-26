@@ -4,9 +4,9 @@
 [![npm](https://img.shields.io/npm/v/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
 [![license](https://img.shields.io/npm/l/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
 
-> Promise-based W3C WebSocket client
+> Promise-based API for WebSockets
 
-A [WebSocket] client library that allows to use [Promises] for connecting, disconnecting and messaging with server.
+A [WebSocket] client library providing [Promise]-based API for connecting, disconnecting and messaging with server.
 
 ## Contents
 * [Installation](#installation)
@@ -131,5 +131,5 @@ Please see [CHANGELOG.md](CHANGELOG.md).
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
 
-[Promises]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise
+[Promise]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise
 [WebSocket]: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
