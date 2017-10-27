@@ -29,7 +29,7 @@ npm install websocket-as-promised --save
 
 ## Usage in browser
 ```js
-const WebSocketAsPromised = require('websocket-as-promised');
+import WebSocketAsPromised from 'websocket-as-promised';
 
 const wsp = new WebSocketAsPromised(wsUrl);
 
