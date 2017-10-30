@@ -38,6 +38,23 @@ wsp.open()
   .then(() => wsp.close())
   .catch(e => console.error(e));
 ```
+Or with ES7 [async / await](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function):
+```js
+import WebSocketAsPromised from 'websocket-as-promised';
+
+const wsp = new WebSocketAsPromised(wsUrl);
+
+(async () => {
+  try {
+    await wsp.open();
+    wsp.send('foo');
+  } catch(e) {
+    console.error(e);
+  } finally {
+    await wsp.close();
+  }
+})();
+```
 
 ## Usage in Node.js
 As there is no built-in WebSocket client in Node.js, you should use a third-party module
@@ -99,11 +116,10 @@ wsp.open()
 ```
 
 ## Sending requests
-Sending request assumes sending WebSocket message that waits for server response. 
-Method `.sendRequest()` returns promise that resolves when response comes. 
-Match between request and response is performed by **unique request identifier**
-that should present in both sent and received messages. 
-For setting/reading `requestId` there are two functions `options.attachRequestId / options.extractRequestId`:
+*websocket-as-promised* supports simple request-response mechanism. 
+Method `.sendRequest()` sends message with unique `requestId` and returns promise. 
+That promise get resolved when response message with the same `requestId` comes. 
+For setting/reading `requestId` from messages there are two functions `options.attachRequestId / options.extractRequestId`:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.strinigfy(data),
@@ -120,6 +136,8 @@ By default `requestId` value is auto-generated, but you can set it manually:
 ```js
 wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 ```
+
+> Note: you should implement yourself attaching `requestId` on server side.
 
 ## API
 
