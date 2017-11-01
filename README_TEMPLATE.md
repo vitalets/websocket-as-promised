@@ -1,12 +1,14 @@
-# websocket-as-promised
-
-[![Build Status](https://travis-ci.org/vitalets/websocket-as-promised.svg?branch=master)](https://travis-ci.org/vitalets/websocket-as-promised)
-[![npm](https://img.shields.io/npm/v/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
-[![license](https://img.shields.io/npm/l/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
-
-> Promise-based API for WebSockets
-
-A [WebSocket] client library providing [Promise]-based API for connecting, disconnecting and messaging with server.
+<h1 align="center">websocket-as-promised</h1>
+<h5 align="center">A
+<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">WebSocket</a> 
+client library providing 
+<a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>-based API
+for connecting, disconnecting and messaging with server</h5>
+<div align="center">
+  <a href="https://travis-ci.org/vitalets/websocket-as-promised"><img src="https://travis-ci.org/vitalets/websocket-as-promised.svg?branch=master" alt="Build Status" /></a>
+  <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/v/websocket-as-promised.svg" alt="Npm version" /></a>
+  <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/l/websocket-as-promised.svg" alt="License" /></a>
+</div>
 
 ## Contents
 * [Installation](#installation)
