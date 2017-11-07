@@ -1,3 +1,4 @@
+<img align="center" alt="websocket-as-promised logo" src="https://user-images.githubusercontent.com/1473072/32486445-b2443538-c3b7-11e7-8e9f-94c95efad760.png"/>
 <h1 align="center">websocket-as-promised</h1>
 <h5 align="center">A
 <a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">WebSocket</a> 
