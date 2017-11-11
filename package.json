@@ -1,7 +1,7 @@
 {
   "name": "websocket-as-promised",
   "version": "0.6.0",
-  "description": "Promise-based W3C WebSocket client",
+  "description": "A WebSocket client library providing Promise-based API for connecting, disconnecting and messaging with server",
   "author": {
     "name": "Vitaliy Potapov",
     "email": "noginsk@rambler.ru"
