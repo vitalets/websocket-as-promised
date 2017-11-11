@@ -9,6 +9,7 @@ for connecting, disconnecting and messaging with server</h5>
   <a href="https://travis-ci.org/vitalets/websocket-as-promised"><img src="https://travis-ci.org/vitalets/websocket-as-promised.svg?branch=master" alt="Build Status" /></a>
   <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/v/websocket-as-promised.svg" alt="Npm version" /></a>
   <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/l/websocket-as-promised.svg" alt="License" /></a>
+  <a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs welcome" /></a>
 </div>
 
 ## Contents
