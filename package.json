@@ -24,7 +24,7 @@
     "test-runtyper": "RUNTYPER=1 npm run build && LIB_PATH=.runtyper npm t",
     "test-installed": "npm run install-local && LIB_PATH=.installed/node_modules/websocket-as-promised npm t",
     "ci": "run-s code test-dist test-runtyper",
-    "docs": "jsdoc2md --template README_TEMPLATE.md --files src/** > README.md",
+    "docs": "node ./docs.js",
     "install-local": "npm run make-installed-dir && pushd .installed && install-local .. && popd",
     "make-installed-dir": "mkdir -p .installed && echo '{\"name\": \"dummy\"}' > .installed/package.json",
     "prerelease": "run-s code test-dist test-runtyper test-installed",
