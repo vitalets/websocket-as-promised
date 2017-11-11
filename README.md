@@ -144,14 +144,14 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 
 ## API
 
-## Classes
+### Classes
 
 <dl>
 <dt><a href="#WebSocketAsPromised">WebSocketAsPromised</a></dt>
 <dd></dd>
 </dl>
 
-## Typedefs
+### Typedefs
 
 <dl>
 <dt><a href="#Options">Options</a> : <code>Object</code></dt>
@@ -160,7 +160,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 
 <a name="WebSocketAsPromised"></a>
 
-## WebSocketAsPromised
+### WebSocketAsPromised
 **Kind**: global class  
 
 * [WebSocketAsPromised](#WebSocketAsPromised)
@@ -182,7 +182,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 
 <a name="new_WebSocketAsPromised_new"></a>
 
-### new WebSocketAsPromised(url, [options])
+#### new WebSocketAsPromised(url, [options])
 Constructor. Unlike original WebSocket it does not immediately open connection.
 Please call `open()` method to connect.
 
@@ -194,37 +194,37 @@ Please call `open()` method to connect.
 
 <a name="WebSocketAsPromised+ws"></a>
 
-### wsp.ws ⇒ <code>WebSocket</code>
+#### wsp.ws ⇒ <code>WebSocket</code>
 Returns original WebSocket instance created by `options.createWebSocket`.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isOpening"></a>
 
-### wsp.isOpening ⇒ <code>Boolean</code>
+#### wsp.isOpening ⇒ <code>Boolean</code>
 Is WebSocket connection in opening state.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isOpened"></a>
 
-### wsp.isOpened ⇒ <code>Boolean</code>
+#### wsp.isOpened ⇒ <code>Boolean</code>
 Is WebSocket connection opened.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isClosing"></a>
 
-### wsp.isClosing ⇒ <code>Boolean</code>
+#### wsp.isClosing ⇒ <code>Boolean</code>
 Is WebSocket connection in closing state.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isClosed"></a>
 
-### wsp.isClosed ⇒ <code>Boolean</code>
+#### wsp.isClosed ⇒ <code>Boolean</code>
 Is WebSocket connection closed.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+onMessage"></a>
 
-### wsp.onMessage ⇒ <code>Channel</code>
+#### wsp.onMessage ⇒ <code>Channel</code>
 Event channel triggered every time when message received from server.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -235,7 +235,7 @@ wsp.onMessage.addListener(message => console.log(message));
 ```
 <a name="WebSocketAsPromised+onPackedMessage"></a>
 
-### wsp.onPackedMessage ⇒ <code>Channel</code>
+#### wsp.onPackedMessage ⇒ <code>Channel</code>
 Event channel triggered every time when received message is successfully unpacked.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -246,7 +246,7 @@ wsp.onPackedMessage.addListener(data => console.log(data));
 ```
 <a name="WebSocketAsPromised+onResponse"></a>
 
-### wsp.onResponse ⇒ <code>Channel</code>
+#### wsp.onResponse ⇒ <code>Channel</code>
 Event channel triggered every time when requestId is found in received message.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -257,7 +257,7 @@ wsp.onResponse.addListener(data => console.log(data));
 ```
 <a name="WebSocketAsPromised+onClose"></a>
 
-### wsp.onClose ⇒ <code>Channel</code>
+#### wsp.onClose ⇒ <code>Channel</code>
 Event channel triggered when connection closed.
 Listener accepts single argument `{code, reason}`.
 
@@ -265,13 +265,13 @@ Listener accepts single argument `{code, reason}`.
 **See**: https://vitalets.github.io/chnl/#channel  
 <a name="WebSocketAsPromised+open"></a>
 
-### wsp.open() ⇒ <code>Promise.&lt;Event&gt;</code>
+#### wsp.open() ⇒ <code>Promise.&lt;Event&gt;</code>
 Opens WebSocket connection. If connection already opened, promise will be resolved with "open event".
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+sendRequest"></a>
 
-### wsp.sendRequest(data, [options]) ⇒ <code>Promise</code>
+#### wsp.sendRequest(data, [options]) ⇒ <code>Promise</code>
 Performs request and waits for response.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -285,7 +285,7 @@ Performs request and waits for response.
 
 <a name="WebSocketAsPromised+sendPacked"></a>
 
-### wsp.sendPacked(data)
+#### wsp.sendPacked(data)
 Packs data with `options.packMessage` and sends to the server.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -296,7 +296,7 @@ Packs data with `options.packMessage` and sends to the server.
 
 <a name="WebSocketAsPromised+send"></a>
 
-### wsp.send(data)
+#### wsp.send(data)
 Sends data without packing.
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
@@ -307,13 +307,13 @@ Sends data without packing.
 
 <a name="WebSocketAsPromised+close"></a>
 
-### wsp.close() ⇒ <code>Promise.&lt;Event&gt;</code>
+#### wsp.close() ⇒ <code>Promise.&lt;Event&gt;</code>
 Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="Options"></a>
 
-## Options : <code>Object</code>
+### Options : <code>Object</code>
 **Kind**: global typedef  
 **Defaults**: please see [options.js](https://github.com/vitalets/websocket-as-promised/blob/master/src/options.js)  
 **Properties**
@@ -327,7 +327,6 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 | extractRequestId | <code>function</code> | <code>false</code> | extracts request id from received data. For example, `data => data.requestId`. |
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
 | connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
-
 
 ## Changelog
 Please see [CHANGELOG.md](CHANGELOG.md).
