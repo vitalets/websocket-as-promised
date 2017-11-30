@@ -322,10 +322,10 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
 | createWebSocket | <code>function</code> | <code>url =&gt; new WebSocket(url)</code> | custom function for WebSocket construction. |
-| packMessage | <code>function</code> | <code>false</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
-| unpackMessage | <code>function</code> | <code>false</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
-| attachRequestId | <code>function</code> | <code>false</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
-| extractRequestId | <code>function</code> | <code>false</code> | extracts request id from received data. For example, `data => data.requestId`. |
+| packMessage | <code>function</code> | <code>noop</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
+| unpackMessage | <code>function</code> | <code>noop</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
+| attachRequestId | <code>function</code> | <code>noop</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
+| extractRequestId | <code>function</code> | <code>noop</code> | extracts request id from received data. For example, `data => data.requestId`. |
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
 | connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
 

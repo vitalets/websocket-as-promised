@@ -6,14 +6,14 @@
  * @typedef {Object} Options
  * @property {Function} [createWebSocket=url => new WebSocket(url)] - custom function for WebSocket construction.
   *
- * @property {Function} [packMessage=false] - packs message for sending. For example, `data => JSON.stringify(data)`.
+ * @property {Function} [packMessage=noop] - packs message for sending. For example, `data => JSON.stringify(data)`.
  *
- * @property {Function} [unpackMessage=false] - unpacks received message. For example, `message => JSON.parse(message)`.
+ * @property {Function} [unpackMessage=noop] - unpacks received message. For example, `message => JSON.parse(message)`.
  *
- * @property {Function} [attachRequestId=false] - injects request id into data.
+ * @property {Function} [attachRequestId=noop] - injects request id into data.
  * For example, `(data, requestId) => Object.assign({requestId}, data)`.
  *
- * @property {Function} [extractRequestId=false] - extracts request id from received data.
+ * @property {Function} [extractRequestId=noop] - extracts request id from received data.
  * For example, `data => data.requestId`.
  *
  * @property {Number} timeout=0 - timeout for opening connection and sending messages.
