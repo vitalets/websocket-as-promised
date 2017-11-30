@@ -335,8 +335,9 @@ Please see [CHANGELOG.md](CHANGELOG.md).
 ## License
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
 
-<div align="center"><i>Stay notified about new trending JavaScript projects via GitHub notifications!<br>
-Have a look on <a href="https://github.com/vitalets/github-trending-repos">vitalets/github-trending-repos</a>.</i></div>
+<div align="center">
+<i>If you love ❤ JavaScript and would like to track new trending repositories - have a look on <a href="https://github.com/vitalets/github-trending-repos">vitalets/github-trending-repos</a>.</i>
+</div>
 
 [Promise]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise
 [WebSocket]: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API
