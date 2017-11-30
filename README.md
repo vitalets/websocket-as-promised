@@ -336,7 +336,8 @@ Please see [CHANGELOG.md](CHANGELOG.md).
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
 
 <div align="center">
-<i>If you love ❤ JavaScript and would like to track new trending repositories - have a look on <a href="https://github.com/vitalets/github-trending-repos">vitalets/github-trending-repos</a>.</i>
+<i>If you love  ❤  JavaScript and would like to track new trending repositories, <br>
+have a look on <a href="https://github.com/vitalets/github-trending-repos">vitalets/github-trending-repos</a>.</i>
 </div>
 
 [Promise]: https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise
