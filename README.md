@@ -336,7 +336,8 @@ Please see [CHANGELOG.md](CHANGELOG.md).
 MIT @ [Vitaliy Potapov](https://github.com/vitalets)
 
 <div align="center">
-<i>If you love&nbsp;❤&nbsp;JavaScript and would like to track new trending repositories, <br>
+* * *<br>
+<i>If you love :heart: JavaScript and would like to track new trending repositories, <br>
 have a look on <a href="https://github.com/vitalets/github-trending-repos">vitalets/github-trending-repos</a>.</i>
 </div>
 
