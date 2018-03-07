@@ -91,7 +91,7 @@ wsp.onMessage.addListener(message => console.log(message));
 To send JSON you should define `options.packMessage / options.unpackMessage` and use `.sendPacked()` method:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
-  packMessage: data => JSON.strinigfy(data),
+  packMessage: data => JSON.stringify(data),
   unpackMessage: message => JSON.parse(message)
 });
 
@@ -126,7 +126,7 @@ That promise get resolved when response message with the same `requestId` comes.
 For setting/reading `requestId` from messages there are two functions `options.attachRequestId / options.extractRequestId`:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
-  packMessage: data => JSON.strinigfy(data),
+  packMessage: data => JSON.stringify(data),
   unpackMessage: message => JSON.parse(message),
   attachRequestId: (data, requestId) => Object.assign({id: requestId}, data), // attach requestId to message as `id` field
   extractRequestId: data => data && data.id,                                  // read requestId from message `id` field
