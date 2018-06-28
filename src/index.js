@@ -37,12 +37,9 @@ class WebSocketAsPromised {
     this._opening = new ControlledPromise();
     this._closing = new ControlledPromise();
     this._requests = new Requests();
-    this._onMessage = new Channel();
-    this._onPackedMessage = new Channel();
-    this._onResponse = new Channel();
-    this._onClose = new Channel();
     this._ws = null;
     this._wsSubscription = null;
+    this._createChannels();
   }
 
   /**
@@ -91,6 +88,19 @@ class WebSocketAsPromised {
   }
 
   /**
+   * Event channel triggered when connection is opened.
+   *
+   * @see https://vitalets.github.io/chnl/#channel
+   * @example
+   * wsp.onOpen.addListener(() => console.log('Connection opened'));
+   *
+   * @returns {Channel}
+   */
+  get onOpen() {
+    return this._onOpen;
+  }
+
+  /**
    * Event channel triggered every time when message received from server.
    *
    * @see https://vitalets.github.io/chnl/#channel
@@ -134,6 +144,8 @@ class WebSocketAsPromised {
    * Listener accepts single argument `{code, reason}`.
    *
    * @see https://vitalets.github.io/chnl/#channel
+   * @example
+   * wsp.onClose.addListener(event => console.log(`Connections closed: ${event.reason}`));
    *
    * @returns {Channel}
    */
@@ -220,6 +232,14 @@ class WebSocketAsPromised {
     });
   }
 
+  _createChannels() {
+    this._onOpen = new Channel();
+    this._onMessage = new Channel();
+    this._onPackedMessage = new Channel();
+    this._onResponse = new Channel();
+    this._onClose = new Channel();
+  }
+
   _createWS() {
     this._ws = this._options.createWebSocket(this._url);
     this._wsSubscription = new Channel.Subscription([
@@ -231,6 +251,7 @@ class WebSocketAsPromised {
   }
 
   _handleOpen(event) {
+    this._onOpen.dispatchAsync(event);
     this._opening.resolve(event);
   }
 

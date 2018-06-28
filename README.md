@@ -171,6 +171,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.isOpened](#WebSocketAsPromised+isOpened) ⇒ <code>Boolean</code>
     * [.isClosing](#WebSocketAsPromised+isClosing) ⇒ <code>Boolean</code>
     * [.isClosed](#WebSocketAsPromised+isClosed) ⇒ <code>Boolean</code>
+    * [.onOpen](#WebSocketAsPromised+onOpen) ⇒ <code>Channel</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.onPackedMessage](#WebSocketAsPromised+onPackedMessage) ⇒ <code>Channel</code>
     * [.onResponse](#WebSocketAsPromised+onResponse) ⇒ <code>Channel</code>
@@ -223,6 +224,17 @@ Is WebSocket connection in closing state.
 Is WebSocket connection closed.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+onOpen"></a>
+
+#### wsp.onOpen ⇒ <code>Channel</code>
+Event channel triggered when connection is opened.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+**See**: https://vitalets.github.io/chnl/#channel  
+**Example**  
+```js
+wsp.onOpen.addListener(() => console.log('Connection opened'));
+```
 <a name="WebSocketAsPromised+onMessage"></a>
 
 #### wsp.onMessage ⇒ <code>Channel</code>
@@ -264,6 +276,10 @@ Listener accepts single argument `{code, reason}`.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  
+**Example**  
+```js
+wsp.onClose.addListener(event => console.log(`Connections closed: ${event.reason}`));
+```
 <a name="WebSocketAsPromised+open"></a>
 
 #### wsp.open() ⇒ <code>Promise.&lt;Event&gt;</code>
@@ -321,7 +337,7 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| createWebSocket | <code>function</code> | <code>url =&gt; new WebSocket(url)</code> | custom function for WebSocket construction. |
+| createWebSocket | <code>function</code> | <code>url &#x3D;&gt; new WebSocket(url)</code> | custom function for WebSocket construction. |
 | packMessage | <code>function</code> | <code>noop</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
 | unpackMessage | <code>function</code> | <code>noop</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
 | attachRequestId | <code>function</code> | <code>noop</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
