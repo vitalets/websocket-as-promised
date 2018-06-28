@@ -1,7 +1,7 @@
 
 const {createWSP} = require('../helper');
 
-describe.only('onOpen', function () {
+describe('onOpen', function () {
   it('should trigger after connection opened', function () {
     // need separate wsp instance here
     const wsp = createWSP(this.url);
