@@ -71,4 +71,14 @@ describe('open', function () {
       .then(() => this.wsp.open());
     return assert.eventually.propertyVal(p, 'type', 'open');
   });
+
+  it('should trigger onOpen', function () {
+    // need separate wsp instance here
+    const wsp = createWSP(this.url);
+    const res = new Promise(resolve => {
+      wsp.onOpen.addListener(resolve);
+    });
+    wsp.open().then(() => wsp.close());
+    return assert.eventually.propertyVal(res, 'type', 'open');
+  });
 });

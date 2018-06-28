@@ -31,4 +31,14 @@ describe('send', function () {
     return assert.isFulfilled(p)
       .then(() => assert.equal(String(new Uint8Array(response)), '1,2,3'));
   });
+
+  it('should trigger onSend', function () {
+    let sentData;
+    this.wsp.onSend.addListener(data => sentData = data);
+    const p = this.wsp.open()
+      .then(() => this.wsp.send('foo'))
+      .then(() => wait(100));
+    return assert.isFulfilled(p)
+      .then(() => assert.equal(sentData, 'foo'));
+  });
 });

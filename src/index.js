@@ -101,6 +101,19 @@ class WebSocketAsPromised {
   }
 
   /**
+   * Event channel triggered every time when message is sent to server.
+   *
+   * @see https://vitalets.github.io/chnl/#channel
+   * @example
+   * wsp.onSend.addListener(data => console.log('Message sent', data));
+   *
+   * @returns {Channel}
+   */
+  get onSend() {
+    return this._onSend;
+  }
+
+  /**
    * Event channel triggered every time when message received from server.
    *
    * @see https://vitalets.github.io/chnl/#channel
@@ -211,6 +224,7 @@ class WebSocketAsPromised {
   send(data) {
     if (this.isOpened) {
       this._ws.send(data);
+      this._onSend.dispatchAsync(data);
     } else {
       throw new Error(`Can't send data because WebSocket is not opened.`);
     }
@@ -237,6 +251,7 @@ class WebSocketAsPromised {
     this._onMessage = new Channel();
     this._onPackedMessage = new Channel();
     this._onResponse = new Channel();
+    this._onSend = new Channel();
     this._onClose = new Channel();
   }
 

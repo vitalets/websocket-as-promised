@@ -172,6 +172,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.isClosing](#WebSocketAsPromised+isClosing) ⇒ <code>Boolean</code>
     * [.isClosed](#WebSocketAsPromised+isClosed) ⇒ <code>Boolean</code>
     * [.onOpen](#WebSocketAsPromised+onOpen) ⇒ <code>Channel</code>
+    * [.onSend](#WebSocketAsPromised+onSend) ⇒ <code>Channel</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.onPackedMessage](#WebSocketAsPromised+onPackedMessage) ⇒ <code>Channel</code>
     * [.onResponse](#WebSocketAsPromised+onResponse) ⇒ <code>Channel</code>
@@ -234,6 +235,17 @@ Event channel triggered when connection is opened.
 **Example**  
 ```js
 wsp.onOpen.addListener(() => console.log('Connection opened'));
+```
+<a name="WebSocketAsPromised+onSend"></a>
+
+#### wsp.onSend ⇒ <code>Channel</code>
+Event channel triggered every time when message is sent to server.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+**See**: https://vitalets.github.io/chnl/#channel  
+**Example**  
+```js
+wsp.onSend.addListener(data => console.log('Message sent', data));
 ```
 <a name="WebSocketAsPromised+onMessage"></a>
 

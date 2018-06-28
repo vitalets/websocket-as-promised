@@ -1,6 +1,7 @@
 ## 0.7.0 (Jan 9, 2018)
 
 * Add `.onOpen` event channel ([#9])
+* Add `.onSend` event channel ([#8])
 
 ## 0.6.0 (Oct 21, 2017)
 
@@ -21,4 +22,5 @@ are replaced with 4 more atomic hadlers:
 * Added changelog :)
 
 
+[#8]: https://github.com/vitalets/websocket-as-promised/issues/8
 [#9]: https://github.com/vitalets/websocket-as-promised/issues/9

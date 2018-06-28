@@ -66,6 +66,15 @@ describe('close', function () {
     });
   });
 
+  it('should trigger onClose (initiated by client)', function () {
+    const wsp = createWSP(this.url);
+    const res = new Promise(resolve => {
+      wsp.onClose.addListener(resolve);
+      wsp.open().then(() => wsp.close());
+    });
+    return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
+  });
+
   describe('by server', function () {
     it('should reject request', function () {
       const wsp = createWSP(this.url, this.wspOptionsJson);
@@ -83,6 +92,15 @@ describe('close', function () {
       const res = wsp.open()
         .then(() => wsp.sendRequest({drop: true}));
       return assert.isRejected(res, /WebSocket closed/);
+    });
+
+    it('should trigger onClose', function () {
+      const wsp = createWSP(this.url);
+      const res = new Promise(resolve => {
+        wsp.onClose.addListener(resolve);
+        wsp.open().then(() => wsp.send(JSON.stringify({close: true, code: 1009}))).catch(noop);
+      });
+      return assert.eventually.propertyVal(res, 'code', 1009);
     });
   });
 });
