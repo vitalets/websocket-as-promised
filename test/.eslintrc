@@ -9,10 +9,15 @@
     "noop": false
   },
 
+  "plugins": [
+    "mocha"
+  ],
+
   "rules": {
     "no-console": 0,
     "max-statements": 0,
     "max-lines": 0,
-    "max-nested-callbacks": 0
+    "max-nested-callbacks": 0,
+    "mocha/no-exclusive-tests": "error"
   }
 }
