@@ -177,6 +177,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.onPackedMessage](#WebSocketAsPromised+onPackedMessage) ⇒ <code>Channel</code>
     * [.onResponse](#WebSocketAsPromised+onResponse) ⇒ <code>Channel</code>
     * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
+    * [.onError](#WebSocketAsPromised+onError) ⇒ <code>Channel</code>
     * [.open()](#WebSocketAsPromised+open) ⇒ <code>Promise.&lt;Event&gt;</code>
     * [.sendRequest(data, [options])](#WebSocketAsPromised+sendRequest) ⇒ <code>Promise</code>
     * [.sendPacked(data)](#WebSocketAsPromised+sendPacked)
@@ -291,6 +292,17 @@ Listener accepts single argument `{code, reason}`.
 **Example**  
 ```js
 wsp.onClose.addListener(event => console.log(`Connections closed: ${event.reason}`));
+```
+<a name="WebSocketAsPromised+onError"></a>
+
+#### wsp.onError ⇒ <code>Channel</code>
+Event channel triggered when by Websocket 'error' event.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+**See**: https://vitalets.github.io/chnl/#channel  
+**Example**  
+```js
+wsp.onError.addListener(event => console.error(event));
 ```
 <a name="WebSocketAsPromised+open"></a>
 

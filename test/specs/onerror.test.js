@@ -1,0 +1,19 @@
+
+const {createWSP} = require('../helper');
+
+describe('onError', function () {
+
+  it('should trigger for incorrect urls', function () {
+    const wsp = createWSP('http://foo');
+    const res = new Promise(resolve => {
+      wsp.onError.addListener(resolve);
+      wsp.open().catch(noop);
+    });
+    return assert.eventually.propertyVal(res, 'type', 'error');
+  });
+
+  // todo: how to make error from server side?
+  it('should trigger by server error');
+
+});
+

@@ -167,6 +167,19 @@ class WebSocketAsPromised {
   }
 
   /**
+   * Event channel triggered when by Websocket 'error' event.
+   *
+   * @see https://vitalets.github.io/chnl/#channel
+   * @example
+   * wsp.onError.addListener(event => console.error(event));
+   *
+   * @returns {Channel}
+   */
+  get onError() {
+    return this._onError;
+  }
+
+  /**
    * Opens WebSocket connection. If connection already opened, promise will be resolved with "open event".
    *
    * @returns {Promise<Event>}
@@ -253,6 +266,7 @@ class WebSocketAsPromised {
     this._onResponse = new Channel();
     this._onSend = new Channel();
     this._onClose = new Channel();
+    this._onError = new Channel();
   }
 
   _createWS() {
@@ -296,8 +310,8 @@ class WebSocketAsPromised {
     }
   }
 
-  _handleError() {
-    // currently no specific handling of this event
+  _handleError(event) {
+    this._onError.dispatchAsync(event);
   }
 
   _handleClose(event) {
