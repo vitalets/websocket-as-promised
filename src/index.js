@@ -7,7 +7,7 @@
  */
 
 const Channel = require('chnl');
-const ControlledPromise = require('controlled-promise');
+const PromiseController = require('promise-controller');
 const flatOptions = require('flat-options');
 const Requests = require('./requests');
 const defaultOptions = require('./options');
@@ -34,11 +34,11 @@ class WebSocketAsPromised {
   constructor(url, options) {
     this._url = url;
     this._options = flatOptions(options, defaultOptions);
-    this._opening = new ControlledPromise();
-    this._closing = new ControlledPromise();
     this._requests = new Requests();
     this._ws = null;
     this._wsSubscription = null;
+    this._createOpeningController();
+    this._createClosingController();
     this._createChannels();
   }
 
@@ -192,8 +192,6 @@ class WebSocketAsPromised {
       return this._opening.promise;
     }
     return this._opening.call(() => {
-      const timeout = this._options.connectionTimeout || this._options.timeout;
-      this._opening.timeout(timeout, `Can't open WebSocket within allowed timeout: ${timeout} ms.`);
       this._opening.promise.catch(e => this._cleanup(e));
       this._createWS();
     });
@@ -249,13 +247,24 @@ class WebSocketAsPromised {
    * @returns {Promise<Event>}
    */
   close() {
-    if (this.isClosed) {
-      return Promise.resolve(this._closing.value);
-    }
-    return this._closing.call(() => {
-      const {timeout} = this._options;
-      this._closing.timeout(timeout, `Can't close WebSocket within allowed timeout: ${timeout} ms.`);
-      this._ws.close();
+    return this.isClosed
+      ? Promise.resolve(this._closing.value)
+      : this._closing.call(() => this._ws.close());
+  }
+
+  _createOpeningController() {
+    const connectionTimeout = this._options.connectionTimeout || this._options.timeout;
+    this._opening = new PromiseController({
+      timeout: connectionTimeout,
+      timeoutReason: `Can't open WebSocket within allowed timeout: ${connectionTimeout} ms.`
+    });
+  }
+
+  _createClosingController() {
+    const closingTimeout = this._options.timeout;
+    this._closing = new PromiseController({
+      timeout: closingTimeout,
+      timeoutReason: `Can't close WebSocket within allowed timeout: ${closingTimeout} ms.`
     });
   }
 

@@ -1,3 +1,7 @@
+## 0.8.0 (Jul 10, 2018)
+
+* Replace `controlled-promise` with [`promise-controller`](https://github.com/vitalets/promise-controller)
+
 ## 0.7.0 (Jun 29, 2018)
 
 * Add `.onOpen` event channel ([#9])

@@ -3,7 +3,7 @@
  * @private
  */
 
-const ControlledPromise = require('controlled-promise');
+const PromiseController = require('promise-controller');
 const promiseFinally = require('promise.prototype.finally');
 
 module.exports = class Requests {
@@ -12,7 +12,7 @@ module.exports = class Requests {
   }
 
   /**
-   * Creates new request andd stores it in the list.
+   * Creates new request and stores it in the list.
    *
    * @param {String|Number} requestId
    * @param {Function} fn
@@ -42,9 +42,11 @@ module.exports = class Requests {
   }
 
   _createNewRequest(requestId, fn, timeout) {
-    const request = new ControlledPromise();
+    const request = new PromiseController({
+      timeout,
+      timeoutReason: `WebSocket request was rejected by timeout (${timeout} ms). RequestId: ${requestId}`
+    });
     this._items.set(requestId, request);
-    request.timeout(timeout, `WebSocket request was rejected by timeout (${timeout} ms). RequestId: ${requestId}`);
     return promiseFinally(request.call(fn), () => this._deleteRequest(requestId, request));
   }
 
