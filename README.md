@@ -61,7 +61,7 @@ const wsp = new WebSocketAsPromised(wsUrl);
 ```
 
 ## Usage in Node.js
-As there is no built-in WebSocket client in Node.js, you should use a third-party module
+As there is no built-in WebSocket client in Node.js, you should use any W3C compatible third-party module
 (for example [websocket](https://www.npmjs.com/package/websocket)):
 ```js
 const W3CWebSocket = require('websocket').w3cwebsocket;
@@ -88,7 +88,7 @@ wsp.onMessage.addListener(message => console.log(message));
 ```
 
 ## Sending JSON
-To send JSON you should define `options.packMessage / options.unpackMessage` options:
+To send JSON you should define `packMessage / unpackMessage` options:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.stringify(data),
@@ -122,7 +122,7 @@ wsp.open()
 *websocket-as-promised* provides simple request-response mechanism. 
 Method `.sendRequest()` sends message with unique `requestId` and returns promise. 
 That promise get resolved when response message with the same `requestId` comes. 
-For setting/reading `requestId` from messages there are two functions `options.attachRequestId / options.extractRequestId`:
+For reading/setting `requestId` from/to message there are two functions defined in options `attachRequestId / extractRequestId`:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.stringify(data),
@@ -132,7 +132,7 @@ const wsp = new WebSocketAsPromised(wsUrl, {
 });
 
 wsp.open()
- .then(() => wsp.sendRequest({foo: 'bar'})) // actually sends {foo: 'bar', id: 'xxx'}
+ .then(() => wsp.sendRequest({foo: 'bar'})) // actually sends {foo: 'bar', id: 'xxx'}, because `attachRequestId` defined above
  .then(response => console.log(response));  // waits server message with corresponding requestId: {id: 'xxx', ...}
 ```
 By default `requestId` value is auto-generated, but you can set it manually:
