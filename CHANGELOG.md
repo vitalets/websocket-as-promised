@@ -1,5 +1,6 @@
 ## 0.8.0 (Jul 10, 2018)
 
+* Rename `.onPackedMessage` into `.onUnpackedMessage` [#10]
 * Replace `controlled-promise` with [`promise-controller`](https://github.com/vitalets/promise-controller)
 
 ## 0.7.0 (Jun 29, 2018)
@@ -30,3 +31,4 @@ are replaced with 4 more atomic hadlers:
 [#4]: https://github.com/vitalets/websocket-as-promised/issues/4
 [#8]: https://github.com/vitalets/websocket-as-promised/issues/8
 [#9]: https://github.com/vitalets/websocket-as-promised/issues/9
+[#10]: https://github.com/vitalets/websocket-as-promised/issues/10

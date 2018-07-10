@@ -126,21 +126,30 @@ class WebSocketAsPromised {
     return this._onMessage;
   }
 
-  /**
-   * Event channel triggered every time when received message is successfully unpacked.
-   *
-   * @see https://vitalets.github.io/chnl/#channel
-   * @example
-   * wsp.onPackedMessage.addListener(data => console.log(data));
-   *
-   * @returns {Channel}
-   */
   get onPackedMessage() {
-    return this._onPackedMessage;
+    throw new Error([
+      `Websocket-as-promised 'onPackedMessage' was renamed into 'onUnpackedMessage' to match the argument`,
+      `passed to the listener. Please just use 'onUnpackedMessage' instead.`
+    ].join(' '));
   }
 
   /**
-   * Event channel triggered every time when requestId is found in received message.
+   * Event channel triggered every time when received message is successfully unpacked.
+   * For example, if you are using JSON transport, the listener will receive already JSON parsed data.
+   *
+   * @see https://vitalets.github.io/chnl/#channel
+   * @example
+   * wsp.onUnpackedMessage.addListener(data => console.log(data.foo));
+   *
+   * @returns {Channel}
+   */
+  get onUnpackedMessage() {
+    return this._onUnpackedMessage;
+  }
+
+  /**
+   * Event channel triggered every time when response to some request comes.
+   * Received message considered a response if requestId is found in it.
    *
    * @see https://vitalets.github.io/chnl/#channel
    * @example
@@ -271,7 +280,7 @@ class WebSocketAsPromised {
   _createChannels() {
     this._onOpen = new Channel();
     this._onMessage = new Channel();
-    this._onPackedMessage = new Channel();
+    this._onUnpackedMessage = new Channel();
     this._onResponse = new Channel();
     this._onSend = new Channel();
     this._onClose = new Channel();
@@ -303,7 +312,7 @@ class WebSocketAsPromised {
     if (this._options.unpackMessage) {
       const data = this._options.unpackMessage(message);
       if (data !== undefined) {
-        this._onPackedMessage.dispatchAsync(data);
+        this._onUnpackedMessage.dispatchAsync(data);
         this._handleResponse(data);
       }
     }

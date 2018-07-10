@@ -88,21 +88,20 @@ wsp.onMessage.addListener(message => console.log(message));
 ```
 
 ## Sending JSON
-To send JSON you should define `options.packMessage / options.unpackMessage` and use `.sendPacked()` method:
+To send JSON you should define `options.packMessage / options.unpackMessage` options:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.stringify(data),
   unpackMessage: message => JSON.parse(message)
 });
-
-wsp.open()
-  .then(() => wsp.sendPacked({foo: 'bar'}))
-  .then(() => wsp.close())
-  .catch(e => console.error(e));
 ```
-You can also subscribe to receiving packed message:
+To send data use `.sendPacked()` method passing json as parameter:
 ```js
-wsp.onPackedMessage.addListener(data => console.log(data));
+wsp.sendPacked({foo: 'bar'});
+```
+To read unpacked data from received message you can subscribe to `onUnpackedMessage` channel:
+```js
+wsp.onUnpackedMessage.addListener(data => console.log(data.status));
 ```
 
 ## Sending binary
@@ -120,7 +119,7 @@ wsp.open()
 ```
 
 ## Sending requests
-*websocket-as-promised* supports simple request-response mechanism. 
+*websocket-as-promised* provides simple request-response mechanism. 
 Method `.sendRequest()` sends message with unique `requestId` and returns promise. 
 That promise get resolved when response message with the same `requestId` comes. 
 For setting/reading `requestId` from messages there are two functions `options.attachRequestId / options.extractRequestId`:
@@ -174,7 +173,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.onOpen](#WebSocketAsPromised+onOpen) ⇒ <code>Channel</code>
     * [.onSend](#WebSocketAsPromised+onSend) ⇒ <code>Channel</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
-    * [.onPackedMessage](#WebSocketAsPromised+onPackedMessage) ⇒ <code>Channel</code>
+    * [.onUnpackedMessage](#WebSocketAsPromised+onUnpackedMessage) ⇒ <code>Channel</code>
     * [.onResponse](#WebSocketAsPromised+onResponse) ⇒ <code>Channel</code>
     * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
     * [.onError](#WebSocketAsPromised+onError) ⇒ <code>Channel</code>
@@ -259,21 +258,23 @@ Event channel triggered every time when message received from server.
 ```js
 wsp.onMessage.addListener(message => console.log(message));
 ```
-<a name="WebSocketAsPromised+onPackedMessage"></a>
+<a name="WebSocketAsPromised+onUnpackedMessage"></a>
 
-#### wsp.onPackedMessage ⇒ <code>Channel</code>
+#### wsp.onUnpackedMessage ⇒ <code>Channel</code>
 Event channel triggered every time when received message is successfully unpacked.
+For example, if you are using JSON transport, the listener will receive already JSON parsed data.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  
 **Example**  
 ```js
-wsp.onPackedMessage.addListener(data => console.log(data));
+wsp.onUnpackedMessage.addListener(data => console.log(data.username));
 ```
 <a name="WebSocketAsPromised+onResponse"></a>
 
 #### wsp.onResponse ⇒ <code>Channel</code>
-Event channel triggered every time when requestId is found in received message.
+Event channel triggered every time when response comes.
+Response is detected by `requestId` is found in received message.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  
