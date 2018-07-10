@@ -75,10 +75,10 @@ describe('sendRequest', function () {
 
   describe('timeout', function () {
     it('should reject after timeout', function () {
-      const wsp = createWSP(this.url, Object.assign({timeout: 50}, this.wspOptionsJson));
-      const res = wsp.open().then(() => wsp.sendRequest({foo: 'bar', delay: 100}));
+      const wsp = createWSP(this.url, Object.assign({timeout: 100}, this.wspOptionsJson));
+      const res = wsp.open().then(() => wsp.sendRequest({foo: 'bar', delay: 200}));
       return assert.isRejected(res)
-        .then(e => assert.match(e.message, /^WebSocket request was rejected by timeout \(50 ms\)/));
+        .then(e => assert.match(e.message, /^WebSocket request was rejected by timeout \(100 ms\)/));
     });
 
     it('should resolve request before timeout', function () {
