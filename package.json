@@ -19,7 +19,7 @@
     "lint-all": "eslint src test",
     "lint-staged": "lint-staged",
     "build": "webpack",
-    "test": "mocha test/specs --require=test/globals.js",
+    "test": "mocha test/setup.js test/specs",
     "test-dist": "npm run build && LIB_PATH=dist npm t",
     "test-runtyper": "RUNTYPER=1 npm run build && LIB_PATH=.runtyper npm t",
     "test-installed": "node scripts/install-local && LIB_PATH=.installed/node_modules/websocket-as-promised npm t",

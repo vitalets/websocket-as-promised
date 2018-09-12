@@ -1,6 +1,4 @@
 
-const {createWSP} = require('../helper');
-
 describe('sendRequest', function () {
   beforeEach(function () {
     this.wsp = createWSP(this.url, this.wspOptionsJson);

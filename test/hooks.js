@@ -1,5 +1,4 @@
-const server = require('../server');
-const {createWSP} = require('../helper');
+const server = require('./server');
 
 const wspOptionsJson = {
   packMessage: data => JSON.stringify(data),

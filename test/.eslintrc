@@ -6,7 +6,8 @@
   "globals": {
     "assert": false,
     "wait": false,
-    "noop": false
+    "noop": false,
+    "createWSP": false
   },
 
   "plugins": [

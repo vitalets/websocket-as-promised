@@ -1,6 +1,4 @@
 
-const {createWSP} = require('../helper');
-
 describe('options', function () {
   it('should throw error for unknown option', function () {
     const fn = () => createWSP(this.url, {foo: 'bar'});

@@ -1,5 +1,5 @@
 
-const {createWSP, NORMAL_CLOSE_CODE} = require('../helper');
+const NORMAL_CLOSE_CODE = 1000;
 
 describe('close', function () {
   it('should close connection', function () {

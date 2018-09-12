@@ -1,6 +1,4 @@
 
-const {createWSP} = require('../helper');
-
 describe('sendPacked', function () {
 
   beforeEach(function () {

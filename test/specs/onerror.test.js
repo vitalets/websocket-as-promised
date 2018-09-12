@@ -1,6 +1,4 @@
 
-const {createWSP} = require('../helper');
-
 describe('onError', function () {
 
   it('should trigger for incorrect urls', function () {

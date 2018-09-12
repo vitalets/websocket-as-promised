@@ -1,6 +1,3 @@
-
-const {createWSP} = require('../helper');
-
 describe('open', function () {
   it('should resolve with correct type', function () {
     const res = this.wsp.open();
