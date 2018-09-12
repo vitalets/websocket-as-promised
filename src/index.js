@@ -11,6 +11,7 @@ const PromiseController = require('promise-controller');
 const flatOptions = require('flat-options');
 const Requests = require('./requests');
 const defaultOptions = require('./options');
+const {throwIf} = require('./utils');
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#Ready_state_constants
 const STATE = {
@@ -242,12 +243,9 @@ class WebSocketAsPromised {
    * @param {String|Blob|ArrayBuffer} data
    */
   send(data) {
-    if (this.isOpened) {
-      this._ws.send(data);
-      this._onSend.dispatchAsync(data);
-    } else {
-      throw new Error(`Can't send data because WebSocket is not opened.`);
-    }
+    throwIf(!this.isOpened, `Can't send data because WebSocket is not opened.`);
+    this._ws.send(data);
+    this._onSend.dispatchAsync(data);
   }
 
   /**
@@ -259,6 +257,19 @@ class WebSocketAsPromised {
     return this.isClosed
       ? Promise.resolve(this._closing.value)
       : this._closing.call(() => this._ws.close());
+  }
+
+  /**
+   * Removes all listeners from WSP instance. Useful for cleanup.
+   */
+  removeAllListeners() {
+    this._onOpen.removeAllListeners();
+    this._onMessage.removeAllListeners();
+    this._onUnpackedMessage.removeAllListeners();
+    this._onResponse.removeAllListeners();
+    this._onSend.removeAllListeners();
+    this._onClose.removeAllListeners();
+    this._onError.removeAllListeners();
   }
 
   _createOpeningController() {
@@ -356,15 +367,17 @@ class WebSocketAsPromised {
   }
 
   _assertPackingHandlers() {
-    if (!this._options.packMessage || !this._options.unpackMessage) {
-      throw new Error(`Please define 'options.packMessage / options.unpackMessage' for sending packed messages.`);
-    }
+    const {packMessage, unpackMessage} = this._options;
+    throwIf(!packMessage || !unpackMessage,
+      `Please define 'options.packMessage / options.unpackMessage' for sending packed messages.`
+    );
   }
 
   _assertRequestIdHandlers() {
-    if (!this._options.attachRequestId || !this._options.extractRequestId) {
-      throw new Error(`Please define 'options.attachRequestId / options.extractRequestId' for sending requests.`);
-    }
+    const {attachRequestId, extractRequestId} = this._options;
+    throwIf(!attachRequestId || !extractRequestId,
+      `Please define 'options.attachRequestId / options.extractRequestId' for sending requests.`
+    );
   }
 }
 

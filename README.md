@@ -182,6 +182,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.sendPacked(data)](#WebSocketAsPromised+sendPacked)
     * [.send(data)](#WebSocketAsPromised+send)
     * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
+    * [.removeAllListeners()](#WebSocketAsPromised+removeAllListeners)
 
 <a name="new_WebSocketAsPromised_new"></a>
 
@@ -268,13 +269,13 @@ For example, if you are using JSON transport, the listener will receive already 
 **See**: https://vitalets.github.io/chnl/#channel  
 **Example**  
 ```js
-wsp.onUnpackedMessage.addListener(data => console.log(data.username));
+wsp.onUnpackedMessage.addListener(data => console.log(data.foo));
 ```
 <a name="WebSocketAsPromised+onResponse"></a>
 
 #### wsp.onResponse ⇒ <code>Channel</code>
-Event channel triggered every time when response comes.
-Response is detected by `requestId` is found in received message.
+Event channel triggered every time when response to some request comes.
+Received message considered a response if requestId is found in it.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 **See**: https://vitalets.github.io/chnl/#channel  
@@ -353,6 +354,12 @@ Sends data without packing.
 Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+removeAllListeners"></a>
+
+#### wsp.removeAllListeners()
+Removes all listeners from WSP instance. Useful for cleanup.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="Options"></a>
 
 ### Options : <code>Object</code>
@@ -362,11 +369,11 @@ Closes WebSocket connection. If connection already closed, promise will be resol
 
 | Name | Type | Default | Description |
 | --- | --- | --- | --- |
-| createWebSocket | <code>function</code> | <code>url &#x3D;&gt; new WebSocket(url)</code> | custom function for WebSocket construction. |
-| packMessage | <code>function</code> | <code>noop</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
-| unpackMessage | <code>function</code> | <code>noop</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
-| attachRequestId | <code>function</code> | <code>noop</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
-| extractRequestId | <code>function</code> | <code>noop</code> | extracts request id from received data. For example, `data => data.requestId`. |
+| [createWebSocket] | <code>function</code> | <code>url &#x3D;&gt; new WebSocket(url)</code> | custom function for WebSocket construction. |
+| [packMessage] | <code>function</code> | <code>noop</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
+| [unpackMessage] | <code>function</code> | <code>noop</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
+| [attachRequestId] | <code>function</code> | <code>noop</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
+| [extractRequestId] | <code>function</code> | <code>noop</code> | extracts request id from received data. For example, `data => data.requestId`. |
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
 | connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
 

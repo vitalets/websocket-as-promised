@@ -1,3 +1,7 @@
+## 0.9.0 (tbd)
+
+* Add `removeAllListeners` method [#12]
+
 ## 0.8.0 (Jul 10, 2018)
 
 * Rename `.onPackedMessage` into `.onUnpackedMessage` [#10]
@@ -32,3 +36,4 @@ are replaced with 4 more atomic hadlers:
 [#8]: https://github.com/vitalets/websocket-as-promised/issues/8
 [#9]: https://github.com/vitalets/websocket-as-promised/issues/9
 [#10]: https://github.com/vitalets/websocket-as-promised/issues/10
+[#12]: https://github.com/vitalets/websocket-as-promised/issues/12
