@@ -12,9 +12,8 @@ chai.use(chaiAsPromised);
 global.assert = chai.assert;
 global.noop = () => {};
 global.wait = ms => new Promise(r => setTimeout(r, ms));
-global.createWSP = (url, options = {}) => new WebSocketAsPromised(url, {
+global.createWSP = (url, options) => new WebSocketAsPromised(url, Object.assign({
   createWebSocket: url => new W3CWebSocket(url),
-  ...options
-});
+}, options));
 
 require('./hooks');
