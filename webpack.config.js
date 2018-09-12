@@ -12,12 +12,14 @@ const babelPlugins = [runtyper].filter(Boolean);
 const outFile = path.basename(packageJson.main);
 
 module.exports = {
+  mode: 'production',
   entry: './src',
   output: {
     path: path.resolve(outDir),
     filename: outFile,
     libraryTarget: 'umd',
     library: 'WebSocketAsPromised',
+    globalObject: 'this', // https://github.com/webpack/webpack/issues/6525
   },
   devtool: 'source-map',
   module: {
