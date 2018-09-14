@@ -14,6 +14,7 @@
     "node": ">=6"
   },
   "main": "dist/index.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "code": "npm run lint-all",
     "lint-all": "eslint src test",
@@ -37,7 +38,7 @@
     "{src,test}/**/*.js": "eslint"
   },
   "dependencies": {
-    "chnl": "^0.4.0",
+    "chnl": "^0.4.1",
     "flat-options": "^0.1.3",
     "promise-controller": "^0.3.0",
     "promise.prototype.finally": "^3.1.0"
