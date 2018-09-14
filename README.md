@@ -28,14 +28,14 @@ for connecting, disconnecting and messaging with server</h5>
 
 ## Installation
 ```bash
-npm install websocket-as-promised --save
+npm i websocket-as-promised --save
 ```
 
 ## Usage in browser
 ```js
 import WebSocketAsPromised from 'websocket-as-promised';
 
-const wsp = new WebSocketAsPromised(wsUrl);
+const wsp = new WebSocketAsPromised('ws://example.com');
 
 wsp.open()
   .then(() => wsp.send('foo'))
@@ -46,9 +46,9 @@ Or with ES7 [async / await](https://developer.mozilla.org/en-US/docs/Web/JavaScr
 ```js
 import WebSocketAsPromised from 'websocket-as-promised';
 
-const wsp = new WebSocketAsPromised(wsUrl);
+const wsp = new WebSocketAsPromised('ws://example.com');
 
-(async () => {
+async function doWebSocketStuff() {
   try {
     await wsp.open();
     wsp.send('foo');
@@ -57,7 +57,7 @@ const wsp = new WebSocketAsPromised(wsUrl);
   } finally {
     await wsp.close();
   }
-})();
+}
 ```
 
 ## Usage in Node.js
@@ -67,7 +67,7 @@ As there is no built-in WebSocket client in Node.js, you should use any W3C comp
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
 
-const wsp = new WebSocketAsPromised(wsUrl, {
+const wsp = new WebSocketAsPromised('ws://example.com', {
   createWebSocket: url => new W3CWebSocket(url)
 });
 
