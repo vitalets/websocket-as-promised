@@ -1,4 +1,4 @@
-## 0.9.0 (tbd)
+## 0.9.0 (Sep 14, 2018)
 
 * Add TypeScript support ([#13])
 * Add `removeAllListeners` method ([#12])
