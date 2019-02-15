@@ -1,13 +1,14 @@
 
 describe('onError', function () {
 
-  it('should trigger for incorrect urls', function () {
+  it('should trigger for incorrect urls', function (done) {
     const wsp = createWSP('http://foo');
     const res = new Promise(resolve => {
       wsp.onError.addListener(resolve);
       wsp.open().catch(noop);
     });
-    return assert.eventually.propertyVal(res, 'type', 'error');
+    assert.eventually.propertyVal(res, 'type', 'error');
+    done();
   });
 
   // todo: how to make error from server side?
