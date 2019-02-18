@@ -2,6 +2,9 @@
 describe('onError', function () {
 
   it('should trigger for incorrect urls', function () {
+    // on windows this test takes more time
+    // see https://github.com/vitalets/websocket-as-promised/pull/16
+    this.timeout(5 * 1000);
     const wsp = createWSP('http://foo');
     const res = new Promise(resolve => {
       wsp.onError.addListener(resolve);
