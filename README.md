@@ -7,6 +7,7 @@ client library providing
 for connecting, disconnecting and messaging with server</h5>
 <div align="center">
   <a href="https://travis-ci.org/vitalets/websocket-as-promised"><img src="https://travis-ci.org/vitalets/websocket-as-promised.svg?branch=master" alt="Build Status" /></a>
+  <a href="https://snyk.io/test/github/vitalets/websocket-as-promised?targetFile=package.json"><img src="https://snyk.io/test/github/vitalets/websocket-as-promised/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/vitalets/websocket-as-promised?targetFile=package.json" style="max-width:100%;"></a>
   <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/v/websocket-as-promised.svg" alt="Npm version" /></a>
   <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/l/websocket-as-promised.svg" alt="License" /></a>
   <a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs welcome" /></a>
