@@ -1,17 +1,22 @@
-<div align="center"><img alt="websocket-as-promised logo" src="https://user-images.githubusercontent.com/1473072/32486445-b2443538-c3b7-11e7-8e9f-94c95efad760.png"/></div>
-<h1 align="center">websocket-as-promised</h1>
-<h5 align="center">A
-<a href="https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API">WebSocket</a> 
-client library providing 
-<a href="https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise">Promise</a>-based API
-for connecting, disconnecting and messaging with server</h5>
-<div align="center">
-  <a href="https://travis-ci.org/vitalets/websocket-as-promised"><img src="https://travis-ci.org/vitalets/websocket-as-promised.svg?branch=master" alt="Build Status" /></a>
-  <a href="https://snyk.io/test/github/vitalets/websocket-as-promised?targetFile=package.json"><img src="https://snyk.io/test/github/vitalets/websocket-as-promised/badge.svg?targetFile=package.json" alt="Known Vulnerabilities" data-canonical-src="https://snyk.io/test/github/vitalets/websocket-as-promised?targetFile=package.json" style="max-width:100%;"></a>
-  <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/v/websocket-as-promised.svg" alt="Npm version" /></a>
-  <a href="https://www.npmjs.com/package/websocket-as-promised"><img src="https://img.shields.io/npm/l/websocket-as-promised.svg" alt="License" /></a>
-  <a href="http://makeapullrequest.com"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="PRs welcome" /></a>
-</div>
+# websocket-as-promised
+
+<img alt="websocket-as-promised logo" align="right" src="https://user-images.githubusercontent.com/1473072/32486445-b2443538-c3b7-11e7-8e9f-94c95efad760.png"/>
+
+[![Build Status](https://travis-ci.org/vitalets/websocket-as-promised.svg?branch=master)](https://travis-ci.org/vitalets/websocket-as-promised)
+[![Known Vulnerabilities](https://snyk.io/test/github/vitalets/websocket-as-promised/badge.svg?targetFile=package.json)](https://snyk.io/test/github/vitalets/websocket-as-promised?targetFile=package.json)
+[![npm](https://img.shields.io/npm/v/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
+[![license](https://img.shields.io/npm/l/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
+
+A [WebSocket] client library with [Promise]-based API for browser and Node.js.
+
+## Example
+```js
+// inside async function
+const wsp = new WebSocketAsPromised('ws://example.com');
+await wsp.open();
+wsp.send('message');
+await wsp.close();
+```
 
 ## Contents
 * [Installation](#installation)
@@ -39,7 +44,7 @@ import WebSocketAsPromised from 'websocket-as-promised';
 const wsp = new WebSocketAsPromised('ws://example.com');
 
 wsp.open()
-  .then(() => wsp.send('foo'))
+  .then(() => wsp.send('message'))
   .then(() => wsp.close())
   .catch(e => console.error(e));
 ```
@@ -49,16 +54,16 @@ import WebSocketAsPromised from 'websocket-as-promised';
 
 const wsp = new WebSocketAsPromised('ws://example.com');
 
-async function doWebSocketStuff() {
+(async () => {
   try {
     await wsp.open();
-    wsp.send('foo');
+    wsp.send('message');
   } catch(e) {
     console.error(e);
   } finally {
     await wsp.close();
   }
-}
+})();
 ```
 
 ## Usage in Node.js
@@ -73,7 +78,7 @@ const wsp = new WebSocketAsPromised('ws://example.com', {
 });
 
 wsp.open()
-  .then(() => wsp.send('foo'))
+  .then(() => wsp.send('message'))
   .then(() => wsp.close())
   .catch(e => console.error(e));
 ```
