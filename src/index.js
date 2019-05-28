@@ -314,7 +314,7 @@ class WebSocketAsPromised {
   }
 
   _handleMessage(event) {
-    const message = event.data;
+    const message = event.data || event;
     this._onMessage.dispatchAsync(message);
     this._handleUnpackedMessage(message);
   }
