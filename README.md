@@ -20,6 +20,7 @@ await wsp.close();
 ```
 
 ## Contents
+* [Requirements](#requirements)
 * [Installation](#installation)
 * [Usage](#usage-in-browser)
   * [Browser](#usage-in-browser)
@@ -32,6 +33,9 @@ await wsp.close();
 * [API](#api)
 * [Changelog](#changelog)
 * [License](#license)
+
+## Requirements
+* global `Promise` constructor
 
 ## Installation
 ```bash
