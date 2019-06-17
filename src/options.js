@@ -8,13 +8,15 @@
   *
  * @property {Function} [packMessage=noop] - packs message for sending. For example, `data => JSON.stringify(data)`.
  *
- * @property {Function} [unpackMessage=noop] - unpacks received message. For example, `message => JSON.parse(message)`.
+ * @property {Function} [unpackMessage=noop] - unpacks received message. For example, `data => JSON.parse(data)`.
  *
  * @property {Function} [attachRequestId=noop] - injects request id into data.
  * For example, `(data, requestId) => Object.assign({requestId}, data)`.
  *
  * @property {Function} [extractRequestId=noop] - extracts request id from received data.
  * For example, `data => data.requestId`.
+ *
+ * @property {Function} [extractMessageData=event => event.data] - extracts data from event object.
  *
  * @property {Number} timeout=0 - timeout for opening connection and sending messages.
  *
@@ -44,7 +46,7 @@ module.exports = {
   /**
    * See {@link Options.unpackMessage}
    *
-   * @param {String|ArrayBuffer|Blob} message
+   * @param {String|ArrayBuffer|Blob} data
    * @returns {*}
    */
   unpackMessage: null,
@@ -65,6 +67,14 @@ module.exports = {
    * @returns {String|Number|undefined}
    */
   extractRequestId: null,
+
+  /**
+   * See {@link Options.extractMessageData}
+   *
+   * @param {*} event
+   * @returns {*}
+   */
+  extractMessageData: event => event.data,
 
   /**
    * See {@link Options.timeout}

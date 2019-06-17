@@ -67,14 +67,34 @@ const wsp = new WebSocketAsPromised('ws://example.com');
 ```
 
 ## Usage in Node.js
-As there is no built-in WebSocket client in Node.js, you should use any W3C compatible third-party module
-(for example [websocket](https://www.npmjs.com/package/websocket)):
+As there is no built-in WebSocket client in Node.js, you should use a third-party WebSocket module.
+
+#### Usage with [websocket](https://www.npmjs.com/package/websocket)
+Here you should use W3C compatible client - [W3CWebSocket](https://github.com/theturtle32/WebSocket-Node/blob/master/docs/W3CWebSocket.md):
 ```js
-const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require('websocket-as-promised');
+const W3CWebSocket = require('websocket').w3cwebsocket;
 
 const wsp = new WebSocketAsPromised('ws://example.com', {
   createWebSocket: url => new W3CWebSocket(url)
+});
+
+wsp.open()
+  .then(() => wsp.send('message'))
+  .then(() => wsp.close())
+  .catch(e => console.error(e));
+```
+
+#### Usage with [ws](https://www.npmjs.com/package/ws)
+Here it is important to define `extractMessageData` option as event data are passed directly to `onmessage` handler, 
+not as `event.data` by [spec](https://html.spec.whatwg.org/multipage/comms.html#dom-messageevent-data):
+```js
+const WebSocketAsPromised = require('websocket-as-promised');
+const WebSocket = require('ws');
+
+const wsp = new WebSocketAsPromised('ws://example.com', {
+  createWebSocket: url => new WebSocket(url),
+  extractMessageData: event => event, // <- this is important
 });
 
 wsp.open()
@@ -88,9 +108,9 @@ To send raw data use `.send()` method:
 ```js
 wsp.send('foo');
 ```
-To handle raw messages from server use `.onMessage` channel:
+To handle raw data from server use `.onMessage` channel:
 ```js
-wsp.onMessage.addListener(message => console.log(message));
+wsp.onMessage.addListener(data => console.log(data));
 ```
 
 ## Sending JSON
@@ -98,7 +118,7 @@ To send JSON you should define `packMessage / unpackMessage` options:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.stringify(data),
-  unpackMessage: message => JSON.parse(message)
+  unpackMessage: data => JSON.parse(data)
 });
 ```
 To send data use `.sendPacked()` method passing json as parameter:
@@ -115,7 +135,7 @@ Example of sending `Uint8Array`:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
     packMessage: data => (new Uint8Array(data)).buffer,
-    unpackMessage: message => new Uint8Array(message),
+    unpackMessage: data => new Uint8Array(data),
 });
 
 wsp.open()
@@ -125,14 +145,14 @@ wsp.open()
 ```
 
 ## Sending requests
-*websocket-as-promised* provides simple request-response mechanism. 
+*websocket-as-promised* provides simple request-response mechanism ([JSON RPC](https://www.jsonrpc.org)). 
 Method `.sendRequest()` sends message with unique `requestId` and returns promise. 
 That promise get resolved when response message with the same `requestId` comes. 
 For reading/setting `requestId` from/to message there are two functions defined in options `attachRequestId / extractRequestId`:
 ```js
 const wsp = new WebSocketAsPromised(wsUrl, {
   packMessage: data => JSON.stringify(data),
-  unpackMessage: message => JSON.parse(message),
+  unpackMessage: data => JSON.parse(data),
   attachRequestId: (data, requestId) => Object.assign({id: requestId}, data), // attach requestId to message as `id` field
   extractRequestId: data => data && data.id,                                  // read requestId from message `id` field
 });
@@ -377,9 +397,10 @@ Removes all listeners from WSP instance. Useful for cleanup.
 | --- | --- | --- | --- |
 | [createWebSocket] | <code>function</code> | <code>url &#x3D;&gt; new WebSocket(url)</code> | custom function for WebSocket construction. |
 | [packMessage] | <code>function</code> | <code>noop</code> | packs message for sending. For example, `data => JSON.stringify(data)`. |
-| [unpackMessage] | <code>function</code> | <code>noop</code> | unpacks received message. For example, `message => JSON.parse(message)`. |
+| [unpackMessage] | <code>function</code> | <code>noop</code> | unpacks received message. For example, `data => JSON.parse(data)`. |
 | [attachRequestId] | <code>function</code> | <code>noop</code> | injects request id into data. For example, `(data, requestId) => Object.assign({requestId}, data)`. |
 | [extractRequestId] | <code>function</code> | <code>noop</code> | extracts request id from received data. For example, `data => data.requestId`. |
+| [extractMessageData] | <code>function</code> | <code>event &#x3D;&gt; event.data</code> | extracts data from event object. |
 | timeout | <code>Number</code> | <code>0</code> | timeout for opening connection and sending messages. |
 | connectionTimeout | <code>Number</code> | <code>0</code> | special timeout for opening connection, by default equals to `timeout`. |
 

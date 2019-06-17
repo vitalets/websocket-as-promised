@@ -4,7 +4,7 @@ describe('sendPacked', function () {
   beforeEach(function () {
     this.wsp = createWSP(this.url, {
       packMessage: data => JSON.stringify(data),
-      unpackMessage: message => JSON.parse(message),
+      unpackMessage: data => JSON.parse(data),
     });
   });
 
@@ -23,7 +23,7 @@ describe('sendPacked', function () {
   it('should throw if packMessage is not defined', function () {
     const wsp = createWSP(this.url, {
       packMessage: null,
-      unpackMessage: message => JSON.parse(message),
+      unpackMessage: data => JSON.parse(data),
     });
     const p = wsp.open().then(() => wsp.sendPacked({foo: 'bar'}));
     return assert.isRejected(p,

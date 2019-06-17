@@ -314,22 +314,22 @@ class WebSocketAsPromised {
   }
 
   _handleMessage(event) {
-    const message = event.data;
-    this._onMessage.dispatchAsync(message);
-    this._handleUnpackedMessage(message);
+    const data = this._options.extractMessageData(event);
+    this._onMessage.dispatchAsync(data);
+    this._tryUnpack(data);
   }
 
-  _handleUnpackedMessage(message) {
+  _tryUnpack(data) {
     if (this._options.unpackMessage) {
-      const data = this._options.unpackMessage(message);
+      data = this._options.unpackMessage(data);
       if (data !== undefined) {
         this._onUnpackedMessage.dispatchAsync(data);
-        this._handleResponse(data);
+        this._tryHandleResponse(data);
       }
     }
   }
 
-  _handleResponse(data) {
+  _tryHandleResponse(data) {
     if (this._options.extractRequestId) {
       const requestId = this._options.extractRequestId(data);
       if (requestId) {

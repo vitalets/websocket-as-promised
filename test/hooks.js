@@ -2,7 +2,7 @@ const server = require('./server');
 
 const wspOptionsJson = {
   packMessage: data => JSON.stringify(data),
-  unpackMessage: message => JSON.parse(message),
+  unpackMessage: data => JSON.parse(data),
   attachRequestId: (data, requestId) => Object.assign({requestId}, data),
   extractRequestId: data => data && data.requestId,
 };
