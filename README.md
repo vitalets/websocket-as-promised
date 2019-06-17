@@ -11,7 +11,8 @@ A [WebSocket] client library with [Promise]-based API for browser and Node.js.
 
 ## Example
 ```js
-// inside async function
+import WebSocketAsPromised from 'websocket-as-promised';
+
 const wsp = new WebSocketAsPromised('ws://example.com');
 await wsp.open();
 wsp.send('message');
@@ -69,7 +70,7 @@ const wsp = new WebSocketAsPromised('ws://example.com');
 ## Usage in Node.js
 As there is no built-in WebSocket client in Node.js, you should use a third-party WebSocket module.
 
-#### Usage with [websocket](https://www.npmjs.com/package/websocket)
+### Usage with [websocket](https://www.npmjs.com/package/websocket)
 Here you should use W3C compatible client - [W3CWebSocket](https://github.com/theturtle32/WebSocket-Node/blob/master/docs/W3CWebSocket.md):
 ```js
 const WebSocketAsPromised = require('websocket-as-promised');
@@ -85,7 +86,7 @@ wsp.open()
   .catch(e => console.error(e));
 ```
 
-#### Usage with [ws](https://www.npmjs.com/package/ws)
+### Usage with [ws](https://www.npmjs.com/package/ws)
 Here it is important to define `extractMessageData` option as event data are passed directly to `onmessage` handler, 
 not as `event.data` by [spec](https://html.spec.whatwg.org/multipage/comms.html#dom-messageevent-data):
 ```js
