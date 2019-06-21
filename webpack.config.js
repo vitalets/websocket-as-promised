@@ -22,6 +22,11 @@ module.exports = {
     globalObject: 'this', // https://github.com/webpack/webpack/issues/6525
   },
   devtool: 'source-map',
+  // disable own minification as second minification in app can break the code.
+  // see: https://github.com/vitalets/websocket-as-promised/issues/21
+  optimization: {
+    minimize: false
+  },
   module: {
     rules: [
       {
