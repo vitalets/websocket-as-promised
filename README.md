@@ -197,6 +197,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 * [WebSocketAsPromised](#WebSocketAsPromised)
     * [new WebSocketAsPromised(url, [options])](#new_WebSocketAsPromised_new)
     * [.ws](#WebSocketAsPromised+ws) ⇒ <code>WebSocket</code>
+    * [.url](#WebSocketAsPromised+url) ⇒ <code>String</code>
     * [.isOpening](#WebSocketAsPromised+isOpening) ⇒ <code>Boolean</code>
     * [.isOpened](#WebSocketAsPromised+isOpened) ⇒ <code>Boolean</code>
     * [.isClosing](#WebSocketAsPromised+isClosing) ⇒ <code>Boolean</code>
@@ -231,6 +232,12 @@ Please call `open()` method to connect.
 
 #### wsp.ws ⇒ <code>WebSocket</code>
 Returns original WebSocket instance created by `options.createWebSocket`.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+<a name="WebSocketAsPromised+url"></a>
+
+#### wsp.url ⇒ <code>String</code>
+Returns WebSocket url.
 
 **Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
 <a name="WebSocketAsPromised+isOpening"></a>

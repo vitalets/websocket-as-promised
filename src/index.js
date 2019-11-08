@@ -53,6 +53,15 @@ class WebSocketAsPromised {
   }
 
   /**
+   * Returns WebSocket url.
+   *
+   * @returns {String}
+   */
+  get url() {
+    return this._url;
+  }
+
+  /**
    * Is WebSocket connection in opening state.
    *
    * @returns {Boolean}
