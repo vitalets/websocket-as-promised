@@ -136,13 +136,6 @@ class WebSocketAsPromised {
     return this._onMessage;
   }
 
-  get onPackedMessage() {
-    throw new Error([
-      `Websocket-as-promised 'onPackedMessage' was renamed into 'onUnpackedMessage' to match the argument`,
-      `passed to the listener. Please just use 'onUnpackedMessage' instead.`
-    ].join(' '));
-  }
-
   /**
    * Event channel triggered every time when received message is successfully unpacked.
    * For example, if you are using JSON transport, the listener will receive already JSON parsed data.
