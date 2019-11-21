@@ -1,3 +1,7 @@
+## 1.0.0 (tbd)
+
+* Provide unpacked sources by default to reduce bundle size ([#22])
+
 ## 0.9.0 (Sep 14, 2018)
 
 * Add TypeScript support ([#13])
@@ -39,3 +43,4 @@ are replaced with 4 more atomic hadlers:
 [#10]: https://github.com/vitalets/websocket-as-promised/issues/10
 [#12]: https://github.com/vitalets/websocket-as-promised/issues/12
 [#13]: https://github.com/vitalets/websocket-as-promised/issues/13
+[#22]: https://github.com/vitalets/websocket-as-promised/issues/22
