@@ -4,3 +4,5 @@
 .eslintrc
 
 /.installed/
+/scripts/
+/test/
