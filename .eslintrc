@@ -21,6 +21,7 @@
     "max-len": ["error", {"code" : 120}],
     "max-lines": ["error", {"max": 210, "skipComments": true, "skipBlankLines": true}],
     "semi": ["error", "always"],
-    "space-before-function-paren": ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}]
+    "space-before-function-paren": ["error", {"anonymous": "always", "named": "never", "asyncArrow": "always"}],
+    "no-prototype-builtins": 0
   }
 }

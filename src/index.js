@@ -8,7 +8,6 @@
 
 const Channel = require('chnl');
 const PromiseController = require('promise-controller');
-const flatOptions = require('flat-options');
 const Requests = require('./requests');
 const defaultOptions = require('./options');
 const {throwIf} = require('./utils');
@@ -33,8 +32,9 @@ class WebSocketAsPromised {
    * @param {Options} [options]
    */
   constructor(url, options) {
+    this._assertOptions(options);
     this._url = url;
-    this._options = flatOptions(options, defaultOptions);
+    this._options = Object.assign({}, defaultOptions, options);
     this._requests = new Requests();
     this._ws = null;
     this._wsSubscription = null;
@@ -366,6 +366,14 @@ class WebSocketAsPromised {
   _cleanup(error) {
     this._cleanupWS();
     this._requests.rejectAll(error);
+  }
+
+  _assertOptions(options) {
+    Object.keys(options || {}).forEach(key => {
+      if (!defaultOptions.hasOwnProperty(key)) {
+        throw new Error(`Unknown option: ${key}`);
+      }
+    });
   }
 
   _assertPackingHandlers() {
