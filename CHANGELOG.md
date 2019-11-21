@@ -1,4 +1,4 @@
-## 1.0.0 (tbd)
+## 1.0.0 (Nov 21, 2019)
 
 * Provide unpacked sources by default to reduce bundle size ([#22])
 
