@@ -1,11 +1,7 @@
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
-const path = require('path');
 const W3CWebSocket = require('websocket').w3cwebsocket;
-const srcPath = process.env.LIB_PATH || 'src';
-const WebSocketAsPromised = require(path.resolve(srcPath));
-
-console.log(`Require websocket-as-promised from: ${srcPath}`);
+const WebSocketAsPromised = require(process.env.LIB_PATH || '../');
 
 chai.use(chaiAsPromised);
 
