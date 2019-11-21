@@ -37,8 +37,8 @@
     "{src,test}/**/*.js": "eslint"
   },
   "dependencies": {
-    "chnl": "^0.6.0",
-    "promise-controller": "^0.6.0",
+    "chnl": "^0.6.1",
+    "promise-controller": "^1.0.0",
     "promise.prototype.finally": "^3.1.1"
   },
   "devDependencies": {
