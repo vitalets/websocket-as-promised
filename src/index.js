@@ -10,7 +10,7 @@ const Channel = require('chnl');
 const PromiseController = require('promise-controller');
 const Requests = require('./requests');
 const defaultOptions = require('./options');
-const {throwIf} = require('./utils');
+const { throwIf } = require('./utils');
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#Ready_state_constants
 const STATE = {
@@ -255,10 +255,10 @@ class WebSocketAsPromised {
    *
    * @returns {Promise<Event>}
    */
-  close() {
+  close(code, reason) { // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close
     return this.isClosed
       ? Promise.resolve(this._closing.value)
-      : this._closing.call(() => this._ws.close());
+      : this._closing.call(() => this._ws.close(code, reason));
   }
 
   /**
@@ -303,10 +303,10 @@ class WebSocketAsPromised {
   _createWS() {
     this._ws = this._options.createWebSocket(this._url);
     this._wsSubscription = new Channel.Subscription([
-      {channel: this._ws, event: 'open', listener: e => this._handleOpen(e)},
-      {channel: this._ws, event: 'message', listener: e => this._handleMessage(e)},
-      {channel: this._ws, event: 'error', listener: e => this._handleError(e)},
-      {channel: this._ws, event: 'close', listener: e => this._handleClose(e)},
+      { channel: this._ws, event: 'open', listener: e => this._handleOpen(e) },
+      { channel: this._ws, event: 'message', listener: e => this._handleMessage(e) },
+      { channel: this._ws, event: 'error', listener: e => this._handleError(e) },
+      { channel: this._ws, event: 'close', listener: e => this._handleClose(e) },
     ]).on();
   }
 
@@ -377,14 +377,14 @@ class WebSocketAsPromised {
   }
 
   _assertPackingHandlers() {
-    const {packMessage, unpackMessage} = this._options;
+    const { packMessage, unpackMessage } = this._options;
     throwIf(!packMessage || !unpackMessage,
       `Please define 'options.packMessage / options.unpackMessage' for sending packed messages.`
     );
   }
 
   _assertRequestIdHandlers() {
-    const {attachRequestId, extractRequestId} = this._options;
+    const { attachRequestId, extractRequestId } = this._options;
     throwIf(!attachRequestId || !extractRequestId,
       `Please define 'options.attachRequestId / options.extractRequestId' for sending requests.`
     );
