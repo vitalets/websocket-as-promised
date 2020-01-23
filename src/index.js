@@ -10,7 +10,7 @@ const Channel = require('chnl');
 const PromiseController = require('promise-controller');
 const Requests = require('./requests');
 const defaultOptions = require('./options');
-const { throwIf } = require('./utils');
+const {throwIf} = require('./utils');
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#Ready_state_constants
 const STATE = {
@@ -253,6 +253,8 @@ class WebSocketAsPromised {
   /**
    * Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
    *
+   * @param {number=} [1005] code A numeric value indicating the status code.
+   * @param {string=} reason A human-readable string.
    * @returns {Promise<Event>}
    */
   close(code, reason) { // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close
