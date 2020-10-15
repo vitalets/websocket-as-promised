@@ -2,7 +2,7 @@
 
 <img alt="websocket-as-promised logo" align="right" src="https://user-images.githubusercontent.com/1473072/32486445-b2443538-c3b7-11e7-8e9f-94c95efad760.png"/>
 
-[![Build Status](https://travis-ci.org/vitalets/websocket-as-promised.svg?branch=master)](https://travis-ci.org/vitalets/websocket-as-promised)
+[![Actions Status](https://github.com/vitalets/websocket-as-promised/workflows/autotests/badge.svg)](https://github.com/vitalets/websocket-as-promised/actions)
 [![Known Vulnerabilities](https://snyk.io/test/github/vitalets/websocket-as-promised/badge.svg?targetFile=package.json)](https://snyk.io/test/github/vitalets/websocket-as-promised?targetFile=package.json)
 [![npm](https://img.shields.io/npm/v/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
 [![license](https://img.shields.io/npm/l/websocket-as-promised.svg)](https://www.npmjs.com/package/websocket-as-promised)
