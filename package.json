@@ -19,7 +19,7 @@
     "lint": "eslint src test",
     "test": "mocha test/setup.js test/specs",
     "test-installed": "node scripts/install-local && LIB_PATH=../.installed/node_modules/websocket-as-promised npm t",
-    "ci": "run-s lint test test-installed",
+    "test-ci": "run-s lint test test-installed",
     "docs": "node scripts/docs",
     "prerelease": "run-s lint test test-installed",
     "release": "npm version $VER && npm publish",
