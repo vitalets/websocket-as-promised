@@ -213,7 +213,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.sendRequest(data, [options])](#WebSocketAsPromised+sendRequest) ⇒ <code>Promise</code>
     * [.sendPacked(data)](#WebSocketAsPromised+sendPacked)
     * [.send(data)](#WebSocketAsPromised+send)
-    * [.close()](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
+    * [.close([code], [reason])](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
     * [.removeAllListeners()](#WebSocketAsPromised+removeAllListeners)
 
 <a name="new_WebSocketAsPromised_new"></a>
@@ -388,10 +388,16 @@ Sends data without packing.
 
 <a name="WebSocketAsPromised+close"></a>
 
-#### wsp.close() ⇒ <code>Promise.&lt;Event&gt;</code>
+#### wsp.close([code], [reason]) ⇒ <code>Promise.&lt;Event&gt;</code>
 Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
 
 **Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| [code] | <code>number</code> | <code>1000</code> | A numeric value indicating the status code. |
+| [reason] | <code>string</code> |  | A human-readable reason for closing connection. |
+
 <a name="WebSocketAsPromised+removeAllListeners"></a>
 
 #### wsp.removeAllListeners()
