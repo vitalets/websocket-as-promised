@@ -253,8 +253,8 @@ class WebSocketAsPromised {
   /**
    * Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
    *
-   * @param {number=} [1005] code A numeric value indicating the status code.
-   * @param {string=} reason A human-readable string.
+   * @param {number=} [code=1000] A numeric value indicating the status code.
+   * @param {string=} [reason] A human-readable reason for closing connection.
    * @returns {Promise<Event>}
    */
   close(code, reason) { // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close

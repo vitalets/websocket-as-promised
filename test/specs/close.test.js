@@ -7,6 +7,14 @@ describe('close', function () {
     return assert.eventually.propertyVal(res, 'code', NORMAL_CLOSE_CODE);
   });
 
+  it('should close connection with custom code', function () {
+    const res = this.wsp.open().then(() => this.wsp.close(3000, 'custom reason'));
+    return Promise.all([
+      assert.eventually.propertyVal(res, 'code', 3000),
+      assert.eventually.propertyVal(res, 'reason', 'custom reason'),
+    ]);
+  });
+
   it('should return the same closing promise for several calls while closing', function () {
     const res = this.wsp.open().then(() => {
       const p1 = this.wsp.close();
