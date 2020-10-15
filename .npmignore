@@ -4,5 +4,6 @@
 .eslintrc
 
 /.installed/
+/.github/
 /scripts/
 /test/
