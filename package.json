@@ -15,6 +15,11 @@
   },
   "main": "src/index.js",
   "types": "types/index.d.ts",
+  "files": [
+    "src",
+    "types",
+    "README.md"
+  ],
   "scripts": {
     "lint": "eslint src test",
     "test": "mocha test/setup.js test/specs",

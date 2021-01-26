@@ -1,9 +1,0 @@
-.idea
-.travis.yml
-.editorconfig
-.eslintrc
-
-/.installed/
-/.github/
-/scripts/
-/test/
