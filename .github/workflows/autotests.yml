@@ -1,6 +1,12 @@
 name: autotests
 
-on: [push]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    - cron: '0 3 * * *'
 
 jobs:
   build:
@@ -9,17 +15,18 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        node-version: [12, 14]
 
     steps:
     - uses: actions/checkout@v1
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
+
     - name: install deps
       run: npm ci
+
     - name: run tests
       run: npm run test-ci
-      env:
-        CI: true
