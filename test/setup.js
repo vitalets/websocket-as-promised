@@ -1,4 +1,4 @@
-const assert = require('assert/strict');
+const assert = require('assert').strict;
 const W3CWebSocket = require('websocket').w3cwebsocket;
 const WebSocketAsPromised = require(process.env.LIB_PATH || '../');
 
