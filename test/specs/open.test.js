@@ -1,81 +1,76 @@
 describe('open', function () {
-  it('should resolve with correct type', function () {
-    const res = this.wsp.open();
-    return assert.eventually.propertyVal(res, 'type', 'open');
+  it('should resolve with correct type', async function () {
+    const res = await this.wsp.open();
+    assert.equal(res.type, 'open');
   });
 
-  it('should return the same opening promise on several calls', function () {
+  it('should return the same opening promise on several calls', async function () {
     const p1 = this.wsp.open();
     const p2 = this.wsp.open();
     assert.equal(p1, p2);
-    return assert.eventually.propertyVal(p1, 'type', 'open');
+    assert.equal((await p1).type, 'open');
   });
 
-  it('should return the same opening promise on several open calls (with timeout)', function () {
+  it('should return the same opening promise on several open calls (with timeout)', async function () {
     const wsp = createWSP(this.url, {timeout: 50});
     const p1 = wsp.open();
     const p2 = wsp.open();
     assert.equal(p1, p2);
-    return assert.eventually.propertyVal(p1, 'type', 'open');
+    assert.equal((await p1).type, 'open');
   });
 
-  it('should reject if server rejects connection', function () {
+  it('should reject if server rejects connection', async function () {
     const wsp = createWSP(this.url + '?reject=1');
     const p = wsp.open();
-    return assert.isRejected(p, 'WebSocket closed with reason: connection failed (1006).');
+    await assert.rejects(p, /WebSocket closed with reason: connection failed \(1006\)/);
   });
 
-  it('should reject after timeout and close connection', function () {
+  it('should reject after timeout and close connection', async function () {
     const wsp = createWSP(this.url + '?delay=20', {timeout: 10});
-    const p1 = wsp.open();
-    return assert.isRejected(p1, 'Can\'t open WebSocket within allowed timeout: 10 ms.')
-      .then(() => assert.ok(wsp.isClosed));
+    const p = wsp.open();
+    await assert.rejects(p, /Can't open WebSocket within allowed timeout: 10 ms/);
   });
 
   describe('connectionTimeout', function () {
-    it('should not reject after timeout if connectionTimeout set', function () {
+    it('should not reject after timeout if connectionTimeout set', async function () {
       const wsp = createWSP(this.url + '?delay=20', {connectionTimeout: 50, timeout: 10});
-      const p1 = wsp.open();
-      return assert.isFulfilled(p1)
-        .then(() => assert.ok(wsp.isOpened));
+      await wsp.open();
+      assert.ok(wsp.isOpened);
     });
 
-    it('should reject after connectionTimeout and close connection', function () {
+    it('should reject after connectionTimeout and close connection', async function () {
       const wsp = createWSP(this.url + '?delay=20', {connectionTimeout: 10, timeout: 30});
-      const p1 = wsp.open();
-      return assert.isRejected(p1, 'Can\'t open WebSocket within allowed timeout: 10 ms.')
-        .then(() => assert.ok(wsp.isClosed));
+      const p = wsp.open();
+      await assert.rejects(p, /Can't open WebSocket within allowed timeout: 10 ms/);
     });
   });
 
-  it('should reject for invalid url', function () {
+  it('should reject for invalid url', async function () {
     const wsp = createWSP('abc', {timeout: 10});
     const p = wsp.open();
-    return assert.isRejected(p, 'You must specify a full WebSocket URL, including protocol.');
+    await assert.rejects(p, /You must specify a full WebSocket URL, including protocol/);
   });
 
-  it('should resolve with the same promise when opening already opened connection', function () {
-    let p1 = this.wsp.open();
-    let p2;
-    const res = p1.then(() => p2 = this.wsp.open());
-    return assert.eventually.propertyVal(res, 'type', 'open')
-      .then(() => assert.equal(p1, p2));
+  it('should resolve with the same promise when opening already opened connection', async function () {
+    const p1 = this.wsp.open();
+    await p1;
+    const p2 = this.wsp.open();
+    assert.equal(p1, p2);
   });
 
-  it('should re-open', function () {
-    const p = this.wsp.open()
-      .then(() => this.wsp.close())
-      .then(() => this.wsp.open());
-    return assert.eventually.propertyVal(p, 'type', 'open');
+  it('should re-open', async function () {
+    await this.wsp.open();
+    await this.wsp.close();
+    const res = await this.wsp.open();
+    assert.equal(res.type, 'open');
   });
 
-  it('should trigger onOpen', function () {
+  it('should trigger onOpen', async function () {
     // need separate wsp instance here
     const wsp = createWSP(this.url);
-    const res = new Promise(resolve => {
-      wsp.onOpen.addListener(resolve);
-    });
-    wsp.open().then(() => wsp.close());
-    return assert.eventually.propertyVal(res, 'type', 'open');
+    const p = new Promise(resolve => wsp.onOpen.addListener(resolve));
+    await wsp.open();
+    await wsp.close();
+    return assert.equal((await p).type, 'open');
   });
 });

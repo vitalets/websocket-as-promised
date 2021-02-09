@@ -3,22 +3,17 @@ const WebSocket = require('ws');
 
 describe('support ws package', function () {
 
-  it('should send and receive messages', function () {
-    this.wsp = createWSP(this.url, {
+  it('should send and receive messages', async function () {
+    const wsp = createWSP(this.url, {
       createWebSocket: url => new WebSocket(url),
       extractMessageData: event => event,
       packMessage: data => JSON.stringify(data),
       unpackMessage: data => JSON.parse(data),
     });
-
-    let response;
-    this.wsp.onUnpackedMessage.addListener(data => response = data);
-    const p = this.wsp.open()
-      .then(() => this.wsp.sendPacked({foo: 'bar'}))
-      .then(() => wait(100));
-
-    return assert.isFulfilled(p)
-      .then(() => assert.deepEqual(response, {foo: 'bar'}));
+    await wsp.open();
+    const p = new Promise(resolve => wsp.onUnpackedMessage.addListener(data => resolve(data)));
+    wsp.sendPacked({foo: 'bar'});
+    assert.deepEqual(await p, {foo: 'bar'});
   });
 
 });

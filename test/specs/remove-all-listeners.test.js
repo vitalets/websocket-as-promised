@@ -14,13 +14,13 @@ describe('removeAllListeners', function () {
 
     wsp.removeAllListeners();
 
-    assert.isNotOk(wsp.onOpen.hasListeners());
-    assert.isNotOk(wsp.onMessage.hasListeners());
-    assert.isNotOk(wsp.onUnpackedMessage.hasListeners());
-    assert.isNotOk(wsp.onResponse.hasListeners());
-    assert.isNotOk(wsp.onSend.hasListeners());
-    assert.isNotOk(wsp.onClose.hasListeners());
-    assert.isNotOk(wsp.onError.hasListeners());
+    assert.equal(wsp.onOpen.hasListeners(), false, 'onOpen');
+    assert.equal(wsp.onMessage.hasListeners(), false, 'onMessage');
+    assert.equal(wsp.onUnpackedMessage.hasListeners(), false, 'onUnpackedMessage');
+    assert.equal(wsp.onResponse.hasListeners(), false, 'onResponse');
+    assert.equal(wsp.onSend.hasListeners(), false, 'onSend');
+    assert.equal(wsp.onClose.hasListeners(), false, 'onClose');
+    assert.equal(wsp.onError.hasListeners(), false, 'onError');
   });
 
 });

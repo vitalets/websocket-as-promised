@@ -1,29 +1,28 @@
 
 describe('isClosed', function () {
   it('should be initially true', function () {
-    assert.isTrue(this.wsp.isClosed);
+    assert.equal(this.wsp.isClosed, true);
   });
 
-  it('should be false while opening', function () {
-    const p = this.wsp.open();
-    assert.isFalse(this.wsp.isClosed);
-    return p;
+  it('should be false while opening', async function () {
+    this.wsp.open();
+    assert.equal(this.wsp.isClosed, false);
   });
 
-  it('should be false after open', function () {
-    const p = this.wsp.open();
-    return p.then(() => assert.isFalse(this.wsp.isClosed));
+  it('should be false after open', async function () {
+    await this.wsp.open();
+    assert.equal(this.wsp.isClosed, false);
   });
 
-  it('should be false while closing', function () {
-    return this.wsp.open().then(() => {
-      this.wsp.close();
-      assert.isFalse(this.wsp.isClosed);
-    });
+  it('should be false while closing', async function () {
+    await this.wsp.open();
+    this.wsp.close();
+    assert.equal(this.wsp.isClosed, false);
   });
 
-  it('should be true after close', function () {
-    const p = this.wsp.open().then(() => this.wsp.close());
-    return p.then(() => assert.isTrue(this.wsp.isClosed));
+  it('should be true after close', async function () {
+    await this.wsp.open();
+    await this.wsp.close();
+    assert.equal(this.wsp.isClosed, true);
   });
 });
