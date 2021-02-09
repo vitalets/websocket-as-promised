@@ -56,4 +56,18 @@ describe('sendPacked', function () {
     wsp.sendPacked([1, 2, 3]);
     assert.deepEqual(String(await p), '1,2,3');
   });
+
+  it('should wait for unpackMessage when it returns promise (#34)', async function () {
+    const wsp = createWSP(this.url, {
+      packMessage: data => JSON.stringify(data),
+      unpackMessage: async data => JSON.parse(data),
+    });
+    await wsp.open();
+    let response;
+    wsp.onUnpackedMessage.addListener(data => response = data);
+    const p = new Promise(resolve => wsp.onUnpackedMessage.addListener(resolve));
+    wsp.sendPacked({foo: 'bar'});
+    await p;
+    assert.deepEqual(response, {foo: 'bar'});
+  });
 });

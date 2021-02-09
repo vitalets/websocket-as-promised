@@ -4,3 +4,7 @@ exports.throwIf = (condition, message) => {
     throw new Error(message);
   }
 };
+
+exports.isPromise = value => {
+  return value && typeof value.then === 'function';
+};

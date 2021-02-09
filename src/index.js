@@ -13,7 +13,7 @@ const { PromisedMap } = require('promised-map');
 // todo: maybe remove Requests and just use promised-map?
 const Requests = require('./requests');
 const defaultOptions = require('./options');
-const {throwIf} = require('./utils');
+const {throwIf, isPromise} = require('./utils');
 
 // see: https://developer.mozilla.org/en-US/docs/Web/API/WebSocket#Ready_state_constants
 const STATE = {
@@ -355,12 +355,21 @@ class WebSocketAsPromised {
   _tryUnpack(data) {
     if (this._options.unpackMessage) {
       data = this._options.unpackMessage(data);
-      if (data !== undefined) {
-        this._onUnpackedMessage.dispatchAsync(data);
-        this._tryHandleResponse(data);
+      if (isPromise(data)) {
+        data.then(data => this._handleUnpackedData(data));
+      } else {
+        this._handleUnpackedData(data);
       }
-      this._tryHandleWaitingMessage(data);
     }
+  }
+
+  _handleUnpackedData(data) {
+    if (data !== undefined) {
+      // todo: maybe trigger onUnpackedMessage always?
+      this._onUnpackedMessage.dispatchAsync(data);
+      this._tryHandleResponse(data);
+    }
+    this._tryHandleWaitingMessage(data);
   }
 
   _tryHandleResponse(data) {
