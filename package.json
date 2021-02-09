@@ -44,7 +44,8 @@
   "dependencies": {
     "chnl": "^1.2.0",
     "promise-controller": "^1.0.0",
-    "promise.prototype.finally": "^3.1.2"
+    "promise.prototype.finally": "^3.1.2",
+    "promised-map": "^1.0.0"
   },
   "devDependencies": {
     "eslint": "^7.18.0",

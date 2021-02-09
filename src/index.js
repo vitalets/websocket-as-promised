@@ -7,7 +7,10 @@
  */
 
 const Channel = require('chnl');
+// todo: maybe remove PromiseController and just use promised-map with 2 items?
 const PromiseController = require('promise-controller');
+const { PromisedMap } = require('promised-map');
+// todo: maybe remove Requests and just use promised-map?
 const Requests = require('./requests');
 const defaultOptions = require('./options');
 const {throwIf} = require('./utils');
@@ -36,6 +39,7 @@ class WebSocketAsPromised {
     this._url = url;
     this._options = Object.assign({}, defaultOptions, options);
     this._requests = new Requests();
+    this._promisedMap = new PromisedMap();
     this._ws = null;
     this._wsSubscription = null;
     this._createOpeningController();
@@ -251,6 +255,31 @@ class WebSocketAsPromised {
   }
 
   /**
+   * Waits for particular message to come.
+   *
+   * @param {Function} predicate function to check incoming message.
+   * @param {Object} [options]
+   * @param {Number} [options.timeout=0]
+   * @param {Error} [options.timeoutError]
+   * @returns {Promise}
+   *
+   * @example
+   * const response = await wsp.waitUnpackedMessage(data => data && data.foo === 'bar');
+   */
+  waitUnpackedMessage(predicate, options = {}) {
+    throwIf(typeof predicate !== 'function', `Predicate must be a function, got ${typeof predicate}`);
+    if (options.timeout) {
+      setTimeout(() => {
+        if (this._promisedMap.has(predicate)) {
+          const error = options.timeoutError || new Error('Timeout');
+          this._promisedMap.reject(predicate, error);
+        }
+      }, options.timeout);
+    }
+    return this._promisedMap.set(predicate);
+  }
+
+  /**
    * Closes WebSocket connection. If connection already closed, promise will be resolved with "close event".
    *
    * @param {number=} [code=1000] A numeric value indicating the status code.
@@ -330,6 +359,7 @@ class WebSocketAsPromised {
         this._onUnpackedMessage.dispatchAsync(data);
         this._tryHandleResponse(data);
       }
+      this._tryHandleWaitingMessage(data);
     }
   }
 
@@ -341,6 +371,21 @@ class WebSocketAsPromised {
         this._requests.resolve(requestId, data);
       }
     }
+  }
+
+  _tryHandleWaitingMessage(data) {
+    this._promisedMap.forEach((_, predicate) => {
+      let isMatched = false;
+      try {
+        isMatched = predicate(data);
+      } catch (e) {
+        this._promisedMap.reject(predicate, e);
+        return;
+      }
+      if (isMatched) {
+        this._promisedMap.resolve(predicate, data);
+      }
+    });
   }
 
   _handleError(event) {

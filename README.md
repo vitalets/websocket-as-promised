@@ -213,6 +213,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.sendRequest(data, [options])](#WebSocketAsPromised+sendRequest) ⇒ <code>Promise</code>
     * [.sendPacked(data)](#WebSocketAsPromised+sendPacked)
     * [.send(data)](#WebSocketAsPromised+send)
+    * [.waitUnpackedMessage(predicate, [options])](#WebSocketAsPromised+waitUnpackedMessage) ⇒ <code>Promise</code>
     * [.close([code], [reason])](#WebSocketAsPromised+close) ⇒ <code>Promise.&lt;Event&gt;</code>
     * [.removeAllListeners()](#WebSocketAsPromised+removeAllListeners)
 
@@ -386,6 +387,24 @@ Sends data without packing.
 | --- | --- |
 | data | <code>String</code> \| <code>Blob</code> \| <code>ArrayBuffer</code> | 
 
+<a name="WebSocketAsPromised+waitUnpackedMessage"></a>
+
+#### wsp.waitUnpackedMessage(predicate, [options]) ⇒ <code>Promise</code>
+Waits for particular message to come.
+
+**Kind**: instance method of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| predicate | <code>function</code> |  | function to check incoming message. |
+| [options] | <code>Object</code> |  |  |
+| [options.timeout] | <code>Number</code> | <code>0</code> |  |
+| [options.timeoutError] | <code>Error</code> |  |  |
+
+**Example**  
+```js
+const response = await wsp.waitUnpackedMessage(data => data && data.foo === 'bar');
+```
 <a name="WebSocketAsPromised+close"></a>
 
 #### wsp.close([code], [reason]) ⇒ <code>Promise.&lt;Event&gt;</code>
