@@ -22,6 +22,7 @@ declare class WebSocketAsPromised {
     sendRequest: (data: any, options?: RequestOptions) => Promise<any>;
     sendPacked: (data: any) => void;
     send: (data: string | ArrayBuffer | Blob) => void;
+    waitUnpackedMessage: (predicate: (data: any) => boolean, options?: WaitUnpackedMessageOptions) => Promise<any>
     close: () => Promise<CloseEvent>;
     removeAllListeners: () => void;
 }
@@ -29,4 +30,9 @@ declare class WebSocketAsPromised {
 declare interface RequestOptions {
     requestId?: string | number;
     timeout?: number;
+}
+
+declare interface WaitUnpackedMessageOptions {
+    timeout?: number;
+    timeoutError?: Error;
 }
