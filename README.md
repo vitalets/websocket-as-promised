@@ -22,7 +22,7 @@ await wsp.open();
 // send some data
 wsp.send('data');
 
-// wait for connetction to close
+// wait for connection to close
 await wsp.close();
 ```
 
