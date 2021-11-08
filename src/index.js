@@ -338,6 +338,7 @@ class WebSocketAsPromised {
       { channel: this._ws, event: 'message', listener: e => this._handleMessage(e) },
       { channel: this._ws, event: 'error', listener: e => this._handleError(e) },
       { channel: this._ws, event: 'close', listener: e => this._handleClose(e) },
+      { channel: this._ws, event: 'unexpected-response', listener: (_, res) => this._handleClose({ reason: res.statusMessage, code: res.statusCode }) },
     ]).on();
   }
 
