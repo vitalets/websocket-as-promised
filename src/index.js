@@ -338,6 +338,7 @@ class WebSocketAsPromised {
       { channel: this._ws, event: 'message', listener: e => this._handleMessage(e) },
       { channel: this._ws, event: 'error', listener: e => this._handleError(e) },
       { channel: this._ws, event: 'close', listener: e => this._handleClose(e) },
+      { channel: this._ws, event: 'unexpected-response', listener: (_, res) => this._handleClose({ reason: res.statusMessage, code: res.statusCode }) },
     ]).on();
   }
 
@@ -405,6 +406,8 @@ class WebSocketAsPromised {
     this._onClose.dispatchAsync(event);
     this._closing.resolve(event);
     const error = new Error(`WebSocket closed with reason: ${event.reason} (${event.code}).`);
+    error.reason = event.reason;
+    error.code = event.code;
     if (this._opening.isPending) {
       this._opening.reject(error);
     }
