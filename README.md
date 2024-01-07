@@ -1,3 +1,8 @@
+Base on `vitalets/websocket-as-promised`. 
+
+Introducing a `onUnpackedNotif` event channel. Request/response messages both have an `id` attribute, while notification 
+messages are messages that do not contain an `id` attribute and can be used for server-initiated notification messages.
+
 # websocket-as-promised
 
 <img alt="websocket-as-promised logo" align="right" src="https://user-images.githubusercontent.com/1473072/32486445-b2443538-c3b7-11e7-8e9f-94c95efad760.png"/>
