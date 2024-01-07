@@ -178,6 +178,11 @@ By default `requestId` value is auto-generated, but you can set it manually:
 wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 ```
 
+When use send/request pattern, you can listen a notification which the message does not contain a `id` property.
+```js
+wsp.onUnpackedNotif.addListener(data => console.log(JSON.stringify(data)));
+```
+
 > Note: you should implement yourself attaching `requestId` on server side.
 
 ## API
@@ -213,6 +218,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.onSend](#WebSocketAsPromised+onSend) ⇒ <code>Channel</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.onUnpackedMessage](#WebSocketAsPromised+onUnpackedMessage) ⇒ <code>Channel</code>
+    * [.onUnpackedNotif](#WebSocketAsPromised+onUnpackedNotif) ⇒ <code>Channel</code>
     * [.onResponse](#WebSocketAsPromised+onResponse) ⇒ <code>Channel</code>
     * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
     * [.onError](#WebSocketAsPromised+onError) ⇒ <code>Channel</code>
@@ -316,6 +322,18 @@ For example, if you are using JSON transport, the listener will receive already 
 **Example**  
 ```js
 wsp.onUnpackedMessage.addListener(data => console.log(data.foo));
+```
+<a name="WebSocketAsPromised+onUnpackedNotif"></a>
+
+#### wsp.onUnpackedNotif ⇒ <code>Channel</code>
+Event channel triggered every time when a notification which does not contain an `id` property is successfully unpacked. 
+For example, if you are using JSON transport, the listener will receive already JSON parsed data.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+**See**: https://vitalets.github.io/chnl/#channel  
+**Example**
+```js
+wsp.onUnpackedNotif.addListener(data => console.log(data.foo));
 ```
 <a name="WebSocketAsPromised+onResponse"></a>
 
