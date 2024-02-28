@@ -1,14 +1,14 @@
 {
   "name": "promised-websocket",
   "version": "2.0.2",
-  "description": "A WebSocket client library providing Promise-based API for connecting, disconnecting and messaging with server. Original developed by Vitaliy Potapov.",
+  "description": "A WebSocket client library providing Promise-based API for connecting, disconnecting and messaging with server. Original developed by Vitaliy Potapov(noginsk@rambler.ru).",
   "author": {
-    "name": "Vitaliy Potapov",
-    "email": "noginsk@rambler.ru"
+    "name": "KwanKin Yau",
+    "email": "alphax@vip.163.com"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/vitalets/websocket-as-promised.git"
+    "url": "https://github.com/kwankin-yau/websocket-as-promised.git"
   },
   "engines": {
     "node": ">=6"
