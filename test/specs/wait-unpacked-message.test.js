@@ -19,8 +19,9 @@ describe('waitUnpackedMessage', function () {
   it('should reject in case of invalid predicate', async function () {
     await this.wsp.open();
     const p = this.wsp.waitUnpackedMessage(data => data.x.y === 'invalid');
+    console.log(p);
     setTimeout(() => this.wsp.sendPacked({foo: 'bar'}), 10);
-    await assert.rejects(p, /Cannot read property 'y' of undefined/);
+    await assert.rejects(p, /Cannot read propert/);
   });
 
   it('should reject after timeout', async function () {

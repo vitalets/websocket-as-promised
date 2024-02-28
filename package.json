@@ -1,6 +1,6 @@
 {
   "name": "websocket-as-promised",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A WebSocket client library providing Promise-based API for connecting, disconnecting and messaging with server",
   "author": {
     "name": "Vitaliy Potapov",
@@ -23,11 +23,12 @@
   "scripts": {
     "lint": "eslint src test",
     "test": "mocha test/setup.js test/specs",
-    "test-installed": "node scripts/install-local && LIB_PATH=../.installed/node_modules/websocket-as-promised npm t",
+    "setlibpath-win": "SET LIB_PATH=../.installed/node_modules/websocket-as-promised",
+    "test-installed": "node scripts/install-local && npm run setlibpath-win && npm t",
     "test-ci": "npm run lint && npm test && npm run test-installed",
     "docs": "node scripts/docs",
     "prerelease": "npm run lint && npm test && npm run test-installed",
-    "release": "npm version $VER && npm publish",
+    "release": "npm version --allow-same-version %npm_package_version% && npm publish",
     "postrelease": "git push --follow-tags --no-verify",
     "release-patch": "VER=patch npm run release",
     "release-minor": "VER=minor npm run release"
