@@ -1,5 +1,5 @@
 {
-  "name": "kky-promised-websocket",
+  "name": "promised-websocket",
   "version": "2.0.2",
   "description": "A WebSocket client library providing Promise-based API for connecting, disconnecting and messaging with server. Original developed by Vitaliy Potapov.",
   "author": {

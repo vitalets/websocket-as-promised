@@ -7,3 +7,4 @@ npm-debug.log
 .idea
 
 /.installed/
+/dist/websocket-as-promised-2.0.1.js
