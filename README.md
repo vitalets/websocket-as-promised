@@ -1,3 +1,11 @@
+Base on `vitalets/websocket-as-promised`. 
+
+Introducing a `onUnpackedNotif` event channel. Request/response messages both have an `id` attribute, while notification 
+messages are messages that do not contain an `id` attribute and can be used for server-initiated notification messages.
+
+> Note: The requestId property on the server side must be named `id`; otherwise, the `onUnpackedNotif` event will be 
+> fired every time a message is received.
+
 # websocket-as-promised
 
 <img alt="websocket-as-promised logo" align="right" src="https://user-images.githubusercontent.com/1473072/32486445-b2443538-c3b7-11e7-8e9f-94c95efad760.png"/>
@@ -37,6 +45,7 @@ await wsp.close();
   * [JSON](#sending-json)
   * [binary](#sending-binary)
   * [request / response](#sending-requests)
+* [Listen notifications](#listen-notifications)
 * [API](#api)
 * [Changelog](#changelog)
 * [License](#license)
@@ -180,6 +189,14 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
 
 > Note: you should implement yourself attaching `requestId` on server side.
 
+## Listen notifications
+When use send/request pattern, you can listen a notification which the message does not contain a `id` property.
+```js
+wsp.onUnpackedNotif.addListener(data => console.log(JSON.stringify(data)));
+```
+
+
+
 ## API
 
 ### Classes
@@ -213,6 +230,7 @@ wsp.sendRequest({foo: 'bar'}, {requestId: 42});
     * [.onSend](#WebSocketAsPromised+onSend) ⇒ <code>Channel</code>
     * [.onMessage](#WebSocketAsPromised+onMessage) ⇒ <code>Channel</code>
     * [.onUnpackedMessage](#WebSocketAsPromised+onUnpackedMessage) ⇒ <code>Channel</code>
+    * [.onUnpackedNotif](#WebSocketAsPromised+onUnpackedNotif) ⇒ <code>Channel</code>
     * [.onResponse](#WebSocketAsPromised+onResponse) ⇒ <code>Channel</code>
     * [.onClose](#WebSocketAsPromised+onClose) ⇒ <code>Channel</code>
     * [.onError](#WebSocketAsPromised+onError) ⇒ <code>Channel</code>
@@ -316,6 +334,18 @@ For example, if you are using JSON transport, the listener will receive already 
 **Example**  
 ```js
 wsp.onUnpackedMessage.addListener(data => console.log(data.foo));
+```
+<a name="WebSocketAsPromised+onUnpackedNotif"></a>
+
+#### wsp.onUnpackedNotif ⇒ <code>Channel</code>
+Event channel triggered every time when a notification which does not contain an `id` property is successfully unpacked. 
+For example, if you are using JSON transport, the listener will receive already JSON parsed data.
+
+**Kind**: instance property of [<code>WebSocketAsPromised</code>](#WebSocketAsPromised)  
+**See**: https://vitalets.github.io/chnl/#channel  
+**Example**
+```js
+wsp.onUnpackedNotif.addListener(data => console.log(data.foo));
 ```
 <a name="WebSocketAsPromised+onResponse"></a>
 

@@ -155,6 +155,20 @@ class WebSocketAsPromised {
   }
 
   /**
+   * Event channel triggered every time when received message without `requestId` is successfully unpacked.
+   * For example, if you are using JSON transport, the listener will receive already JSON parsed data.
+   *
+   * @see https://vitalets.github.io/chnl/#channel
+   * @example
+   * wsp.onUnpackedNotif.addListener(data => console.log(data.foo));
+   *
+   * @returns {Channel}
+   */
+  get onUnpackedNotif() {
+    return this._onUnpackedNotif;
+  }
+
+  /**
    * Event channel triggered every time when response to some request comes.
    * Received message considered a response if requestId is found in it.
    *
@@ -299,6 +313,7 @@ class WebSocketAsPromised {
     this._onOpen.removeAllListeners();
     this._onMessage.removeAllListeners();
     this._onUnpackedMessage.removeAllListeners();
+    this._onUnpackedNotif.removeAllListeners();
     this._onResponse.removeAllListeners();
     this._onSend.removeAllListeners();
     this._onClose.removeAllListeners();
@@ -325,6 +340,7 @@ class WebSocketAsPromised {
     this._onOpen = new Channel();
     this._onMessage = new Channel();
     this._onUnpackedMessage = new Channel();
+    this._onUnpackedNotif = new Channel();
     this._onResponse = new Channel();
     this._onSend = new Channel();
     this._onClose = new Channel();
@@ -367,19 +383,32 @@ class WebSocketAsPromised {
     if (data !== undefined) {
       // todo: maybe trigger onUnpackedMessage always?
       this._onUnpackedMessage.dispatchAsync(data);
-      this._tryHandleResponse(data);
+      if (!this._tryHandleResponse(data)) {
+        // message does not contain an `id` property, treat as a notification
+        this._onUnpackedNotif.dispatchAsync((data));
+      }
     }
     this._tryHandleWaitingMessage(data);
   }
 
+  /**
+   *
+   * @param data
+   * @return {boolean} true if `given` data contains a requestId
+   * @private
+   */
   _tryHandleResponse(data) {
     if (this._options.extractRequestId) {
       const requestId = this._options.extractRequestId(data);
       if (requestId) {
         this._onResponse.dispatchAsync(data, requestId);
         this._requests.resolve(requestId, data);
+
+        return true;
       }
     }
+
+    return false;
   }
 
   _tryHandleWaitingMessage(data) {

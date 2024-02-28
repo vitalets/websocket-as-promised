@@ -1,3 +1,9 @@
+## 2.0.1 (Jan 7, 2024)
+* `WebSocketAsPromised` adds an `onUnpackedNotif` event handler.
+* The original `_tryHandleResponse` method is modified to return a boolean value to reflect whether the given `data` parameter contains an `id` attribute.
+* Addition of a browserify script.
+* Minor usage instructions added to README.md.
+
 ## 1.0.0 (Nov 21, 2019)
 
 * Provide unpacked sources by default to reduce bundle size ([#22])
