@@ -15,6 +15,7 @@ declare class WebSocketAsPromised {
     onSend: Channel;
     onMessage: Channel;
     onUnpackedMessage: Channel;
+    onUnpackedNotif: Channel;
     onResponse: Channel;
     onClose: Channel;
     onError: Channel;
