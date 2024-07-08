@@ -404,7 +404,7 @@ class WebSocketAsPromised {
   _handleClose(event) {
     this._onClose.dispatchAsync(event);
     this._closing.resolve(event);
-    const error = new Error(`WebSocket closed with reason: ${event.reason} (${event.code}).`);
+    const error = new Error(`WebSocket closed with reason: ${event.reason || event.message} (${event.code}).`);
     if (this._opening.isPending) {
       this._opening.reject(error);
     }
