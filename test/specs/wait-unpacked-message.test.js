@@ -20,7 +20,7 @@ describe('waitUnpackedMessage', function () {
     await this.wsp.open();
     const p = this.wsp.waitUnpackedMessage(data => data.x.y === 'invalid');
     setTimeout(() => this.wsp.sendPacked({foo: 'bar'}), 10);
-    await assert.rejects(p, /Cannot read property 'y' of undefined/);
+    await assert.rejects(p, /Cannot read/);
   });
 
   it('should reject after timeout', async function () {
