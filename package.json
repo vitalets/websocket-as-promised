@@ -1,6 +1,6 @@
 {
   "name": "promised-websocket",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A WebSocket client library providing Promise-based API for connecting, disconnecting and messaging with server. Original developed by Vitaliy Potapov(noginsk@rambler.ru).",
   "author": {
     "name": "KwanKin Yau",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/kwankin-yau/websocket-as-promised.git"
+    "url": "https://github.com/kwankin-yau/promised-websocket.git"
   },
   "engines": {
     "node": ">=6"
@@ -23,7 +23,7 @@
   "scripts": {
     "lint": "eslint src test",
     "test": "mocha test/setup.js test/specs",
-    "setlibpath-win": "SET LIB_PATH=../.installed/node_modules/websocket-as-promised",
+    "setlibpath-win": "SET LIB_PATH=../.installed/node_modules/promised-websocket",
     "test-installed": "node scripts/install-local && npm run setlibpath-win && npm t",
     "test-ci": "npm run lint && npm test && npm run test-installed",
     "docs": "node scripts/docs",

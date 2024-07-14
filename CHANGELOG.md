@@ -1,3 +1,6 @@
+## 2.0.4 
+* `_handleUnpackedData` method: add parameter check and ignore the handling if the parameter is `undefined`.
+
 ## 2.0.1 (Jan 7, 2024)
 * `WebSocketAsPromised` adds an `onUnpackedNotif` event handler.
 * The original `_tryHandleResponse` method is modified to return a boolean value to reflect whether the given `data` parameter contains an `id` attribute.
