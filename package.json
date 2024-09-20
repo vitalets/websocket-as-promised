@@ -1,6 +1,6 @@
 {
   "name": "websocket-as-promised",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A WebSocket client library providing Promise-based API for connecting, disconnecting and messaging with server",
   "author": {
     "name": "Vitaliy Potapov",
@@ -39,7 +39,6 @@
   "dependencies": {
     "chnl": "^1.2.0",
     "promise-controller": "^1.0.0",
-    "promise.prototype.finally": "^3.1.2",
     "promised-map": "^1.0.0"
   },
   "devDependencies": {
