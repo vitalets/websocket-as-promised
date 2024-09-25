@@ -4,7 +4,6 @@
  */
 
 const PromiseController = require('promise-controller');
-const promiseFinally = require('promise.prototype.finally');
 
 module.exports = class Requests {
   constructor() {
@@ -47,7 +46,7 @@ module.exports = class Requests {
       timeoutReason: `WebSocket request was rejected by timeout (${timeout} ms). RequestId: ${requestId}`
     });
     this._items.set(requestId, request);
-    return promiseFinally(request.call(fn), () => this._deleteRequest(requestId, request));
+    return request.call(fn).finally(() => this._deleteRequest(requestId, request));
   }
 
   _deleteRequest(requestId, request) {
