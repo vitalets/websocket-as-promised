@@ -6,7 +6,7 @@ export = WebSocketAsPromised;
 
 declare class WebSocketAsPromised {
     constructor(url: string, options?: Options);
-    ws: WebSocket;
+    ws: WebSocket | null;
     isOpening: boolean;
     isOpened: boolean;
     isClosing: boolean;
@@ -23,7 +23,7 @@ declare class WebSocketAsPromised {
     sendPacked: (data: any) => void;
     send: (data: string | ArrayBuffer | Blob) => void;
     waitUnpackedMessage: (predicate: (data: any) => boolean, options?: WaitUnpackedMessageOptions) => Promise<any>
-    close: () => Promise<CloseEvent>;
+    close: (code?: number, reason?: string) => Promise<CloseEvent>;
     removeAllListeners: () => void;
 }
 
